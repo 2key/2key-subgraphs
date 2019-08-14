@@ -1,19 +1,15 @@
 {
-  "name": "public-contracts-graph",
+  "name": "public-contracts",
   "license": "UNLICENSED",
-  "deploymentVersionTesting": 38,
-  "deploymentVersionStaging": 0,
+  "deploymentVersion": 1,
   "scripts": {
-    "graph-cli": "node graph-cli.js test",
+    "graph-cli": "node graph-cli.js staging",
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/develop",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/staging",
     "deploy-test": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ jacksonjacko/open-backend",
-    "deploy-staging": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ jacksonjacko/jackosub",
     "create-test": "graph create --node https://api.thegraph.com/deploy/ jacksonjacko/open-backend",
-    "create-staging": "graph create --node https://api.thegraph.com/deploy/ jacksonjacko/jackosub",
-    "remove-test": "graph remove --node https://api.thegraph.com/deploy/ jacksonjacko/open-backend",
-    "remove-staging": "graph remove --node https://api.thegraph.com/deploy/ jacksonjacko/jackosub"
+    "remove-test": "graph remove --node https://api.thegraph.com/deploy/ jacksonjacko/open-backend"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.14.0",
@@ -23,5 +19,7 @@
     "mocha": "^6.2.0",
     "readline-sync": "^1.4.10",
     "replace": "^1.1.0"
-  }
+  },
+  "version": "1.0.0",
+  "main": "index.js"
 }
