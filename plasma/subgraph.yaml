@@ -6,8 +6,7 @@ dataSources:
     name: Contract
     network: plasma
     source:
-      address: "0x06933b276f01be1ffb08bead9089a03df8edf569"       #testing
-#      address: "0xfc30a97ca93c0dbb718d9022a39a1cd5ce46b872"       #staging
+      address: "0xfc30a97ca93c0dbb718d9022a39a1cd5ce46b872"
       abi: TwoKeyPlasmaEvents
     mapping:
       kind: ethereum/events
@@ -22,8 +21,7 @@ dataSources:
         - Test
       abis:
         - name: TwoKeyPlasmaEvents
-          file: ./abis/TwoKeyPlasmaEvents.json  #testing
-#          file: ./abis/StatingTwoKeyPlasmaEvents.json #staging
+          file: ./abis/TwoKeyPlasmaEvents.json
       eventHandlers:
         - event: Visited(indexed address,indexed address,indexed address,address)
           handler: handleVisited
