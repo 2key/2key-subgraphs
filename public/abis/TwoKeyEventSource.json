@@ -1,0 +1,1047 @@
+[
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "PROXY_STORAGE_CONTRACT",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "implementation",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "TWO_KEY_SINGLETON_REGISTRY",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_moderator",
+        "type": "address"
+      }
+    ],
+    "name": "Created",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_to",
+        "type": "address"
+      }
+    ],
+    "name": "Joined",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_converter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Converted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_converter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_baseTokens",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_bonusTokens",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_conversionAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_isFiatConversion",
+        "type": "bool"
+      }
+    ],
+    "name": "ConvertedAcquisition",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_converterPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_baseTokens",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_bonusTokens",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_conversionAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_isFiatConversion",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "name": "_conversionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "ConvertedAcquisitionV2",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_converter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_conversionAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "ConvertedDonation",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_converterPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_conversionAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_conversionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "ConvertedDonationV2",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Rewarded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_converter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_indexOrAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Cancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_converter",
+        "type": "address"
+      }
+    ],
+    "name": "Rejected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "value",
+        "type": "string"
+      }
+    ],
+    "name": "UpdatedPublicMetaHash",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "action",
+        "type": "string"
+      }
+    ],
+    "name": "UpdatedData",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReceivedEther",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "proxyLogicHandler",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "proxyConversionHandler",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "proxyAcquisitionCampaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "proxyPurchasesHandler",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "contractor",
+        "type": "address"
+      }
+    ],
+    "name": "AcquisitionCampaignCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "proxyDonationCampaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "proxyDonationConversionHandler",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "proxyDonationLogicHandler",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "contractor",
+        "type": "address"
+      }
+    ],
+    "name": "DonationCampaignCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_currency",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "name": "newRate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_timestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "_updater",
+        "type": "address"
+      }
+    ],
+    "name": "PriceUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "_address",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_fullName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "_email",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "_username_walletName",
+        "type": "string"
+      }
+    ],
+    "name": "UserRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "converterPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "conversionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "Executed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "converterPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "conversionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "tokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExecutedV1",
+    "type": "event"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_twoKeySingletonesRegistry",
+        "type": "address"
+      },
+      {
+        "name": "_proxyStorage",
+        "type": "address"
+      }
+    ],
+    "name": "setInitialParams",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "name": "_moderator",
+        "type": "address"
+      }
+    ],
+    "name": "created",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "name": "_to",
+        "type": "address"
+      }
+    ],
+    "name": "joined",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_converter",
+        "type": "address"
+      },
+      {
+        "name": "_conversionAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "converted",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_converter",
+        "type": "address"
+      }
+    ],
+    "name": "rejected",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "_converterPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "name": "_conversionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "executed",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "_converterPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "name": "_conversionId",
+        "type": "uint256"
+      },
+      {
+        "name": "tokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "executedV1",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_converter",
+        "type": "address"
+      },
+      {
+        "name": "_baseTokens",
+        "type": "uint256"
+      },
+      {
+        "name": "_bonusTokens",
+        "type": "uint256"
+      },
+      {
+        "name": "_conversionAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "_isFiatConversion",
+        "type": "bool"
+      }
+    ],
+    "name": "convertedAcquisition",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_converterPlasma",
+        "type": "address"
+      },
+      {
+        "name": "_baseTokens",
+        "type": "uint256"
+      },
+      {
+        "name": "_bonusTokens",
+        "type": "uint256"
+      },
+      {
+        "name": "_conversionAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "_isFiatConversion",
+        "type": "bool"
+      },
+      {
+        "name": "_conversionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "convertedAcquisitionV2",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_converter",
+        "type": "address"
+      },
+      {
+        "name": "_conversionAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "convertedDonation",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_converterPlasma",
+        "type": "address"
+      },
+      {
+        "name": "_conversionAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "_conversionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "convertedDonationV2",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "rewarded",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_campaign",
+        "type": "address"
+      },
+      {
+        "name": "_converter",
+        "type": "address"
+      },
+      {
+        "name": "_indexOrAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancelled",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "proxyLogicHandler",
+        "type": "address"
+      },
+      {
+        "name": "proxyConversionHandler",
+        "type": "address"
+      },
+      {
+        "name": "proxyAcquisitionCampaign",
+        "type": "address"
+      },
+      {
+        "name": "proxyPurchasesHandler",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      }
+    ],
+    "name": "acquisitionCampaignCreated",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "proxyDonationCampaign",
+        "type": "address"
+      },
+      {
+        "name": "proxyDonationConversionHandler",
+        "type": "address"
+      },
+      {
+        "name": "proxyDonationLogicHandler",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      }
+    ],
+    "name": "donationCampaignCreated",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_currency",
+        "type": "bytes32"
+      },
+      {
+        "name": "_newRate",
+        "type": "uint256"
+      },
+      {
+        "name": "_timestamp",
+        "type": "uint256"
+      },
+      {
+        "name": "_updater",
+        "type": "address"
+      }
+    ],
+    "name": "priceUpdated",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "name": "_address",
+        "type": "address"
+      },
+      {
+        "name": "_fullName",
+        "type": "string"
+      },
+      {
+        "name": "_email",
+        "type": "string"
+      },
+      {
+        "name": "_username_walletName",
+        "type": "string"
+      }
+    ],
+    "name": "userRegistered",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "me",
+        "type": "address"
+      }
+    ],
+    "name": "plasmaOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "me",
+        "type": "address"
+      }
+    ],
+    "name": "ethereumOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_maintainer",
+        "type": "address"
+      }
+    ],
+    "name": "isAddressMaintainer",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getTwoKeyDefaultIntegratorFeeFromAdmin",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getTwoKeyDefaultNetworkTaxPercent",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
