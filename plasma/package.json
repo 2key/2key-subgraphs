@@ -5,8 +5,8 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "create!": "graph create --node http://staging.api.graph.deployer.2key.net:80/ plasma",
-    "remove": "graph remove --node http://staging.api.graph.deployer.2key.net:80/ plasma",
-    "deploy": "graph deploy --node http://staging.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma"
+    "remove!": "graph remove --node http://staging.api.graph.deployer.2key.net:80/ plasma",
+    "deploy!": "graph deploy --node http://staging.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.14.0",

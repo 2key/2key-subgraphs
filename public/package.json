@@ -6,7 +6,7 @@
     "graph-cli": "node graph-cli.js staging",
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/staging",
+    "deploy!": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/staging",
     "deploy-test": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ jacksonjacko/open-backend",
     "create-test": "graph create --node https://api.thegraph.com/deploy/ jacksonjacko/open-backend",
     "remove-test": "graph remove --node https://api.thegraph.com/deploy/ jacksonjacko/open-backend"
