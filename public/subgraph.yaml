@@ -1,0 +1,63 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Contract
+    network: ropsten
+    source:
+      address: "0x0e05fd4224e7e9b5abaaa9cfd56de91cdc95b1cc"
+      abi: TwoKeyEventSource #1.1.37
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Meta
+        - Rate
+        - PriceUpdated
+        - ConCampUser
+        - Metadata
+        - Debug
+        - Campaign
+        - Conversion
+        - User
+        - Created
+        - Join
+        - Reward
+        - Rejected
+        - Web3ToUser
+        - UserReg
+        - Variable
+      abis:
+        - name: TwoKeyEventSource
+          file: ./abis/TwoKeyEventSource.json
+#      callHandlers:
+#        - function: setInitialParams(address,address)
+#          handler: handleSetInitialParams
+      eventHandlers:
+        - event: UserRegistered(string,address,string,string,string)
+          handler: handleUserRegistered
+        - event: Joined(address,address,address)
+          handler: handleJoined
+        - event: Rewarded(address,address,uint256)
+          handler: handleRewarded
+        - event: AcquisitionCampaignCreated(address,address,address,address,address)
+          handler: handleAcquisition
+        - event: DonationCampaignCreated(address,address,address,address)
+          handler: handleDonation
+        - event: ConvertedAcquisitionV2(address,address,uint256,uint256,uint256,bool,uint256)
+          handler: handleConvertedAcquisitionV2
+        - event: ConvertedDonationV2(address,address,uint256,uint256)
+          handler: handleConvertedDonationV2
+        - event: Rejected(address,address)
+          handler: handleRejected
+        - event: ExecutedV1(address,address,uint256,uint256)
+          handler: handleExecutedV1
+        - event : PriceUpdated(bytes32,uint256,uint256,address)
+          handler: handlerPriceUpdated
+#      blockHandlers:
+#        - handler: handleBlock
+#          filter:
+#            kind: call
+      file: ./src/mapping.ts

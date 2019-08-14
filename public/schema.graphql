@@ -1,0 +1,216 @@
+enum CurrencyType {
+    ETH
+    BTC
+    TWOKEY
+    NIS
+    JPY
+    EUR
+    USD
+    ILS
+    DAI
+    TUSD
+    JPY
+    GBP
+    USDT
+}
+
+enum VariableName{
+    Meta
+    Block
+}
+
+enum ConversionStatus{
+    PENDING
+    APPROVED
+    EXECUTED
+    REJECTED
+}
+
+enum CampaignType {
+    Donation
+    Acquisition
+ }
+
+
+type Meta @entity {
+    """The Proxy address of the environment."""
+    id: ID!
+    _userRegisteredCounter: Int!
+    _convertedAcquisitionCounter: Int!
+    _convertedAcquisitionV2Counter: Int!
+    _convertedDonationV2Counter: Int!
+    _convertedDonationCounter: Int!
+    _createdCounter: Int!
+    _joinedCounter: Int!
+    _convertedCounter: Int!
+    _rewardedCounter: Int!
+    _acquisitionCampaignCreatedCounter: Int!
+    _donationCampaignCreatedCounter: Int!
+    _rejectedCounter: Int!
+    _executedCounter: Int!
+    _executedV1Counter: Int!
+    _version: Int
+    _timeStamp: BigInt!
+    _lastBlock: BigInt
+    _updatedTimeStamp: BigInt!
+}
+
+
+type Variable @entity {
+    """The name of the global variable."""
+    id: ID!
+    _variableId: String!
+}
+
+
+type Rate @entity {
+    id: ID!
+    _from:String!
+    _to:String!
+    _rate: BigInt!
+    _maintainer: Bytes!
+    _timeStamp: BigInt!
+    _event: PriceUpdated!
+}
+
+type PriceUpdated @entity {
+    """The name of the global variable."""
+    id: ID!
+    _caller: Bytes!
+    _timeStemp: BigInt!
+    _rate: BigInt!
+    _currency: String!
+    _block: BigInt!
+    _txHash: Bytes!
+}
+
+
+type Campaign @entity {
+    """The web3 address of campaign."""
+    id: ID! # Web3 address.
+    _owner: User # address
+    """Acquisition/Donation"""
+    _type: CampaignType
+    _pricePerUnit: BigInt
+    _conversionHandler: Bytes
+    _rejected_conversions: Int
+    _logicHandler: Bytes
+    _purchasesHandler: Bytes
+    _total_rewards: Int
+    _total_conversions_amount: Int
+    _moderator: User # address
+    _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
+    _joins: [Join!]! @derivedFrom(field: "_campaign")
+    _rewards: [Reward!]! @derivedFrom(field: "_campaign")
+    _version: Int
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt!
+}
+
+
+type UserReg @entity {
+    """The user's plasma address"""
+    id: ID!
+    _name: String
+    _fullName: String
+    _email: String
+    _walletName: String
+    _web3: Bytes
+    _address: Bytes
+    _version: Int
+    _timeStamp: BigInt!
+    _tx_hash: String
+    _updatedTimeStamp: BigInt!
+}
+
+type User @entity {
+    """The user's plasma address"""
+    id: ID!
+    _name: String
+    _fullName: String
+    _email: String
+    _walletName: String
+    _web3Address: Bytes
+    _campaign_owner: [Campaign!]! @derivedFrom(field: "_owner")
+    _campaign_moderator: [Campaign!]! @derivedFrom(field: "_moderator")
+    _conversions: [Conversion!]! @derivedFrom(field: "_participate")
+    _rewards: [Reward!]! @derivedFrom(field: "_user")
+    _version: Int
+    _event: UserReg
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt!
+}
+
+type Conversion @entity {
+    """Campaign + conversionid"""
+    id: ID!
+    _campaignType: CampaignType
+    _status: ConversionStatus
+    _campaign: Campaign!
+    _participate: User! # address
+    _fiatAmountSpent: BigInt
+    _ethAmountSpent: BigInt
+    _tokens: BigInt
+    _isFiatConversion: Boolean
+    _version:Int
+    _conversionId: BigInt
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt!
+}
+
+type Price @entity{
+    id:ID!
+    _currency: CurrencyType
+    _rate: BigInt!
+    _updater: User!
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt!
+}
+
+type Join @entity {
+    id: ID!
+    _campaign: Campaign!
+    _from: User! # address
+    _to: User! # address
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt!
+}
+
+type Reward @entity {
+    id: ID!
+    _campaign: Campaign!
+    _user: User! # address
+    _amount: BigInt! # address
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt!
+}
+
+type ConCampUser @entity {
+    id: ID!
+    _conversions: [BigInt!]!
+}
+
+
+type Rejected @entity {
+    id: ID!
+    _campaign: Bytes! # address
+    _converter: Bytes! # address
+}
+
+type Web3ToUser @entity {
+    id: ID!
+    _user: User! # address
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
+
+type Debug @entity {
+    id: ID!
+    _campaign: Campaign
+    _user: User
+    _conversion: Conversion
+    _reward: Reward
+    _join: Join
+    _price: Price
+    _reason: String!
+}
