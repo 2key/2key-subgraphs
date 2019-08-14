@@ -1,0 +1,46 @@
+type Meta @entity {
+  id: ID!
+  _version: Int
+  _visitCounter: Int
+  _plasmaToHandleCounter: Int
+  _plasmaToEthereumCounter: Int
+  _timeStamp:BigInt!
+  _updatedAt:BigInt!
+}
+
+type Campaign @entity {
+  id: ID!  # Web3 Address
+  _version: Int
+  _timeStamp:BigInt!
+  _visitors: [Visit!] @derivedFrom(field: "_campaign")
+}
+
+type Visit @entity {
+  id: ID!
+  _campaign: Campaign! # address
+  _referrer: User! # address
+  _visitor: User! # address
+  _timeStamp:BigInt!
+}
+
+
+type VisitEvent @entity {
+  id: ID!
+  _campaignWeb3: Campaign! # address
+  _referrer: User! # address
+  _visitor: User! # address
+  _timeStamp:BigInt!
+}
+
+
+type User @entity {
+  id: ID!  #
+  _web3Address: Bytes
+  _handle: String
+  _timeStamp:BigInt!
+}
+
+type Test @entity {
+  id: ID!  # Web3
+  _address: Bytes!
+}
