@@ -110,6 +110,7 @@ export function handlePlasma2Ethereum(event: Plasma2EthereumEvent): void {
   if(user == null){
     user = new User(event.params.plasma.toHex());
     user._web3Address = event.params.eth;
+    user._timeStamp = event.block.timestamp;
     user.save();
   }
   else{
