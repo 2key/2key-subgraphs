@@ -99,6 +99,9 @@ type Campaign @entity {
     _total_rewards: Int
     _total_conversions_amount: Int
     _moderator: User # address
+    _n_conversions: Int
+    _n_rewards: Int
+    _total_rewards_amount: Int
     _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
     _joins: [Join!]! @derivedFrom(field: "_campaign")
     _rewards: [Reward!]! @derivedFrom(field: "_campaign")
