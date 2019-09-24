@@ -78,9 +78,33 @@ function createCampaignObject(campaignAddress: Address, timeStamp: BigInt): void
     campaign._total_conversions_amount = BigInt.fromI32(0);
     campaign._n_conversions_approved = 0;
     campaign._total_rewards_amount = BigInt.fromI32(0);
+    campaign._converters_addresses = [];
+    campaign._n_unique_coverters = 0;
     campaign.save();
   }
 }
+
+function createConversionObject(conversionId: BigInt, campaignAddress: Address, timeStamp: BigInt): void {
+  let campaign = Campaign.load(campaignAddress.toHex());
+  let conversion = Conversion.load(campaign.id + '-' + conversionId.toString());
+
+  if (conversion == null){
+    conversion = new Conversion(campaign.id + '-'+ conversionId.toString());
+    conversion._timeStamp = timeStamp;
+    conversion._updatedTimeStamp = timeStamp;
+    conversion._version = 10;
+    conversion._fiatAmountSpent = BigInt.fromI32(0);
+    conversion._ethAmountSpent = BigInt.fromI32(0);
+    conversion._tokens = BigInt.fromI32(0);
+    conversion._campaign = campaign.id;
+    conversion._status = 'PENDING';
+    conversion._refundable = true;
+    conversion._isFiatConversion = false;
+    conversion._conversionId = conversionId;
+    conversion.save();
+  }
+}
+
 
 function createUserObject(eventAddress: Address, userAddress: Address, timeStamp: BigInt): void {
   let user = User.load(userAddress.toHex());
@@ -294,16 +318,20 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
 
   let campaign = Campaign.load(event.params._campaign.toHex());
   let conversionId = event.params._conversionId;
-  let acquisitionConversion = new Conversion(campaign.id + '-' + conversionId.toString());
-  acquisitionConversion._ethAmountSpent = BigInt.fromI32(0);
-  acquisitionConversion._fiatAmountSpent = BigInt.fromI32(0);
-  acquisitionConversion._refundable = true;
-  let converterPlasmaAddress = event.params._converterPlasma;
 
+  createConversionObject(conversionId, event.params._campaign, event.block.timestamp);
+  let acquisitionConversion = Conversion.load(campaign.id + '-' + conversionId.toString());
+
+  let converterPlasmaAddress = event.params._converterPlasma;
   createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
   let converter = User.load(converterPlasmaAddress.toHex());
 
-
+  if (campaign._converters_addresses.indexOf(converter.id) == -1){
+    let convertersAddresses = campaign._converters_addresses;
+    convertersAddresses.push(converter.id);
+    campaign._converters_addresses = convertersAddresses;
+    campaign._n_unique_coverters += 1;
+  }
 
   acquisitionConversion._campaignType = 'Acquisition';
   acquisitionConversion._isFiatConversion = (event.params._isFiatConversion ? true : false);
@@ -315,25 +343,23 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
     //Eth conversion
     acquisitionConversion._status = 'APPROVED';
     acquisitionConversion._ethAmountSpent = event.params._conversionAmount;
-    acquisitionConversion._fiatAmountSpent = BigInt.fromI32(0);
     campaign._n_conversions_approved = campaign._n_conversions_approved + 1;
     converter._n_conversions_approved = converter._n_conversions_approved + 1 ;
   }
   else{
-    acquisitionConversion._status = 'PENDING';
-    acquisitionConversion._ethAmountSpent = BigInt.fromI32(0);
     acquisitionConversion._fiatAmountSpent = event.params._conversionAmount;
   }
-
-
 
   acquisitionConversion._participate = converter.id;
   acquisitionConversion._conversionId = event.params._conversionId;
   acquisitionConversion._campaign = campaign.id;
-  acquisitionConversion._timeStamp = event.block.timestamp;
 
   acquisitionConversion.save();
+
+  campaign._updatedTimeStamp = event.block.timestamp;
   campaign.save();
+
+  converter._updatedTimeStamp = event.block.timestamp;
   converter.save();
 
   let conversionByCampaignUser = ConCampUser.load(campaign.id +'-'+ converter.id);
@@ -359,34 +385,36 @@ export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void
 
     let campaign = Campaign.load(event.params._campaign.toHex());
     let conversionId = event.params._conversionId;
-    let donationConversion = new Conversion(campaign.id + '-' + conversionId.toString())
+
+    createConversionObject(conversionId, event.params._campaign, event.block.timestamp);
+    let donationConversion = Conversion.load(campaign.id + '-' + conversionId.toString());
+
     let converterPlasmaAddress = event.params._converterPlasma;
-
-    donationConversion._ethAmountSpent = BigInt.fromI32(0);
-    donationConversion._fiatAmountSpent = BigInt.fromI32(0);
-    donationConversion._refundable = true;
-
     createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
     let converter = User.load(converterPlasmaAddress.toHex());
 
+    if (campaign._converters_addresses.indexOf(converter.id) == -1){
+      let convertersAddresses = campaign._converters_addresses;
+      convertersAddresses.push(converter.id);
+      campaign._converters_addresses = convertersAddresses;
+      campaign._n_unique_coverters += 1;
+    }
 
     campaign._n_conversions = campaign._n_conversions + 1;
     campaign._n_conversions_approved = campaign._n_conversions_approved + 1;
+    campaign._updatedTimeStamp = event.block.timestamp;
     campaign.save();
 
     converter._n_conversions = converter._n_conversions + 1;
     converter._n_conversions_approved = converter._n_conversions_approved + 1;
+    converter._updatedTimeStamp = event.block.timestamp;
     converter.save();
 
     donationConversion._campaignType = 'Donation';
     donationConversion._status = 'APPROVED';
     donationConversion._ethAmountSpent = event.params._conversionAmount;
-    donationConversion._fiatAmountSpent = BigInt.fromI32(0);
     donationConversion._participate = converter.id;
     donationConversion._conversionId = event.params._conversionId;
-    donationConversion._isFiatConversion = false;
-    donationConversion._campaign = campaign.id;
-    donationConversion._timeStamp = event.block.timestamp;
     donationConversion.save();
 
     let conversionByCampaignUser = ConCampUser.load(campaign.id +'-'+ converter.id);
