@@ -188,6 +188,7 @@ export function handleRejected(event: RejectedEvent): void {
 
       if (conversion != null){
         conversion._status = 'REJECTED';
+        conversion._refundable = false;
         conversion.save();
 
         user._n_conversions_rejected = user._n_conversions_rejected + 1;
@@ -227,6 +228,7 @@ export function handleExecutedV1(event: ExecutedV1Event): void {
     conversion._status = 'EXECUTED';
     conversion._tokens = event.params.tokens;
     conversion._version = 1;
+    conversion._refundable = false;
     conversion.save();
 
     let conversionEthWei = conversion._ethAmountSpent;
@@ -295,6 +297,7 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
   let acquisitionConversion = new Conversion(campaign.id + '-' + conversionId.toString());
   acquisitionConversion._ethAmountSpent = BigInt.fromI32(0);
   acquisitionConversion._fiatAmountSpent = BigInt.fromI32(0);
+  acquisitionConversion._refundable = true;
   let converterPlasmaAddress = event.params._converterPlasma;
 
   createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
@@ -361,6 +364,7 @@ export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void
 
     donationConversion._ethAmountSpent = BigInt.fromI32(0);
     donationConversion._fiatAmountSpent = BigInt.fromI32(0);
+    donationConversion._refundable = true;
 
     createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
     let converter = User.load(converterPlasmaAddress.toHex());
