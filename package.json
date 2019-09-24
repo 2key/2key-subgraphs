@@ -1,0 +1,18 @@
+{
+  "name": "2key-subgraphs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "graph-cli": "node graph-cli.js"
+  },
+  "dependencies": {
+    "dotenv": "^8.0.0",
+    "git-user-name": "^2.0.0",
+    "mocha": "^6.2.0",
+    "readline-sync": "^1.4.10",
+    "replace": "^1.1.0"
+  },
+  "repository": "https://github.com/2key/2key-subgraphs.git",
+  "author": "4tal <idan.4tal@gmail.com>",
+  "license": "MIT"
+}
