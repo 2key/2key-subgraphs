@@ -12,7 +12,7 @@
     "remove-test": "graph remove --node https://api.thegraph.com/deploy/ jacksonjacko/jackosub"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.14.0",
-    "@graphprotocol/graph-ts": "^0.14.0"
+    "@graphprotocol/graph-cli": "^0.15.0",
+    "@graphprotocol/graph-ts": "^0.15.1"
   }
 }
