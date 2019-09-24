@@ -166,6 +166,7 @@ type Conversion @entity {
     _ethAmountSpent: BigInt!
     _tokens: BigInt
     _isFiatConversion: Boolean
+    _refundable: Boolean
     _version:Int
     _conversionId: BigInt
     _timeStamp: BigInt!
