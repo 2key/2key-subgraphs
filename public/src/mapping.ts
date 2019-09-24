@@ -19,18 +19,17 @@ import {
 import {
     Meta,
     Variable,
-    Rejected,
     Campaign,
     Conversion,
     User,
     Join,
     Reward,
     Debug,
-    Web3ToUser,
     ConCampUser,
     UserReg,
     PriceUpdated,
-    Rate
+    Rate,
+    Event
 } from "../generated/schema"
 
 
@@ -63,14 +62,52 @@ function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
   }
 }
 
-// export function handleSetInitialParams(call: SetInitialParamsCall){
-//
-//   let metadata = Meta.load(Variable.load('Meta')._variableId);
-//   if (metadata == null){
-//     return;
-//   }
-//
-// }
+
+function createCampaignObject(campaignAddress: Address, timeStamp: BigInt): void {
+  let campaign = Campaign.load(campaignAddress.toHex());
+  if (campaign == null){
+    campaign = new Campaign(campaignAddress.toHex());
+    campaign._timeStamp = timeStamp;
+    campaign._updatedTimeStamp = timeStamp;
+    campaign._version = 10;
+    campaign._n_conversions_executed = 0;
+    campaign._n_conversions = 0;
+    campaign._n_conversions_rejected = 0;
+    campaign._n_joined = 0;
+    campaign._n_rewards = 0;
+    campaign._total_conversions_amount = BigInt.fromI32(0);
+    campaign._n_conversions_approved = 0;
+    campaign._total_rewards_amount = BigInt.fromI32(0);
+    campaign.save();
+  }
+}
+
+function createUserObject(eventAddress: Address, userAddress: Address, timeStamp: BigInt): void {
+  let user = User.load(userAddress.toHex());
+  if (user == null){
+    user = new User(userAddress.toHex());
+    user._timeStamp = timeStamp;
+    user._updatedTimeStamp = timeStamp;
+    user._version = 0;
+    user._n_rewards = 0;
+    user._total_rewards_amount = BigInt.fromI32(0);
+    user._n_conversions = 0;
+    user._n_conversions_rejected = 0;
+    user._n_conversions_approved = 0;
+    user._n_conversions_executed = 0;
+    user._total_conversions_amount = BigInt.fromI32(0);
+  }
+
+  let twoKeyEventSource = TwoKeyEventSource.bind(eventAddress);
+  let web3Address = twoKeyEventSource.ethereumOf(userAddress);
+
+  if (web3Address != userAddress){
+    user._web3Address = web3Address;
+    user._updatedTimeStamp = timeStamp;
+  }
+  user.save();
+}
+
 
 
 export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
@@ -80,7 +117,7 @@ export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
     priceUpdated._caller = event.params._updater;
     priceUpdated._rate = event.params.newRate;
     priceUpdated._currency = event.params._currency.toString();
-    priceUpdated._timeStemp = event.params._timestamp;
+    priceUpdated._timeStamp = event.params._timestamp;
     priceUpdated._txHash = event.transaction.hash;
     priceUpdated._block = event.block.number;
     priceUpdated.save();
@@ -117,16 +154,6 @@ export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
 //   metadata.save();
 // }
 
-function createCampaignObject(campaignAddress: Address, event: EthereumEvent): void {
-  let campaign = Campaign.load(campaignAddress.toHex());
-  if (campaign == null){
-    campaign = new Campaign(campaignAddress.toHex());
-    campaign._timeStamp = event.block.timestamp;
-    //...
-
-    campaign.save();
-  }
-}
 
 export function handleRejected(event: RejectedEvent): void {
   createMetadata(event.address, event.block.timestamp);
@@ -135,39 +162,46 @@ export function handleRejected(event: RejectedEvent): void {
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
-  let campaign = Campaign.load(event.params._campaign.toHex());
+
+  createCampaignObject(event.params._campaign, event.block.timestamp);
+  createUserObject(event.address, event.params._campaign, event.block.timestamp);
+
   let user = User.load(event.params._converter.toHex());
-  if (campaign == null || user == null){
-    let deb = new Debug(event.block.number.toString()+'-'+event.transaction.hash.toHexString()+'Rejected');
-    deb._reason = 'For converter '+event.params._converter.toHexString()+' in campaign '+ event.params._campaign.toHexString()+'rejected event exist and no campaign/user';
+  user._n_conversions_rejected = user._n_conversions_rejected + 1;
+
+  let campaign = Campaign.load(event.params._campaign.toHex());
+  campaign._n_conversions_rejected = campaign._n_conversions_rejected + 1;
+
+  let conversionsForCampaignBySpecificUser = ConCampUser.load(campaign.id+'-'+user.id);
+  if(conversionsForCampaignBySpecificUser == null){
+    let deb = new Debug(event.block.number.toString()+'-'+event.transaction.hash.toHexString()+'conCampUser');
+    deb._reason = 'conCampUser not exist for this campaign and user';
+    deb._campaign = campaign.id;
+    deb._user = user.id;
     deb.save();
   }
   else{
-    let conversionsForCampaignBySpecificUser = ConCampUser.load(campaign.id+'-'+user.id);
-    if(conversionsForCampaignBySpecificUser == null){
-      let deb = new Debug(event.block.number.toString()+'-'+event.transaction.hash.toHexString()+'conCampUser');
-      deb._reason = 'conCampUser not exist for this campaign and user';
-      deb._campaign = campaign.id;
-      deb._user = user.id;
-      deb.save();
-    }
-    else{
-      let conversions = conversionsForCampaignBySpecificUser._conversions;
-      for (let i = 0;i<conversions.length;i++){
-        let conversionId = conversions[i].toString();
-        let conversion = Conversion.load(campaign.id+'-'+conversionId);
-        if (conversion != null){
-          conversion._status = 'REJECTED';
-          conversion.save();
-        }
-        else{
-          let deb = new Debug(event.block.number.toString()+'-'+event.transaction.hash.toHexString()+'conversions');
-          deb._reason = 'conversion id '+conversionId+' for that campaign does not exist';
-          deb._campaign = campaign.id;
-          deb.save();
-        }
+    let conversions = conversionsForCampaignBySpecificUser._conversions;
+    for (let i = 0;i<conversions.length;i++){
+      let conversionId = conversions[i].toString();
+      let conversion = Conversion.load(campaign.id+'-'+conversionId);
+
+      if (conversion != null){
+        conversion._status = 'REJECTED';
+        conversion.save();
+
+        user._n_conversions_rejected = user._n_conversions_rejected + 1;
+        campaign._n_conversions_rejected = campaign._n_conversions_rejected + 1;
+      }
+      else{
+        let deb = new Debug(event.block.number.toString()+'-'+event.transaction.hash.toHexString()+'conversions');
+        deb._reason = 'conversion id '+conversionId+' for that campaign does not exist';
+        deb._campaign = campaign.id;
+        deb.save();
       }
     }
+    campaign.save();
+    user.save();
   }
 }
 
@@ -179,13 +213,30 @@ export function handleExecutedV1(event: ExecutedV1Event): void {
   metadata.save();
 
   let campaign = Campaign.load(event.params.campaignAddress.toHex());
+  campaign._n_conversions_executed = campaign._n_conversions_executed + 1;
+
+  //Added here creation because part of the users are still from the time we save them as web3.
+  createUserObject(event.address, event.params.converterPlasmaAddress, event.block.timestamp);
+  let user = User.load(event.params.converterPlasmaAddress.toHex());
+  user._n_conversions_executed = user._n_conversions_executed + 1;
+
+
+
   let conversion = Conversion.load(campaign.id +'-'+event.params.conversionId.toString());
   if (conversion != null){
     conversion._status = 'EXECUTED';
     conversion._tokens = event.params.tokens;
     conversion._version = 1;
     conversion.save();
+
+    let conversionEthWei = conversion._ethAmountSpent;
+    campaign._total_conversions_amount = campaign._total_conversions_amount.plus(conversionEthWei);
+    campaign.save();
+
+    user._total_conversions_amount = user._total_conversions_amount.plus(conversionEthWei);
+    user.save();
   }
+
   else{
     log.debug(
         'converter null in executedEvent',
@@ -217,25 +268,18 @@ export function handleUserRegistered(event: UserRegisteredEvent): void{
   userReg.save();
 
 
-  let newUser = User.load(event.params._address.toHex());
-  if (newUser == null){
-    newUser = new User(event.params._address.toHex());
-    newUser._timeStamp = event.block.timestamp;
-  }
-  newUser._name = event.params._name;
-  newUser._fullName = event.params._fullName;
-  newUser._walletName = event.params._username_walletName;
-  newUser._email = event.params._email;
+  createUserObject(event.address, event.params._address, event.block.timestamp);
 
-  let web3Address = twoKeyEventSource.ethereumOf(event.params._address);
-  if (web3Address != event.params._address){
-    newUser._web3Address = web3Address;
-  }
+  let user = User.load(event.params._address.toHex());
 
-  newUser._updatedTimeStamp = event.block.timestamp;
-  newUser._version = 0;
-  newUser._event = userReg.id;
-  newUser.save();
+  user._name = event.params._name;
+  user._fullName = event.params._fullName;
+  user._walletName = event.params._username_walletName;
+  user._email = event.params._email;
+  user._updatedTimeStamp = event.block.timestamp;
+  user._version = 0;
+  user._event = userReg.id;
+  user.save();
 }
 
 export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event): void{
@@ -245,41 +289,49 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
-  let twoKeyEventSource = TwoKeyEventSource.bind(event.address);
+
   let campaign = Campaign.load(event.params._campaign.toHex());
   let conversionId = event.params._conversionId;
-  let acquisitionConversion = new Conversion(campaign.id + '-' + conversionId.toString())
+  let acquisitionConversion = new Conversion(campaign.id + '-' + conversionId.toString());
+  acquisitionConversion._ethAmountSpent = BigInt.fromI32(0);
+  acquisitionConversion._fiatAmountSpent = BigInt.fromI32(0);
   let converterPlasmaAddress = event.params._converterPlasma;
+
+  createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
   let converter = User.load(converterPlasmaAddress.toHex());
-  if (converter == null) {
-    converter = new User(converterPlasmaAddress.toHex());
-  }
 
-  let web3Address = twoKeyEventSource.ethereumOf(converterPlasmaAddress);
-  if (web3Address != converterPlasmaAddress){
-    converter._web3Address = web3Address;
-  }
 
-  converter.save();
 
   acquisitionConversion._campaignType = 'Acquisition';
-  acquisitionConversion._isFiatConversion = (event.params._isFiatConversion? true:false);
+  acquisitionConversion._isFiatConversion = (event.params._isFiatConversion ? true : false);
+
+  converter._n_conversions = converter._n_conversions + 1 ;
+  campaign._n_conversions = campaign._n_conversions + 1;
+
   if(acquisitionConversion._isFiatConversion == false){
     //Eth conversion
     acquisitionConversion._status = 'APPROVED';
     acquisitionConversion._ethAmountSpent = event.params._conversionAmount;
     acquisitionConversion._fiatAmountSpent = BigInt.fromI32(0);
+    campaign._n_conversions_approved = campaign._n_conversions_approved + 1;
+    converter._n_conversions_approved = converter._n_conversions_approved + 1 ;
   }
   else{
     acquisitionConversion._status = 'PENDING';
     acquisitionConversion._ethAmountSpent = BigInt.fromI32(0);
     acquisitionConversion._fiatAmountSpent = event.params._conversionAmount;
   }
+
+
+
   acquisitionConversion._participate = converter.id;
   acquisitionConversion._conversionId = event.params._conversionId;
   acquisitionConversion._campaign = campaign.id;
   acquisitionConversion._timeStamp = event.block.timestamp;
+
   acquisitionConversion.save();
+  campaign.save();
+  converter.save();
 
   let conversionByCampaignUser = ConCampUser.load(campaign.id +'-'+ converter.id);
   if (conversionByCampaignUser == null){
@@ -298,26 +350,28 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
 export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void{
     createMetadata(event.address, event.block.timestamp);
     let metadata = Meta.load(event.address.toHex());
-    metadata._convertedDonationV2Counter= metadata._convertedDonationV2Counter + 1;
+    metadata._convertedDonationV2Counter = metadata._convertedDonationV2Counter + 1;
     metadata._updatedTimeStamp = event.block.timestamp;
     metadata.save();
-
-    let twoKeyEventSource = TwoKeyEventSource.bind(event.address);
 
     let campaign = Campaign.load(event.params._campaign.toHex());
     let conversionId = event.params._conversionId;
     let donationConversion = new Conversion(campaign.id + '-' + conversionId.toString())
     let converterPlasmaAddress = event.params._converterPlasma;
+
+    donationConversion._ethAmountSpent = BigInt.fromI32(0);
+    donationConversion._fiatAmountSpent = BigInt.fromI32(0);
+
+    createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
     let converter = User.load(converterPlasmaAddress.toHex());
-    if (converter == null) {
-    converter = new User(converterPlasmaAddress.toHex());
-    }
 
-    let web3Address = twoKeyEventSource.ethereumOf(converterPlasmaAddress);
-    if (web3Address != converterPlasmaAddress){
-    converter._web3Address = web3Address;
-    }
 
+    campaign._n_conversions = campaign._n_conversions + 1;
+    campaign._n_conversions_approved = campaign._n_conversions_approved + 1;
+    campaign.save();
+
+    converter._n_conversions = converter._n_conversions + 1;
+    converter._n_conversions_approved = converter._n_conversions_approved + 1;
     converter.save();
 
     donationConversion._campaignType = 'Donation';
@@ -352,30 +406,16 @@ export function handleDonation(event: DonationCampaignCreated): void {
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
-  let twoKeyEventSource = TwoKeyEventSource.bind(event.address);
+  createUserObject(event.address, event.params.contractor, event.block.timestamp);
+
   let contractor = User.load(event.params.contractor.toHex());
-  if (contractor == null) {
-    contractor = new User(event.params.contractor.toHex());
 
-    let web3Address = twoKeyEventSource.ethereumOf(event.params.contractor);
-    if (web3Address != event.params.contractor){
-      contractor._web3Address = web3Address;
-    }
-    contractor._timeStamp = event.block.timestamp;
-    contractor._updatedTimeStamp = event.block.timestamp;
-    contractor.save();
-  }
-
-  let newCampaign = new Campaign(
-      event.params.proxyDonationCampaign.toHex()
-  );
-
+  createCampaignObject(event.params.proxyDonationCampaign,event.block.timestamp);
+  let newCampaign = Campaign.load(event.params.proxyDonationCampaign.toHex());
   newCampaign._conversionHandler = event.params.proxyDonationConversionHandler;
   newCampaign._owner = contractor.id;
   newCampaign._logicHandler = event.params.proxyDonationLogicHandler;
   newCampaign._type = "Donation";
-  newCampaign._timeStamp = event.block.timestamp;
-  newCampaign._updatedTimeStamp = event.block.timestamp;
   newCampaign.save()
 }
 
@@ -386,65 +426,39 @@ export function handleAcquisition(event: AcquisitionCampaignCreated): void {
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
-  let twoKeyEventSource = TwoKeyEventSource.bind(event.address);
+
+  createUserObject(event.address, event.params.contractor, event.block.timestamp);
 
   let contractor = User.load(event.params.contractor.toHex());
-  if( contractor == null){
-    contractor = new User(event.params.contractor.toHex());
-    contractor._web3Address = event.params.contractor;
-    contractor._timeStamp = event.block.timestamp;
-    contractor._updatedTimeStamp = event.block.timestamp;
-    let web3Address = twoKeyEventSource.ethereumOf(event.params.contractor);
-    if (web3Address != event.params.contractor){
-      contractor._web3Address = web3Address;
-    }
-    contractor.save();
-  }
 
-
-  let newCampaign = new Campaign(
-      event.params.proxyAcquisitionCampaign.toHex()
-  );
-
+  createCampaignObject(event.params.proxyAcquisitionCampaign,event.block.timestamp);
+  let newCampaign = Campaign.load(event.params.proxyAcquisitionCampaign.toHex());
   newCampaign._purchasesHandler = event.params.proxyPurchasesHandler;
   newCampaign._conversionHandler = event.params.proxyConversionHandler;
   newCampaign._logicHandler = event.params.proxyLogicHandler;
   newCampaign._owner = contractor.id;
   newCampaign._type = "Acquisition";
-  newCampaign._timeStamp = event.block.timestamp;
-  newCampaign._updatedTimeStamp = event.block.timestamp;
   newCampaign.save();
 }
 
 export function handleJoined(event: JoinedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._joinedCounter= metadata._joinedCounter + 1;
+  metadata._joinedCounter = metadata._joinedCounter + 1;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
-  let twoKeyEventSource = TwoKeyEventSource.bind(event.address);
-  let joiner = User.load(event.params._to.toHex());
-  if (joiner == null){
-    joiner = new User(event.params._to.toHex());
-    joiner._timeStamp = event.block.timestamp;
-  }
-  if (joiner._web3Address == null){
-    joiner._web3Address = twoKeyEventSource.ethereumOf(event.params._to);
-    joiner._updatedTimeStamp = event.block.timestamp;
-  }
-  joiner.save();
-  let referrer = User.load(event.params._from.toHex());
-  if (referrer == null){
-    referrer = new User(event.params._from.toHex());
-    referrer._timeStamp = event.block.timestamp;
-  }
-  if(referrer._web3Address==null){
-    referrer._web3Address = twoKeyEventSource.ethereumOf(event.params._from);
-    referrer._updatedTimeStamp = event.block.timestamp;
-  }
-  referrer.save();
 
+  createUserObject(event.address, event.params._to ,event.block.timestamp);
+  let joiner = User.load(event.params._to.toHex());
+
+  createUserObject(event.address, event.params._from, event.block.timestamp);
+  let referrer = User.load(event.params._from.toHex());
+
+  createCampaignObject(event.params._campaign,event.block.timestamp);
   let campaign = Campaign.load(event.params._campaign.toHex());
+  campaign._n_joined = campaign._n_joined + 1;
+  campaign.save();
+
   let join = new Join(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   );
@@ -466,10 +480,22 @@ export function handleRewarded(event: RewardedEvent): void {
   let newReward = new Reward(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   );
-  newReward._campaign = Campaign.load(event.params._campaign.toHex()).id;
 
-  newReward._user = User.load(event.params._to.toHex()).id;
-  newReward._amount = event.params._amount;
+  let campaign = Campaign.load(event.params._campaign.toHex());
+  let rewardAmount = event.params._amount;
+  let user = User.load(event.params._to.toHex());
+
+  campaign._n_rewards = campaign._n_rewards + 1;
+  campaign._total_rewards_amount = campaign._total_rewards_amount.plus(rewardAmount);
+  campaign.save();
+
+  user._n_rewards = user._n_rewards + 1;
+  user._total_rewards_amount = user._total_rewards_amount.plus(rewardAmount);
+  user.save();
+
+  newReward._campaign = campaign.id;
+  newReward._user = user.id;
+  newReward._amount = rewardAmount;
   newReward._timeStamp = event.block.timestamp;
   newReward._updatedTimeStamp = event.block.timestamp;
   newReward.save();

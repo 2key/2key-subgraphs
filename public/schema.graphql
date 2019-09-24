@@ -77,7 +77,7 @@ type PriceUpdated @entity {
     """The name of the global variable."""
     id: ID!
     _caller: Bytes!
-    _timeStemp: BigInt!
+    _timeStamp: BigInt!
     _rate: BigInt!
     _currency: String!
     _block: BigInt!
@@ -93,15 +93,19 @@ type Campaign @entity {
     _type: CampaignType
     _pricePerUnit: BigInt
     _conversionHandler: Bytes
-    _rejected_conversions: Int
     _logicHandler: Bytes
     _purchasesHandler: Bytes
-    _total_rewards: Int
-    _total_conversions_amount: Int
+    _total_rewards: BigInt
     _moderator: User # address
-    _n_conversions: Int
+    _n_joined: Int
     _n_rewards: Int
-    _total_rewards_amount: Int
+    _total_rewards_amount: BigInt
+    _n_conversions: Int
+    _total_conversions_amount: BigInt
+    _rejected_conversions: Int
+    _n_conversions_executed: Int
+    _n_conversions_approved: Int
+    _n_conversions_rejected: Int
     _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
     _joins: [Join!]! @derivedFrom(field: "_campaign")
     _rewards: [Reward!]! @derivedFrom(field: "_campaign")
@@ -138,6 +142,13 @@ type User @entity {
     _campaign_moderator: [Campaign!]! @derivedFrom(field: "_moderator")
     _conversions: [Conversion!]! @derivedFrom(field: "_participate")
     _rewards: [Reward!]! @derivedFrom(field: "_user")
+    _total_rewards_amount: BigInt
+    _n_rewards: Int
+    _n_conversions: Int
+    _total_conversions_amount: BigInt
+    _n_conversions_rejected: Int
+    _n_conversions_approved: Int
+    _n_conversions_executed: Int
     _version: Int
     _event: UserReg
     _timeStamp: BigInt!
@@ -152,13 +163,20 @@ type Conversion @entity {
     _campaign: Campaign!
     _participate: User! # address
     _fiatAmountSpent: BigInt
-    _ethAmountSpent: BigInt
+    _ethAmountSpent: BigInt!
     _tokens: BigInt
     _isFiatConversion: Boolean
     _version:Int
     _conversionId: BigInt
     _timeStamp: BigInt!
     _updatedTimeStamp: BigInt!
+}
+
+type Event @entity {
+    id: ID!
+    _address: Bytes!
+    _timeStamp: BigInt!
+    _tx_hash: String!
 }
 
 type Price @entity{
