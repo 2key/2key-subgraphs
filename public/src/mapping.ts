@@ -212,7 +212,6 @@ export function handleRejected(event: RejectedEvent): void {
 
       if (conversion != null){
         conversion._status = 'REJECTED';
-        conversion._refundable = false;
         conversion.save();
 
         user._n_conversions_rejected = user._n_conversions_rejected + 1;
