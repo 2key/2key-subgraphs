@@ -38,11 +38,15 @@ function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
   if (metadata == null){
     metadata = new Meta(eventAddress.toHex());
     metadata._version = 1;
+    metadata._subgraphType = 'PUBLIC';
     metadata._userRegisteredCounter = 0;
     metadata._convertedAcquisitionCounter = 0;
     metadata._convertedDonationCounter = 0;
     metadata._donationCampaignCreatedCounter = 0;
     metadata._acquisitionCampaignCreatedCounter = 0;
+    metadata._total_rewards_amount = BigInt.fromI32(0);
+    metadata._n_conversions = 0;
+    metadata._total_conversions_amount = BigInt.fromI32(0);
     metadata._createdCounter = 0;
     metadata._convertedCounter = 0;
     metadata._joinedCounter = 0;
@@ -68,6 +72,7 @@ function createCampaignObject(campaignAddress: Address, timeStamp: BigInt): void
   if (campaign == null){
     campaign = new Campaign(campaignAddress.toHex());
     campaign._timeStamp = timeStamp;
+    campaign._subgraphType = 'PUBLIC';
     campaign._updatedTimeStamp = timeStamp;
     campaign._version = 10;
     campaign._n_conversions_executed = 0;
@@ -91,6 +96,7 @@ function createConversionObject(conversionId: BigInt, campaignAddress: Address, 
   if (conversion == null){
     conversion = new Conversion(campaign.id + '-'+ conversionId.toString());
     conversion._timeStamp = timeStamp;
+    conversion._subgraphType = 'PUBLIC';
     conversion._updatedTimeStamp = timeStamp;
     conversion._version = 10;
     conversion._fiatAmountSpent = BigInt.fromI32(0);
@@ -111,6 +117,7 @@ function createUserObject(eventAddress: Address, userAddress: Address, timeStamp
   if (user == null){
     user = new User(userAddress.toHex());
     user._timeStamp = timeStamp;
+    user._subgraphType = 'PUBLIC';
     user._updatedTimeStamp = timeStamp;
     user._version = 0;
     user._n_rewards = 0;
@@ -153,8 +160,8 @@ export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
     let currencyString = event.params._currency.toString();
     let seperator = currencyString.indexOf('-');
     if(seperator > 0){
-      rate._from = currencyString.substring(0,seperator);
-      rate._to = currencyString.substring(seperator+1,currencyString.length);
+      rate._from = currencyString.substring(0, seperator);
+      rate._to = currencyString.substring(seperator + 1, currencyString.length);
     }
     else{
       rate._from = 'ETH';
@@ -182,7 +189,7 @@ export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
 export function handleRejected(event: RejectedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._rejectedCounter = metadata._rejectedCounter + 1;
+  metadata._rejectedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
@@ -191,10 +198,10 @@ export function handleRejected(event: RejectedEvent): void {
   createUserObject(event.address, event.params._campaign, event.block.timestamp);
 
   let user = User.load(event.params._converter.toHex());
-  user._n_conversions_rejected = user._n_conversions_rejected + 1;
+  user._n_conversions_rejected++;
 
   let campaign = Campaign.load(event.params._campaign.toHex());
-  campaign._n_conversions_rejected = campaign._n_conversions_rejected + 1;
+  campaign._n_conversions_rejected++;
 
   let conversionsForCampaignBySpecificUser = ConCampUser.load(campaign.id+'-'+user.id);
   if(conversionsForCampaignBySpecificUser == null){
@@ -214,8 +221,8 @@ export function handleRejected(event: RejectedEvent): void {
         conversion._status = 'REJECTED';
         conversion.save();
 
-        user._n_conversions_rejected = user._n_conversions_rejected + 1;
-        campaign._n_conversions_rejected = campaign._n_conversions_rejected + 1;
+        user._n_conversions_rejected++;
+        campaign._n_conversions_rejected++;
       }
       else{
         let deb = new Debug(event.block.number.toString()+'-'+event.transaction.hash.toHexString()+'conversions');
@@ -232,17 +239,17 @@ export function handleRejected(event: RejectedEvent): void {
 export function handleExecutedV1(event: ExecutedV1Event): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._executedV1Counter = metadata._executedV1Counter + 1;
+  metadata._executedV1Counter++;
   metadata._updatedTimeStamp = event.block.timestamp;
-  metadata.save();
+
 
   let campaign = Campaign.load(event.params.campaignAddress.toHex());
-  campaign._n_conversions_executed = campaign._n_conversions_executed + 1;
+  campaign._n_conversions_executed++;
 
   //Added here creation because part of the users are still from the time we save them as web3.
   createUserObject(event.address, event.params.converterPlasmaAddress, event.block.timestamp);
   let user = User.load(event.params.converterPlasmaAddress.toHex());
-  user._n_conversions_executed = user._n_conversions_executed + 1;
+  user._n_conversions_executed++;
 
 
 
@@ -260,8 +267,10 @@ export function handleExecutedV1(event: ExecutedV1Event): void {
 
     user._total_conversions_amount = user._total_conversions_amount.plus(conversionEthWei);
     user.save();
-  }
 
+    metadata._total_conversions_amount.plus(conversionEthWei);
+    metadata.save();
+  }
   else{
     log.debug(
         'converter null in executedEvent',
@@ -275,7 +284,7 @@ export function handleExecutedV1(event: ExecutedV1Event): void {
 export function handleUserRegistered(event: UserRegisteredEvent): void{
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._userRegisteredCounter= metadata._userRegisteredCounter + 1;
+  metadata._userRegisteredCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
@@ -310,7 +319,7 @@ export function handleUserRegistered(event: UserRegisteredEvent): void{
 export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event): void{
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._convertedAcquisitionV2Counter= metadata._convertedAcquisitionV2Counter + 1;
+  metadata._convertedAcquisitionV2Counter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
@@ -329,21 +338,21 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
     let convertersAddresses = campaign._converters_addresses;
     convertersAddresses.push(converter.id);
     campaign._converters_addresses = convertersAddresses;
-    campaign._n_unique_coverters += 1;
+    campaign._n_unique_coverters++;
   }
 
   acquisitionConversion._campaignType = 'Acquisition';
   acquisitionConversion._isFiatConversion = (event.params._isFiatConversion ? true : false);
 
-  converter._n_conversions = converter._n_conversions + 1 ;
-  campaign._n_conversions = campaign._n_conversions + 1;
+  converter._n_conversions++;
+  campaign._n_conversions++;
 
   if(acquisitionConversion._isFiatConversion == false){
     //Eth conversion
     acquisitionConversion._status = 'APPROVED';
     acquisitionConversion._ethAmountSpent = event.params._conversionAmount;
-    campaign._n_conversions_approved = campaign._n_conversions_approved + 1;
-    converter._n_conversions_approved = converter._n_conversions_approved + 1 ;
+    campaign._n_conversions_approved++;
+    converter._n_conversions_approved++;
   }
   else{
     acquisitionConversion._fiatAmountSpent = event.params._conversionAmount;
@@ -378,7 +387,7 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
 export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void{
     createMetadata(event.address, event.block.timestamp);
     let metadata = Meta.load(event.address.toHex());
-    metadata._convertedDonationV2Counter = metadata._convertedDonationV2Counter + 1;
+    metadata._convertedDonationV2Counter++;
     metadata._updatedTimeStamp = event.block.timestamp;
     metadata.save();
 
@@ -396,16 +405,16 @@ export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void
       let convertersAddresses = campaign._converters_addresses;
       convertersAddresses.push(converter.id);
       campaign._converters_addresses = convertersAddresses;
-      campaign._n_unique_coverters += 1;
+      campaign._n_unique_coverters++;
     }
 
-    campaign._n_conversions = campaign._n_conversions + 1;
-    campaign._n_conversions_approved = campaign._n_conversions_approved + 1;
+    campaign._n_conversions++;
+    campaign._n_conversions_approved++;
     campaign._updatedTimeStamp = event.block.timestamp;
     campaign.save();
 
-    converter._n_conversions = converter._n_conversions + 1;
-    converter._n_conversions_approved = converter._n_conversions_approved + 1;
+    converter._n_conversions++;
+    converter._n_conversions_approved++;
     converter._updatedTimeStamp = event.block.timestamp;
     converter.save();
 
@@ -433,7 +442,7 @@ export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void
 export function handleDonation(event: DonationCampaignCreated): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._donationCampaignCreatedCounter= metadata._donationCampaignCreatedCounter + 1;
+  metadata._donationCampaignCreatedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
@@ -453,7 +462,7 @@ export function handleDonation(event: DonationCampaignCreated): void {
 export function handleAcquisition(event: AcquisitionCampaignCreated): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._acquisitionCampaignCreatedCounter= metadata._acquisitionCampaignCreatedCounter + 1;
+  metadata._acquisitionCampaignCreatedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
@@ -475,7 +484,7 @@ export function handleAcquisition(event: AcquisitionCampaignCreated): void {
 export function handleJoined(event: JoinedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._joinedCounter = metadata._joinedCounter + 1;
+  metadata._joinedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
 
@@ -487,7 +496,7 @@ export function handleJoined(event: JoinedEvent): void {
 
   createCampaignObject(event.params._campaign,event.block.timestamp);
   let campaign = Campaign.load(event.params._campaign.toHex());
-  campaign._n_joined = campaign._n_joined + 1;
+  campaign._n_joined++;
   campaign.save();
 
   let join = new Join(
@@ -504,9 +513,8 @@ export function handleJoined(event: JoinedEvent): void {
 export function handleRewarded(event: RewardedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._rewardedCounter= metadata._rewardedCounter + 1;
+  metadata._rewardedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
-  metadata.save();
 
   let newReward = new Reward(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
@@ -516,13 +524,16 @@ export function handleRewarded(event: RewardedEvent): void {
   let rewardAmount = event.params._amount;
   let user = User.load(event.params._to.toHex());
 
-  campaign._n_rewards = campaign._n_rewards + 1;
+  campaign._n_rewards++;
   campaign._total_rewards_amount = campaign._total_rewards_amount.plus(rewardAmount);
   campaign.save();
 
-  user._n_rewards = user._n_rewards + 1;
+  user._n_rewards++;
   user._total_rewards_amount = user._total_rewards_amount.plus(rewardAmount);
   user.save();
+
+  metadata._total_rewards_amount.plus(rewardAmount);
+  metadata.save();
 
   newReward._campaign = campaign.id;
   newReward._user = user.id;

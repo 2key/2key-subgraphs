@@ -14,6 +14,11 @@ enum CurrencyType {
     USDT
 }
 
+enum GraphType{
+    PLASMA
+    PUBLIC
+}
+
 enum VariableName{
     Meta
     Block
@@ -35,11 +40,15 @@ enum CampaignType {
 type Meta @entity {
     """The Proxy address of the environment."""
     id: ID!
+    _subgraphType: GraphType!
     _userRegisteredCounter: Int!
     _convertedAcquisitionCounter: Int!
     _convertedAcquisitionV2Counter: Int!
     _convertedDonationV2Counter: Int!
     _convertedDonationCounter: Int!
+    _total_rewards_amount: BigInt!
+    _n_conversions: Int
+    _total_conversions_amount: BigInt!
     _createdCounter: Int!
     _joinedCounter: Int!
     _convertedCounter: Int!
@@ -91,6 +100,7 @@ type Campaign @entity {
     _owner: User # address
     """Acquisition/Donation"""
     _type: CampaignType
+    _subgraphType: GraphType!
     _pricePerUnit: BigInt
     _converters_addresses: [String!]
     _conversionHandler: Bytes
@@ -135,6 +145,7 @@ type UserReg @entity {
 type User @entity {
     """The user's plasma address"""
     id: ID!
+    _subgraphType: GraphType!
     _name: String
     _fullName: String
     _email: String
@@ -161,6 +172,7 @@ type Conversion @entity {
     """Campaign + conversionid"""
     id: ID!
     _campaignType: CampaignType
+    _subgraphType: GraphType!
     _status: ConversionStatus
     _campaign: Campaign!
     _participate: User! # address
