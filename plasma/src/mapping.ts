@@ -72,7 +72,7 @@ export function handleVisited(event: VisitedEvent): void {
   let metadata = Meta.load(event.address.toHex());
   metadata._visitCounter++;
   metadata._updatedAt = event.block.timestamp;
-  metadata.save();
+
 
   //Add user by new visitor address
   log.debug('Handle {} Visited))))))))',['string arg']);
@@ -99,7 +99,9 @@ export function handleVisited(event: VisitedEvent): void {
     campaign._n_visits = 0;
     campaign._version = 1;
     campaign._timeStamp = event.block.timestamp;
+    metadata._n_campaigns++;
   }
+  metadata.save();
 
   campaign._n_visits++;
   campaign.save();
