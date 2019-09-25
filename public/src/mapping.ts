@@ -84,7 +84,7 @@ function createCampaignObject(campaignAddress: Address, timeStamp: BigInt): void
     campaign._n_conversions_approved = 0;
     campaign._total_rewards_amount = BigInt.fromI32(0);
     campaign._converters_addresses = [];
-    campaign._n_unique_coverters = 0;
+    campaign._n_unique_converters = 0;
     campaign.save();
   }
 }
@@ -338,7 +338,7 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
     let convertersAddresses = campaign._converters_addresses;
     convertersAddresses.push(converter.id);
     campaign._converters_addresses = convertersAddresses;
-    campaign._n_unique_coverters++;
+    campaign._n_unique_converters++;
   }
 
   acquisitionConversion._campaignType = 'Acquisition';
@@ -405,7 +405,7 @@ export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void
       let convertersAddresses = campaign._converters_addresses;
       convertersAddresses.push(converter.id);
       campaign._converters_addresses = convertersAddresses;
-      campaign._n_unique_coverters++;
+      campaign._n_unique_converters++;
     }
 
     campaign._n_conversions++;

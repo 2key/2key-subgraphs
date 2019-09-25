@@ -115,7 +115,7 @@ type Campaign @entity {
     _total_conversions_amount: BigInt
     _rejected_conversions: Int
     _n_conversions_executed: Int
-    _n_unique_coverters: Int
+    _n_unique_converters: Int
     _n_conversions_approved: Int
     _n_conversions_rejected: Int
     _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
