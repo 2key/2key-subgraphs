@@ -14,7 +14,8 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
   if (metadata == null){
     metadata = new Meta(eventAddress.toHex());
     metadata._visitCounter = 0;
-    metadata._version = 9;
+    metadata._subgraphType = 'PLASMA';
+    metadata._version = 10;
     metadata._plasmaToHandleCounter = 0;
     metadata._plasmaToEthereumCounter = 0;
     metadata._timeStamp = timeStamp;
@@ -22,6 +23,22 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata.save();
   }
 }
+
+
+// function createCampaignObject(campaignAddress: Address, timeStamp:BigInt): void {
+//   let campaign = Campaign.load(campaignAddress.toHex());
+//   if (campaign == null){
+//     campaign = new Campaign(campaignAddress.toHex());
+//     campaign._visitCounter = 0;
+//     campaign._version = 10;
+//     campaign._plasmaToHandleCounter = 0;
+//     campaign._plasmaToEthereumCounter = 0;
+//     campaign._timeStamp = timeStamp;
+//     campaign._updatedAt = timeStamp;
+//     campaign.save();
+//   }
+// }
+
 
 export function handleHandled(event: Plasma2HandleEvent): void {
   createMetadata(event.address, event.block.timestamp);
@@ -53,7 +70,7 @@ export function handleVisited(event: VisitedEvent): void {
 
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
-  metadata._visitCounter = metadata._visitCounter + 1;
+  metadata._visitCounter++;
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
 
@@ -78,10 +95,15 @@ export function handleVisited(event: VisitedEvent): void {
   let campaign = Campaign.load(event.params.c.toHex());
   if (campaign == null){
     campaign = new Campaign(event.params.c.toHex());
+    campaign._subgraphType = 'PLASMA';
+    campaign._n_visits = 0;
     campaign._version = 1;
     campaign._timeStamp = event.block.timestamp;
-    campaign.save();
   }
+
+  campaign._n_visits++;
+  campaign.save();
+
 
   let visitByCampaign = Visit.load(event.params.from.toHex()+'-'+event.params.to.toHex()+'-'+ event.params.c.toHex());
   if (visitByCampaign == null){

@@ -1,6 +1,12 @@
+enum GraphType{
+  PLASMA
+  PUBLIC
+}
+
 type Meta @entity {
   id: ID!
   _version: Int
+  _subgraphType: GraphType!
   _visitCounter: Int
   _plasmaToHandleCounter: Int
   _plasmaToEthereumCounter: Int
@@ -10,7 +16,9 @@ type Meta @entity {
 
 type Campaign @entity {
   id: ID!  # Web3 Address
+  _subgraphType: GraphType!
   _version: Int
+  _n_visits: Int
   _timeStamp:BigInt!
   _visitors: [Visit!] @derivedFrom(field: "_campaign")
 }
