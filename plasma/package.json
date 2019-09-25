@@ -16,7 +16,7 @@
     "remove-pos11": "graph remove --node http://test.api.graph.deployer2.2key.net:80/ plasma"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.14.0",
-    "@graphprotocol/graph-ts": "^0.13.0"
+    "@graphprotocol/graph-cli": "^0.15.0",
+    "@graphprotocol/graph-ts": "^0.15.1"
   }
 }
