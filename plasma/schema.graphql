@@ -10,6 +10,7 @@ type Meta @entity {
   _visitCounter: Int
   _plasmaToHandleCounter: Int
   _plasmaToEthereumCounter: Int
+  _n_campaigns: Int
   _timeStamp:BigInt!
   _updatedAt:BigInt!
 }
