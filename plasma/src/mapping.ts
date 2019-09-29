@@ -15,6 +15,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata = new Meta(eventAddress.toHex());
     metadata._visitCounter = 0;
     metadata._subgraphType = 'PLASMA';
+    metadata._n_campaigns = 0;
     metadata._version = 10;
     metadata._plasmaToHandleCounter = 0;
     metadata._plasmaToEthereumCounter = 0;
@@ -41,6 +42,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
 
 
 export function handleHandled(event: Plasma2HandleEvent): void {
+  // log.debug('Handle {} Visited))))))))',['string arg']);
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
   metadata._plasmaToHandleCounter = metadata._plasmaToHandleCounter + 1;
@@ -75,8 +77,8 @@ export function handleVisited(event: VisitedEvent): void {
 
 
   //Add user by new visitor address
-  log.debug('Handle {} Visited))))))))',['string arg']);
-  log.info('info - Handle {} Visited))))))))',['string arg']);
+  // log.debug('Handle {} Visited))))))))',['string arg']);
+  // log.info('info - Handle {} 1))))))))',['string arg']);
 
   let referrer = User.load(event.params.from.toHex());
   if (referrer== null){
@@ -85,12 +87,15 @@ export function handleVisited(event: VisitedEvent): void {
     referrer.save();
   }
 
+
+  // log.info('info - Handle {} 2))))))))',['string arg']);
   let visitor = User.load(event.params.to.toHex());
   if (visitor == null){
     visitor = new User(event.params.to.toHex());
     visitor._timeStamp = event.block.timestamp;
     visitor.save();
   }
+
 
   let campaign = Campaign.load(event.params.c.toHex());
   if (campaign == null){
@@ -101,11 +106,11 @@ export function handleVisited(event: VisitedEvent): void {
     campaign._timeStamp = event.block.timestamp;
     metadata._n_campaigns++;
   }
-  metadata.save();
 
+  metadata.save();
+  
   campaign._n_visits++;
   campaign.save();
-
 
   let visitByCampaign = Visit.load(event.params.from.toHex()+'-'+event.params.to.toHex()+'-'+ event.params.c.toHex());
   if (visitByCampaign == null){
@@ -121,8 +126,8 @@ export function handleVisited(event: VisitedEvent): void {
 export function handlePlasma2Ethereum(event: Plasma2EthereumEvent): void {
   // event.params.plasma
   // event.params.eth
-  log.debug('Handle {} Plasma2EthereumEvent))))))))',['string arg']);
-  log.info('INFO - Handle {} Plasma2EthereumEvent))))))))',['string arg']);
+  // log.debug('Handle {} Plasma2EthereumEvent))))))))',['string arg']);
+  // log.info('INFO - Handle {} Plasma2EthereumEvent))))))))',['string arg']);
 
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
