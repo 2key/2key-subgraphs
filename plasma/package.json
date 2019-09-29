@@ -4,9 +4,12 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "create!": "graph create --node http://staging.api.graph.deployer.2key.net:80/ plasma",
-    "remove!": "graph remove --node http://staging.api.graph.deployer.2key.net:80/ plasma",
-    "deploy!": "graph deploy --node http://staging.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma"
+    "create-aws": "graph create --node http://staging.api.graph.deployer.2key.net:80/ plasma",
+    "remove-aws": "graph remove --node http://staging.api.graph.deployer.2key.net:80/ plasma",
+    "deploy-aws": "graph deploy --node http://staging.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma",
+    "create-temp": "graph create --node http://s.api.graph.deployer.2key.net:80/ plasma",
+    "remove-temp": "graph remove --node http://s.api.graph.deployer.2key.net:80/ plasma",
+    "deploy-temp": "graph deploy --node http://s.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.15.0",
