@@ -4,16 +4,12 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy-hosted": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ plasma",
     "create-aws": "graph create --node http://test.api.graph.deployer.2key.net:80/ plasma",
     "remove-aws": "graph remove --node http://test.api.graph.deployer.2key.net:80/ plasma",
     "deploy-aws": "graph deploy --node http://test.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma",
-    "create-deployed-aws": "graph create --node http://test.api.graph.deployer.2key.net:80/ andrei",
-    "deploy-deployed-aws": "graph deploy --node http://test.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 andrei",
-    "remove-deployed-aws": "graph remove --node http://test.api.graph.deployer.2key.net:80/ andrei",
-    "create-pos11": "graph create --node http://test.api.graph.deployer2.2key.net:80/ plasma",
-    "deploy-pos11": "graph deploy --node http://test.api.graph.deployer2.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma",
-    "remove-pos11": "graph remove --node http://test.api.graph.deployer2.2key.net:80/ plasma"
+    "create-temp": "graph create --node http://t.api.graph.deployer.2key.net:80/ plasma",
+    "remove-temp": "graph remove --node http://t.api.graph.deployer.2key.net:80/ plasma",
+    "deploy-temp": "graph deploy --node http://t.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.15.0",
