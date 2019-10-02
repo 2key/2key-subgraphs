@@ -104,12 +104,14 @@ export function handleVisited(event: VisitedEvent): void {
     campaign._n_visits = 0;
     campaign._version = 1;
     campaign._timeStamp = event.block.timestamp;
+    campaign._updatedTimeStamp = event.block.timestamp;
     metadata._n_campaigns++;
   }
 
   metadata.save();
   
   campaign._n_visits++;
+  campaign._updatedTimeStamp = event.block.timestamp;
   campaign.save();
 
   let visitByCampaign = Visit.load(event.params.from.toHex()+'-'+event.params.to.toHex()+'-'+ event.params.c.toHex());

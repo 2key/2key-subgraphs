@@ -21,6 +21,7 @@ type Campaign @entity {
   _version: Int
   _n_visits: Int
   _timeStamp:BigInt!
+  _updatedTimeStamp: BigInt!
   _visitors: [Visit!] @derivedFrom(field: "_campaign")
 }
 
