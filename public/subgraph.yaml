@@ -6,7 +6,7 @@ dataSources:
     name: Contract
     network: ropsten
     source:
-      address: "0x0e05fd4224e7e9b5abaaa9cfd56de91cdc95b1cc"
+      address: "0xaee2bb51071df79284b87874e3b96a49cb0885de"
       abi: TwoKeyEventSource #1.1.37
     mapping:
       kind: ethereum/events
