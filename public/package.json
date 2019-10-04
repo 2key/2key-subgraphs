@@ -9,7 +9,8 @@
     "deploy!": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/develop",
     "deploy-test": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ jacksonjacko/jackosub",
     "create-test": "graph create --node https://api.thegraph.com/deploy/ jacksonjacko/jackosub",
-    "remove-test": "graph remove --node https://api.thegraph.com/deploy/ jacksonjacko/jackosub"
+    "remove-test": "graph remove --node https://api.thegraph.com/deploy/ jacksonjacko/jackosub",
+    "auth": "graph auth https://api.thegraph.com/deploy/ 5bc9bc1b897341f384be846fcef326e1"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.15.0",
