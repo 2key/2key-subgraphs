@@ -37,6 +37,15 @@ enum CampaignType {
  }
 
 
+ enum EventType{
+     Joined
+     AcquisitionCampaignCreated
+     DonationCampaignCreated
+     UserRegistered
+     PriceUpdated
+ }
+
+
 type Meta @entity {
     """The Proxy address of the environment."""
     id: ID!
@@ -192,6 +201,7 @@ type Event @entity {
     _address: Bytes!
     _timeStamp: BigInt!
     _tx_hash: String!
+    _type: String!
 }
 
 type Price @entity{

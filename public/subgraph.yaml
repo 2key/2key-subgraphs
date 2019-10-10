@@ -29,6 +29,7 @@ dataSources:
         - Web3ToUser
         - UserReg
         - Variable
+        - Event
       abis:
         - name: TwoKeyEventSource
           file: ./abis/TwoKeyEventSource.json
