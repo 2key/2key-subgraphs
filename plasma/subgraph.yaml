@@ -17,6 +17,7 @@ dataSources:
         - Meta
         - Visit
         - Campaign
+        - VisitEvent
         - User
         - Test
       abis:

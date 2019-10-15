@@ -36,9 +36,16 @@ type Visit @entity {
 
 type VisitEvent @entity {
   id: ID!
-  _campaignWeb3: Campaign! # address
+  _campaign: Campaign! # address
   _referrer: User! # address
   _visitor: User! # address
+  _timeStamp:BigInt!
+}
+
+type PlasmaToEthereumMappingEvent @entity {
+  id: ID!
+  _plasma: User! # address
+  _ethereum: Bytes! # address
   _timeStamp:BigInt!
 }
 
