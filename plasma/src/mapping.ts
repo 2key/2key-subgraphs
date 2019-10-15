@@ -1,11 +1,10 @@
 import {
   Visited as VisitedEvent,
   Plasma2Ethereum as Plasma2EthereumEvent,
-  Plasma2Handle as Plasma2HandleEvent
-
+  Plasma2Handle as Plasma2HandleEvent,
 } from "../generated/Contract/TwoKeyPlasmaEvents"
 
-import { Campaign, User, Visit, Test, Meta} from "../generated/schema"
+import { Campaign, User, Visit, Test, Meta, VisitEvent, PlasmaToEthereumMappingEvent} from "../generated/schema"
 import { log,Address, BigInt } from '@graphprotocol/graph-ts'
 
 
@@ -69,7 +68,6 @@ export function handleVisited(event: VisitedEvent): void {
   // event.params.contractor    - Contractor Web3 Address
   // event.params.from          - Previous plasma Address
 
-
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
   metadata._visitCounter++;
@@ -102,7 +100,7 @@ export function handleVisited(event: VisitedEvent): void {
     campaign = new Campaign(event.params.c.toHex());
     campaign._subgraphType = 'PLASMA';
     campaign._n_visits = 0;
-    campaign._version = 1;
+    campaign._version = 2;
     campaign._timeStamp = event.block.timestamp;
     campaign._updatedTimeStamp = event.block.timestamp;
     metadata._n_campaigns++;
@@ -122,6 +120,16 @@ export function handleVisited(event: VisitedEvent): void {
     visit._referrer = referrer.id;
     visit._timeStamp = event.block.timestamp;
     visit.save();
+  }
+
+  let visitEvent = VisitEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  if(visitEvent == null){
+    visitEvent = new VisitEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+    visitEvent._campaign = campaign.id;
+    visitEvent._referrer = referrer.id;
+    visitEvent._visitor = visitor.id;
+    visitEvent._timeStamp = event.block.timestamp;
+    visitEvent.save();
   }
 }
 
@@ -147,5 +155,14 @@ export function handlePlasma2Ethereum(event: Plasma2EthereumEvent): void {
   else{
     user._web3Address = event.params.eth;
     user.save();
+  }
+
+  let mappingEvent = PlasmaToEthereumMappingEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  if(mappingEvent == null){
+    mappingEvent = new PlasmaToEthereumMappingEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+    mappingEvent._ethereum = event.params.eth;
+    mappingEvent._plasma = user.id;
+    mappingEvent._timeStamp = event.block.timestamp;
+    mappingEvent.save();
   }
 }
