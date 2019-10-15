@@ -1,7 +1,7 @@
 import {
   Visited as VisitedEvent,
   Plasma2Ethereum as Plasma2EthereumEvent,
-  Plasma2Handle as Plasma2HandleEvent,
+  Plasma2Handle as Plasma2HandleEvent
 } from "../generated/Contract/TwoKeyPlasmaEvents"
 
 import { Campaign, User, Visit, Test, Meta, VisitEvent, PlasmaToEthereumMappingEvent} from "../generated/schema"
