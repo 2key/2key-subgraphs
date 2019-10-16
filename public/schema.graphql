@@ -202,6 +202,7 @@ type Event @entity {
     _timeStamp: BigInt!
     _tx_hash: String!
     _type: String!
+    _notes: String
 }
 
 type Price @entity{

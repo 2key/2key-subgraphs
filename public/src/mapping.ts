@@ -112,7 +112,7 @@ function createConversionObject(conversionId: BigInt, campaignAddress: Address, 
 }
 
 
-function createEventObject(event: EthereumEvent, eventType: string): void {
+function createEventObject(event: EthereumEvent, eventType: string, notes: string): void {
   let inputEvent = Event.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
   if (inputEvent == null){
     inputEvent = new Event(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
@@ -120,6 +120,7 @@ function createEventObject(event: EthereumEvent, eventType: string): void {
     inputEvent._timeStamp = event.block.timestamp;
     inputEvent._tx_hash = event.transaction.hash.toHex();
     inputEvent._type = eventType;
+    inputEvent._notes = notes;
     inputEvent.save();
   }
 }
@@ -154,7 +155,7 @@ function createUserObject(eventAddress: Address, userAddress: Address, timeStamp
 
 
 export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
-  createEventObject(event, 'PriceUpdated');
+  createEventObject(event, 'PriceUpdated','');
   let priceUpdated = PriceUpdated.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   if(priceUpdated == null){
     priceUpdated = new PriceUpdated(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
@@ -208,7 +209,7 @@ export function handleRejected(event: RejectedEvent): void {
 
 
   createCampaignObject(event.params._campaign, event.block.timestamp);
-  createUserObject(event.address, event.params._campaign, event.block.timestamp);
+  createUserObject(event.address, event.params._converter, event.block.timestamp);
 
   let user = User.load(event.params._converter.toHex());
   user._n_conversions_rejected++;
@@ -295,7 +296,7 @@ export function handleExecutedV1(event: ExecutedV1Event): void {
 }
 
 export function handleUserRegistered(event: UserRegisteredEvent): void{
-  createEventObject(event, 'UserRegistered');
+  createEventObject(event, 'UserRegistered','');
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
   metadata._userRegisteredCounter++;
@@ -454,7 +455,7 @@ export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void
 }
 
 export function handleDonation(event: DonationCampaignCreated): void {
-  createEventObject(event, 'DonationCampaignCreated');
+  createEventObject(event, 'DonationCampaignCreated',event.params.contractor.toHex()+'-'+event.params.proxyDonationCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
   metadata._donationCampaignCreatedCounter++;
@@ -475,7 +476,7 @@ export function handleDonation(event: DonationCampaignCreated): void {
 }
 
 export function handleAcquisition(event: AcquisitionCampaignCreated): void {
-  createEventObject(event, 'AcquisitionCampaignCreated');
+  createEventObject(event, 'AcquisitionCampaignCreated', event.params.contractor.toHex()+'-'+event.params.proxyAcquisitionCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
   metadata._acquisitionCampaignCreatedCounter++;
@@ -498,7 +499,7 @@ export function handleAcquisition(event: AcquisitionCampaignCreated): void {
 }
 
 export function handleJoined(event: JoinedEvent): void {
-  createEventObject(event, 'Joined');
+  createEventObject(event, 'Joined','');
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
   metadata._joinedCounter++;
