@@ -275,6 +275,13 @@ export function handleExecutedV1(event: ExecutedV1Event): void {
     conversion._refundable = false;
     conversion.save();
 
+    if (campaign._converters_addresses.indexOf(user.id) == -1){
+      let convertersAddresses = campaign._converters_addresses;
+      convertersAddresses.push(user.id);
+      campaign._converters_addresses = convertersAddresses;
+      campaign._n_unique_converters++;
+    }
+
     let conversionEthWei = conversion._ethAmountSpent;
     campaign._total_conversions_amount = campaign._total_conversions_amount.plus(conversionEthWei);
     campaign.save();
@@ -349,13 +356,6 @@ export function handleConvertedAcquisitionV2(event: ConvertedAcquisitionV2Event)
   createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
   let converter = User.load(converterPlasmaAddress.toHex());
 
-  if (campaign._converters_addresses.indexOf(converter.id) == -1){
-    let convertersAddresses = campaign._converters_addresses;
-    convertersAddresses.push(converter.id);
-    campaign._converters_addresses = convertersAddresses;
-    campaign._n_unique_converters++;
-  }
-
   acquisitionConversion._campaignType = 'Acquisition';
   acquisitionConversion._isFiatConversion = (event.params._isFiatConversion ? true : false);
 
@@ -415,13 +415,6 @@ export function handleConvertedDonationV2(event: ConvertedDonationV2Event): void
     let converterPlasmaAddress = event.params._converterPlasma;
     createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
     let converter = User.load(converterPlasmaAddress.toHex());
-
-    if (campaign._converters_addresses.indexOf(converter.id) == -1){
-      let convertersAddresses = campaign._converters_addresses;
-      convertersAddresses.push(converter.id);
-      campaign._converters_addresses = convertersAddresses;
-      campaign._n_unique_converters++;
-    }
 
     campaign._n_conversions++;
     campaign._n_conversions_approved++;
