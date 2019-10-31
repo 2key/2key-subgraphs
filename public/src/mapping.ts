@@ -212,10 +212,8 @@ export function handleRejected(event: RejectedEvent): void {
   createUserObject(event.address, event.params._campaign, event.block.timestamp);
 
   let user = User.load(event.params._converter.toHex());
-  user._n_conversions_rejected++;
 
   let campaign = Campaign.load(event.params._campaign.toHex());
-  campaign._n_conversions_rejected++;
 
   let conversionsForCampaignBySpecificUser = ConCampUser.load(campaign.id+'-'+user.id);
   if(conversionsForCampaignBySpecificUser == null){
@@ -227,7 +225,7 @@ export function handleRejected(event: RejectedEvent): void {
   }
   else{
     let conversions = conversionsForCampaignBySpecificUser._conversions;
-    for (let i = 0;i<conversions.length;i++){
+    for (let i = 0;i < conversions.length;i++){
       let conversionId = conversions[i].toString();
       let conversion = Conversion.load(campaign.id+'-'+conversionId);
 
