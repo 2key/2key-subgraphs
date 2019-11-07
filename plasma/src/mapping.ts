@@ -27,16 +27,21 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
 }
 
 
-function createCampaignObject(campaignAddress: Address, timeStamp: BigInt): void {
+function createCampaignObject(eventAddress:Address, campaignAddress: Address, timeStamp: BigInt): void {
   let campaign = Campaign.load(campaignAddress.toHex());
   if (campaign == null){
+    let metadata = Meta.load(eventAddress.toHex());
+    metadata._n_campaigns++;
+    metadata._updatedAt = timeStamp;
+    metadata.save();
+    
     campaign = new Campaign(campaignAddress.toHex());
     campaign._timeStamp = timeStamp;
     campaign._n_visits = 0;
     campaign._n_joins = 0;
     campaign._subgraphType = 'PLASMA';
     campaign._updatedTimeStamp = timeStamp;
-    campaign._version = 11;
+    campaign._version = 12;
     campaign.save();
   }
 }
@@ -53,14 +58,11 @@ export function handleHandled(event: Plasma2HandleEvent): void {
   let user = User.load(event.params.plasma.toHex());
   if (user == null){
     user = new User(event.params.plasma.toHex());
-    user._handle = event.params.handle;
     user._timeStamp = event.block.timestamp;
-    user.save();
   }
-  else{
-    user._handle = event.params.handle;
-    user.save();
-  }
+
+  user._handle = event.params.handle;
+  user.save();
 }
 
 export function handleJoined(event: JoinedEvent): void {
@@ -68,7 +70,7 @@ export function handleJoined(event: JoinedEvent): void {
   let metadata = Meta.load(event.address.toHex());
   metadata._joinsCounter++;
   metadata._updatedAt = event.block.timestamp;
-
+  metadata.save();
 
   //Add user by new visitor address
   // log.debug('Handle {} Visited))))))))',['string arg']);
@@ -90,11 +92,9 @@ export function handleJoined(event: JoinedEvent): void {
     visitor.save();
   }
 
-  createCampaignObject(event.params.campaignAddress, event.block.timestamp);
+  createCampaignObject(event.address, event.params.campaignAddress, event.block.timestamp);
   let campaign = Campaign.load(event.params.campaignAddress.toHex());
 
-  metadata.save();
-  
   campaign._n_joins++;
   campaign._updatedTimeStamp = event.block.timestamp;
   campaign.save();
@@ -131,7 +131,7 @@ export function handleVisited(event: VisitedEvent): void {
   let metadata = Meta.load(event.address.toHex());
   metadata._visitCounter++;
   metadata._updatedAt = event.block.timestamp;
-
+  metadata.save();
 
   //Add user by new visitor address
   // log.debug('Handle {} Visited))))))))',['string arg']);
@@ -153,11 +153,9 @@ export function handleVisited(event: VisitedEvent): void {
     visitor.save();
   }
 
-  createCampaignObject(event.params.c, event.block.timestamp);
+  createCampaignObject(event.address, event.params.c, event.block.timestamp);
   let campaign = Campaign.load(event.params.c.toHex());
 
-  metadata.save();
-  
   campaign._n_visits++;
   campaign._updatedTimeStamp = event.block.timestamp;
   campaign.save();
