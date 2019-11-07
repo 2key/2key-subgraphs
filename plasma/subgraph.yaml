@@ -13,13 +13,15 @@ dataSources:
       apiVersion: 0.0.3
       language: wasm/assemblyscript
       entities:
-        - Test
-        - Meta
-        - Visit
         - Campaign
-        - VisitEvent
+        - Join
+        - JoinEvent
+        - Meta
+        - PlasmaToEthereumMappingEvent
         - User
         - Test
+        - Visit
+        - VisitEvent
       abis:
         - name: TwoKeyPlasmaEvents
           file: ./abis/TwoKeyPlasmaEvents.json
@@ -30,4 +32,6 @@ dataSources:
           handler: handlePlasma2Ethereum
         - event: Plasma2Handle(address,string)
           handler: handleHandled
+        - event: Joined(address,address,address)
+          handler: handleJoined
       file: ./src/mapping.ts
