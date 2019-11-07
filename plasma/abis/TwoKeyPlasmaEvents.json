@@ -117,6 +117,28 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "fromPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "toPlasma",
+        "type": "address"
+      }
+    ],
+    "name": "Joined",
+    "type": "event"
+  },
+  {
     "constant": false,
     "inputs": [
       {
