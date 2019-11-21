@@ -17,7 +17,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._joinsCounter = 0;
     metadata._subgraphType = 'PLASMA';
     metadata._n_campaigns = 0;
-    metadata._version = 10;
+    metadata._version = 11;
     metadata._plasmaToHandleCounter = 0;
     metadata._plasmaToEthereumCounter = 0;
     metadata._timeStamp = timeStamp;
