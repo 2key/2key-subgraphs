@@ -1,0 +1,517 @@
+[
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "PROXY_STORAGE_CONTRACT",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "implementation",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "TWO_KEY_PLASMA_SINGLETON_REGISTRY",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "from",
+        "type": "address"
+      }
+    ],
+    "name": "Visited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "plasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "eth",
+        "type": "address"
+      }
+    ],
+    "name": "Plasma2Ethereum",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "plasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "handle",
+        "type": "string"
+      }
+    ],
+    "name": "Plasma2Handle",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "fromPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "toPlasma",
+        "type": "address"
+      }
+    ],
+    "name": "Joined",
+    "type": "event"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_twoKeyPlasmaSingletonRegistry",
+        "type": "address"
+      },
+      {
+        "name": "_proxyStorage",
+        "type": "address"
+      }
+    ],
+    "name": "setInitialParams",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "new_public_key",
+        "type": "address"
+      }
+    ],
+    "name": "setPublicLinkKey",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "cut",
+        "type": "uint256"
+      }
+    ],
+    "name": "setCut",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "me",
+        "type": "address"
+      }
+    ],
+    "name": "cutOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "me",
+        "type": "address"
+      }
+    ],
+    "name": "publicLinkKeyOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "note",
+        "type": "bytes"
+      }
+    ],
+    "name": "setNoteByUser",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "_plasma",
+        "type": "address"
+      }
+    ],
+    "name": "notes",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "sig",
+        "type": "bytes"
+      }
+    ],
+    "name": "joinCampaign",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "sig",
+        "type": "bytes"
+      }
+    ],
+    "name": "visited",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "from",
+        "type": "address"
+      }
+    ],
+    "name": "visitsListEx",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address[]"
+      },
+      {
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "campaignAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getNumberOfVisitsAndJoinsAndForwarders",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "getVisitedFrom",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_c",
+        "type": "address"
+      },
+      {
+        "name": "_contractor",
+        "type": "address"
+      },
+      {
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "getJoinedFrom",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_c",
+        "type": "address"
+      },
+      {
+        "name": "_contractor",
+        "type": "address"
+      },
+      {
+        "name": "_referrer",
+        "type": "address"
+      }
+    ],
+    "name": "getVisitsListTimestamps",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_plasma",
+        "type": "address"
+      },
+      {
+        "name": "_ethereum",
+        "type": "address"
+      }
+    ],
+    "name": "emitPlasma2EthereumEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_plasma",
+        "type": "address"
+      },
+      {
+        "name": "_handle",
+        "type": "string"
+      }
+    ],
+    "name": "emitPlasma2HandleEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "name": "public-contracts",
+  "license": "UNLICENSED",
+  "deploymentVersion": 1,
+  "scripts": {
+    "graph-cli": "node graph-cli.js prod",
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy!": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/prod",
+    "create-aws": "graph create --node http://s.api.graph.public.deployer.2key.net:80/ 2key",
+    "remove-aws": "graph remove --node http://s.api.graph.public.deployer.2key.net:80/ 2key",
+    "deploy-aws": "graph deploy --node http://s.api.graph.public.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 2key",
+    "deploy-test": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ jacksonjacko/open-backend",
+    "create-test": "graph create --node https://api.thegraph.com/deploy/ jacksonjacko/open-backend",
+    "remove-test": "graph remove --node https://api.thegraph.com/deploy/ jacksonjacko/open-backend",
+    "auth": "graph auth https://api.thegraph.com/deploy/ 5bc9bc1b897341f384be846fcef326e1"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.15.0",
+    "@graphprotocol/graph-ts": "^0.15.1"
+  }
+}

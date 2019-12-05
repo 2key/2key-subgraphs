@@ -1,0 +1,20 @@
+{
+  "name": "plasma",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "create-aws": "graph create --node http://prod.api.graph.deployer.2key.net:80/ plasma",
+    "remove-aws": "graph remove --node http://prod.api.graph.deployer.2key.net:80/ plasma",
+    "deploy-aws": "graph deploy --node http://prod.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma",
+    "create-temp": "graph create --node http://p.api.graph.deployer.2key.net:80/ plasma",
+    "remove-temp": "graph remove --node http://p.api.graph.deployer.2key.net:80/ plasma",
+    "deploy-temp": "graph deploy --node http://p.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.16.0",
+    "@graphprotocol/graph-ts": "^0.16.0"
+  },
+  "version": "1.0.0",
+  "main": "index.js"
+}

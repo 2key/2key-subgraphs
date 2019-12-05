@@ -1,0 +1,89 @@
+enum GraphType{
+  PLASMA
+  PUBLIC
+}
+
+type Campaign @entity {
+  id: ID!  # Web3 Address
+  _subgraphType: GraphType!
+  _version: Int
+  _n_visits: Int
+  _n_joins: Int
+  _timeStamp:BigInt!
+  _updatedTimeStamp: BigInt!
+  _visitors: [Visit!] @derivedFrom(field: "_campaign")
+  _joins: [Join!] @derivedFrom(field: "_campaign")
+}
+
+
+type Join @entity {
+  id: ID!
+  _campaign: Campaign! # address
+  _referrer: User! # address
+  _visitor: User! # address
+  _timeStamp:BigInt!
+}
+
+
+type JoinEvent @entity {
+  id: ID!
+  _campaign: Campaign! # address
+  _referrer: User! # address
+  _visitor: User! # address
+  _timeStamp:BigInt!
+}
+
+type Meta @entity {
+  id: ID!
+  _version: Int
+  _subgraphType: GraphType!
+  _visitCounter: Int
+  _joinsCounter: Int
+  _plasmaToHandleCounter: Int
+  _plasmaToEthereumCounter: Int
+  _n_campaigns: Int
+  _timeStamp:BigInt!
+  _updatedAt:BigInt!
+}
+
+
+type PlasmaToEthereumMappingEvent @entity {
+  id: ID!
+  _plasma: User! # address
+  _ethereum: Bytes! # address
+  _timeStamp:BigInt!
+}
+
+
+type Test @entity {
+  id: ID!  # Web3
+  _address: Bytes!
+}
+
+
+type User @entity {
+  id: ID!  #
+  _web3Address: Bytes
+  _handle: String
+  _timeStamp:BigInt!
+}
+
+
+type Visit @entity {
+  id: ID!
+  _campaign: Campaign! # address
+  _referrer: User! # address
+  _visitor: User! # address
+  _timeStamp:BigInt!
+}
+
+
+type VisitEvent @entity {
+  id: ID!
+  _campaign: Campaign! # address
+  _referrer: User! # address
+  _visitor: User! # address
+  _timeStamp:BigInt!
+}
+
+

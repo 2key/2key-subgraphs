@@ -1,0 +1,37 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Contract
+    network: plasma
+    source:
+      address: "0x0f02ff9cee1f82fdaee349e41c7334edfc3fad8d"
+      abi: TwoKeyPlasmaEvents
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Campaign
+        - Join
+        - JoinEvent
+        - Meta
+        - PlasmaToEthereumMappingEvent
+        - User
+        - Test
+        - Visit
+        - VisitEvent
+      abis:
+        - name: TwoKeyPlasmaEvents
+          file: ./abis/TwoKeyPlasmaEvents.json
+      eventHandlers:
+        - event: Visited(indexed address,indexed address,indexed address,address)
+          handler: handleVisited
+        - event: Plasma2Ethereum(address,address)
+          handler: handlePlasma2Ethereum
+        - event: Plasma2Handle(address,string)
+          handler: handleHandled
+        - event: Joined(address,address,address)
+          handler: handleJoined
+      file: ./src/mapping.ts
