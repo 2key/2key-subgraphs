@@ -51,8 +51,6 @@ type Meta @entity {
     _subgraphType: GraphType!
     _userRegisteredCounter: Int!
     _convertedAcquisitionCounter: Int!
-    _convertedAcquisitionV2Counter: Int!
-    _convertedDonationV2Counter: Int!
     _convertedDonationCounter: Int!
     _total_rewards_amount: BigInt!
     _n_conversions: Int
@@ -65,11 +63,10 @@ type Meta @entity {
     _donationCampaignCreatedCounter: Int!
     _rejectedCounter: Int!
     _executedCounter: Int!
-    _executedV1Counter: Int!
     _version: Int
     _timeStamp: BigInt!
     _lastBlock: BigInt
-    _updatedTimeStamp: BigInt!
+    _updatedTimeStamp: BigInt
 }
 
 
@@ -131,7 +128,7 @@ type Campaign @entity {
     _rewards: [Reward!]! @derivedFrom(field: "_campaign")
     _version: Int
     _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt!
+    _updatedTimeStamp: BigInt
 }
 
 
@@ -147,7 +144,7 @@ type UserReg @entity {
     _version: Int
     _timeStamp: BigInt!
     _tx_hash: String
-    _updatedTimeStamp: BigInt!
+    _updatedTimeStamp: BigInt
 }
 
 type User @entity {
@@ -173,7 +170,7 @@ type User @entity {
     _version: Int
     _event: UserReg
     _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt!
+    _updatedTimeStamp: BigInt
 }
 
 type Conversion @entity {
@@ -192,7 +189,16 @@ type Conversion @entity {
     _version:Int
     _conversionId: BigInt
     _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
+
+type Event @entity {
+    id: ID!
+    _address: Bytes!
+    _timeStamp: BigInt!
+    _tx_hash: String!
+    _type: String!
+    _notes: String
 }
 
 type Event @entity {
@@ -209,7 +215,7 @@ type Price @entity{
     _rate: BigInt!
     _updater: User!
     _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt!
+    _updatedTimeStamp: BigInt
 }
 
 type Join @entity {
@@ -218,7 +224,7 @@ type Join @entity {
     _from: User! # address
     _to: User! # address
     _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt!
+    _updatedTimeStamp: BigInt
 }
 
 type Reward @entity {
@@ -227,7 +233,7 @@ type Reward @entity {
     _user: User! # address
     _amount: BigInt! # address
     _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt!
+    _updatedTimeStamp: BigInt
 }
 
 type ConCampUser @entity {
