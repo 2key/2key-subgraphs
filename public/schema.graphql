@@ -201,14 +201,6 @@ type Event @entity {
     _notes: String
 }
 
-type Event @entity {
-    id: ID!
-    _address: Bytes!
-    _timeStamp: BigInt!
-    _tx_hash: String!
-    _type: String!
-}
-
 type Price @entity{
     id:ID!
     _currency: CurrencyType
