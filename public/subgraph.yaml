@@ -6,7 +6,7 @@ dataSources:
     name: Contract
     network: ropsten
     source:
-      address: "0x3898dd0756575395ab25a05ba7073f6c94312ca0"
+      address: "0xc2a7bb4b7b4e2cb1d3653caf7b6b308c4600fa66"
       abi: TwoKeyEventSource #1.1.4
     mapping:
       kind: ethereum/events
@@ -44,14 +44,14 @@ dataSources:
           handler: handleAcquisition
         - event: DonationCampaignCreated(address,address,address,address)
           handler: handleDonation
-        - event: ConvertedAcquisitionV2(address,address,uint256,uint256,uint256,bool,uint256)
-          handler: handleConvertedAcquisitionV2
-        - event: ConvertedDonationV2(address,address,uint256,uint256)
-          handler: handleConvertedDonationV2
+        - event: ConvertedAcquisition(address,address,uint256,uint256,uint256,bool,uint256)
+          handler: handleConvertedAcquisition
+        - event: ConvertedDonation(address,address,uint256,uint256)
+          handler: handleConvertedDonation
         - event: Rejected(address,address)
           handler: handleRejected
-        - event: ExecutedV1(address,address,uint256,uint256)
-          handler: handleExecutedV1
+        - event: Executed(address,address,uint256,uint256)
+          handler: handleExecuted
         - event : PriceUpdated(bytes32,uint256,uint256,address)
           handler: handlerPriceUpdated
       file: ./src/mapping.ts

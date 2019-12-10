@@ -131,7 +131,7 @@
       },
       {
         "indexed": false,
-        "name": "_converter",
+        "name": "_converterPlasma",
         "type": "address"
       },
       {
@@ -153,6 +153,11 @@
         "indexed": false,
         "name": "_isFiatConversion",
         "type": "bool"
+      },
+      {
+        "indexed": false,
+        "name": "_conversionId",
+        "type": "uint256"
       }
     ],
     "name": "ConvertedAcquisition",
@@ -173,80 +178,16 @@
       },
       {
         "indexed": false,
-        "name": "_baseTokens",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "_bonusTokens",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
         "name": "_conversionAmount",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "_isFiatConversion",
-        "type": "bool"
       },
       {
         "indexed": false,
         "name": "_conversionId",
-        "type": "uint256"
-      }
-    ],
-    "name": "ConvertedAcquisitionV2",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "_campaign",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "_converter",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "_conversionAmount",
         "type": "uint256"
       }
     ],
     "name": "ConvertedDonation",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "_campaign",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "_converterPlasma",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "_conversionAmount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "_conversionId",
-        "type": "uint256"
-      }
-    ],
-    "name": "ConvertedDonationV2",
     "type": "event"
   },
   {
@@ -501,28 +442,6 @@
         "indexed": false,
         "name": "conversionId",
         "type": "uint256"
-      }
-    ],
-    "name": "Executed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "campaignAddress",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "converterPlasmaAddress",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "conversionId",
-        "type": "uint256"
       },
       {
         "indexed": false,
@@ -530,7 +449,7 @@
         "type": "uint256"
       }
     ],
-    "name": "ExecutedV1",
+    "name": "Executed",
     "type": "event"
   },
   {
@@ -552,7 +471,7 @@
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaign",
@@ -570,11 +489,11 @@
     "name": "created",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaign",
@@ -592,11 +511,11 @@
     "name": "joined",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaign",
@@ -614,11 +533,11 @@
     "name": "converted",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaign",
@@ -632,33 +551,11 @@
     "name": "rejected",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_campaignAddress",
-        "type": "address"
-      },
-      {
-        "name": "_converterPlasmaAddress",
-        "type": "address"
-      },
-      {
-        "name": "_conversionId",
-        "type": "uint256"
-      }
-    ],
-    "name": "executed",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaignAddress",
@@ -677,48 +574,14 @@
         "type": "uint256"
       }
     ],
-    "name": "executedV1",
+    "name": "executed",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_campaign",
-        "type": "address"
-      },
-      {
-        "name": "_converter",
-        "type": "address"
-      },
-      {
-        "name": "_baseTokens",
-        "type": "uint256"
-      },
-      {
-        "name": "_bonusTokens",
-        "type": "uint256"
-      },
-      {
-        "name": "_conversionAmount",
-        "type": "uint256"
-      },
-      {
-        "name": "_isFiatConversion",
-        "type": "bool"
-      }
-    ],
-    "name": "convertedAcquisition",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaign",
@@ -749,62 +612,40 @@
         "type": "uint256"
       }
     ],
-    "name": "convertedAcquisitionV2",
+    "name": "convertedAcquisition",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaign",
         "type": "address"
       },
       {
-        "name": "_converter",
+        "name": "_converterPlasma",
         "type": "address"
       },
       {
         "name": "_conversionAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "_conversionId",
         "type": "uint256"
       }
     ],
     "name": "convertedDonation",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_campaign",
-        "type": "address"
-      },
-      {
-        "name": "_converterPlasma",
-        "type": "address"
-      },
-      {
-        "name": "_conversionAmount",
-        "type": "uint256"
-      },
-      {
-        "name": "_conversionId",
-        "type": "uint256"
-      }
-    ],
-    "name": "convertedDonationV2",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaign",
@@ -822,11 +663,11 @@
     "name": "rewarded",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_campaign",
@@ -844,11 +685,11 @@
     "name": "cancelled",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "proxyLogicHandler",
@@ -874,11 +715,11 @@
     "name": "acquisitionCampaignCreated",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "proxyDonationCampaign",
@@ -900,11 +741,11 @@
     "name": "donationCampaignCreated",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_currency",
@@ -926,11 +767,11 @@
     "name": "priceUpdated",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "constant": true,
+    "constant": false,
     "inputs": [
       {
         "name": "_name",
@@ -956,7 +797,7 @@
     "name": "userRegistered",
     "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
