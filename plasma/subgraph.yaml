@@ -6,7 +6,7 @@ dataSources:
     name: Contract
     network: plasma
     source:
-      address: "0x0f02ff9cee1f82fdaee349e41c7334edfc3fad8d"
+      address: "0xadfca2ce57a598cb58bf059a0501c6e2603fb2d7"
       abi: TwoKeyPlasmaEvents
     mapping:
       kind: ethereum/events
