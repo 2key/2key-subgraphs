@@ -6,7 +6,7 @@ import {
 } from "../generated/Contract/TwoKeyPlasmaEvents"
 
 import { Campaign, User, Visit, Test, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join} from "../generated/schema"
-import { log,Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 
 function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
@@ -27,6 +27,20 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
 }
 
 
+function createUser(userAddress: Address, timeStamp: BigInt): void {
+  let user = User.load(userAddress.toHex());
+  if (user == null){
+    user = new User(userAddress.toHex());
+    user._n_campaigns = 0;
+    user._n_conversions = 0;
+    user._n_joins = 0;
+    user._timeStamp = timeStamp;
+    user._updatedAt = timeStamp;
+    user.save();
+  }
+}
+
+
 function createCampaignObject(eventAddress:Address, campaignAddress: Address, timeStamp: BigInt): void {
   let campaign = Campaign.load(campaignAddress.toHex());
   if (campaign == null){
@@ -34,7 +48,7 @@ function createCampaignObject(eventAddress:Address, campaignAddress: Address, ti
     metadata._n_campaigns++;
     metadata._updatedAt = timeStamp;
     metadata.save();
-    
+
     campaign = new Campaign(campaignAddress.toHex());
     campaign._timeStamp = timeStamp;
     campaign._n_visits = 0;
@@ -55,12 +69,10 @@ export function handleHandled(event: Plasma2HandleEvent): void {
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
 
-  let user = User.load(event.params.plasma.toHex());
-  if (user == null){
-    user = new User(event.params.plasma.toHex());
-    user._timeStamp = event.block.timestamp;
-  }
+  // let user = User.load(event.params.plasma.toHex());
+  createUser(event.params.plasma, event.block.timestamp);
 
+  let user = User.load(event.params.plasma.toHex());
   user._handle = event.params.handle;
   user.save();
 }
@@ -76,21 +88,13 @@ export function handleJoined(event: JoinedEvent): void {
   // log.debug('Handle {} Visited))))))))',['string arg']);
   // log.info('info - Handle {} 1))))))))',['string arg']);
 
-  let referrer = User.load(event.params.fromPlasma.toHex());
-  if (referrer== null){
-    referrer = new User(event.params.fromPlasma.toHex());
-    referrer._timeStamp = event.block.timestamp;
-    referrer.save();
-  }
+  createUser(event.params.fromPlasma, event.block.timestamp);
 
+  let referrer = User.load(event.params.fromPlasma.toHex());
 
   // log.info('info - Handle {} 2))))))))',['string arg']);
+  createUser(event.params.fromPlasma, event.block.timestamp);
   let visitor = User.load(event.params.toPlasma.toHex());
-  if (visitor == null){
-    visitor = new User(event.params.toPlasma.toHex());
-    visitor._timeStamp = event.block.timestamp;
-    visitor.save();
-  }
 
   createCampaignObject(event.address, event.params.campaignAddress, event.block.timestamp);
   let campaign = Campaign.load(event.params.campaignAddress.toHex());
@@ -137,21 +141,12 @@ export function handleVisited(event: VisitedEvent): void {
   // log.debug('Handle {} Visited))))))))',['string arg']);
   // log.info('info - Handle {} 1))))))))',['string arg']);
 
+  createUser(event.params.from, event.block.timestamp);
   let referrer = User.load(event.params.from.toHex());
-  if (referrer== null){
-    referrer = new User(event.params.from.toHex());
-    referrer._timeStamp = event.block.timestamp;
-    referrer.save();
-  }
 
 
-  // log.info('info - Handle {} 2))))))))',['string arg']);
+  createUser(event.params.to, event.block.timestamp);
   let visitor = User.load(event.params.to.toHex());
-  if (visitor == null){
-    visitor = new User(event.params.to.toHex());
-    visitor._timeStamp = event.block.timestamp;
-    visitor.save();
-  }
 
   createCampaignObject(event.address, event.params.c, event.block.timestamp);
   let campaign = Campaign.load(event.params.c.toHex());
@@ -193,17 +188,10 @@ export function handlePlasma2Ethereum(event: Plasma2EthereumEvent): void {
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
 
+  createUser(event.params.plasma, event.block.timestamp);
   let user = User.load(event.params.plasma.toHex());
-  if(user == null){
-    user = new User(event.params.plasma.toHex());
-    user._web3Address = event.params.eth;
-    user._timeStamp = event.block.timestamp;
-    user.save();
-  }
-  else{
-    user._web3Address = event.params.eth;
-    user.save();
-  }
+  user._web3Address = event.params.eth;
+  user.save();
 
   let mappingEvent = PlasmaToEthereumMappingEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   if(mappingEvent == null){
