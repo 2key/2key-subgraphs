@@ -14,6 +14,7 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Campaign
+        - Conversion
         - Join
         - JoinEvent
         - Meta
@@ -34,4 +35,8 @@ dataSources:
           handler: handleHandled
         - event: Joined(address,address,address)
           handler: handleJoined
+        - event: CPCCampaignCreated(address,address)
+          handler: handleCPCCampaignCreated
+        - event: ConversionCreated(address,address,uint256,address,address)
+          handler: handleConversionCreated
       file: ./src/mapping.ts
