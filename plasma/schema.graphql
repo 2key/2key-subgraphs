@@ -65,7 +65,11 @@ type User @entity {
   id: ID!  #
   _web3Address: Bytes
   _handle: String
+  _n_campaigns: Int!
+  _n_conversions: Int!
+  _n_joins: Int!
   _timeStamp:BigInt!
+  _updatedAt: BigInt!
 }
 
 
