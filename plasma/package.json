@@ -12,7 +12,7 @@
     "deploy-temp": "graph deploy --node http://t.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.16.0",
-    "@graphprotocol/graph-ts": "^0.16.0"
+    "@graphprotocol/graph-cli": "^0.17.1",
+    "@graphprotocol/graph-ts": "^0.17.0"
   }
 }
