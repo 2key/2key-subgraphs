@@ -4,9 +4,9 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Contract
-    network: ropsten
+    network: mainnet
     source:
-      address: "0x6282f8bd36bab57dad6c465396031decb17f9408"
+      address: "0xcf12c8227ce211fa791f03d30e3af9dddbba8019"
       abi: TwoKeyEventSource #1.1.4
     mapping:
       kind: ethereum/events
