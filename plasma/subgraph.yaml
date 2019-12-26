@@ -39,4 +39,6 @@ dataSources:
           handler: handleCPCCampaignCreated
         - event: ConversionCreated(address,address,uint256,address,address)
           handler: handleConversionCreated
+        - event: ConversionExecuted(address,uint256)
+          handler: handleConversionExecuted
       file: ./src/mapping.ts

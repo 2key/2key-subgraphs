@@ -55,6 +55,7 @@ type JoinEvent @entity {
 
 type Meta @entity {
   id: ID!
+  _conversionsExecuted: Int
   _version: Int
   _subgraphType: GraphType!
   _visitCounter: Int

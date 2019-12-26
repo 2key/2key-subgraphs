@@ -4,7 +4,8 @@ import {
   Plasma2Handle as Plasma2HandleEvent,
   Joined as JoinedEvent,
   CPCCampaignCreated as CPCCampaignCreatedEvent,
-  ConversionCreated as ConversionCreatedEvent
+  ConversionCreated as ConversionCreatedEvent,
+  ConversionExecuted as ConversionExecutedEvent
 
 } from "../generated/Contract/TwoKeyPlasmaEvents"
 
@@ -16,6 +17,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
   let metadata = Meta.load(eventAddress.toHex());
   if (metadata == null){
     metadata = new Meta(eventAddress.toHex());
+    metadata._conversionsExecuted = 0;
     metadata._visitCounter = 0;
     metadata._joinsCounter = 0;
     metadata._subgraphType = 'PLASMA';
@@ -250,4 +252,16 @@ export function handlePlasma2Ethereum(event: Plasma2EthereumEvent): void {
     mappingEvent._timeStamp = event.block.timestamp;
     mappingEvent.save();
   }
+}
+
+export function handleConversionExecuted(event: ConversionExecutedEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+  let metadata = Meta.load(event.address.toHex());
+  metadata._conversionsExecuted += 1;
+  metadata._updatedAt = event.block.timestamp;
+  metadata.save();
+
+  let conversion = Conversion.load(event.params.campaignAddressPlasma + '-' + event.params.conversionID.toString());
+  conversion._status = 'EXECUTED';
+  conversion.save();
 }
