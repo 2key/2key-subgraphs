@@ -13,6 +13,13 @@ enum CurrencyType {
     USDT
 }
 
+enum TransactionType {
+    DonationCampaignCreated
+    AcquisitionCampaignCreated
+    UserRegistered
+    PriceUpdated
+}
+
 enum GraphType{
     PLASMA
     PUBLIC
@@ -96,6 +103,20 @@ type PriceUpdated @entity {
     _currency: String!
     _block: BigInt!
     _txHash: Bytes!
+    _transaction: Transaction
+}
+
+type Transaction @entity {
+    id: ID!
+    _gasPrice: BigInt
+    _value: BigInt
+    _gasUsed: BigInt
+    _index: BigInt
+    _timeStamp: BigInt
+    _type: String
+    _campaign: [Campaign!]! @derivedFrom(field: "_transaction")
+    _userRegistered: [User!]! @derivedFrom(field: "_transaction")
+    _priceUpdated: [PriceUpdated!]! @derivedFrom(field: "_transaction")
 }
 
 
@@ -113,6 +134,7 @@ type Campaign @entity {
     _purchasesHandler: Bytes
     _total_rewards: BigInt
     _moderator: User # address
+    _transaction: Transaction
     _n_joined: Int
     _n_rewards: Int
     _total_rewards_amount: BigInt
@@ -161,6 +183,7 @@ type User @entity {
     _conversions: [Conversion!]! @derivedFrom(field: "_participate")
     _rewards: [Reward!]! @derivedFrom(field: "_user")
     _total_rewards_amount: BigInt
+    _transaction: Transaction
     _n_rewards: Int
     _n_conversions: Int
     _total_conversions_amount: BigInt

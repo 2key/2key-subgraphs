@@ -21,6 +21,7 @@ import {
     Variable,
     Campaign,
     Conversion,
+    Event,
     User,
     Join,
     Reward,
@@ -29,7 +30,7 @@ import {
     UserReg,
     PriceUpdated,
     Rate,
-    Event
+    Transaction
 } from "../generated/schema"
 
 
@@ -123,6 +124,20 @@ function createEventObject(event: EthereumEvent, eventType: string, notes: strin
   }
 }
 
+
+function createTransactionObject(event: EthereumEvent, eventType: string): void {
+  let transaction = Transaction.load(event.transaction.hash.toHex())
+  if (transaction == null){
+    transaction = new Transaction(event.transaction.hash.toHex());
+    transaction._timeStamp = event.block.timestamp;
+    transaction._gasUsed = event.transaction.gasUsed;
+    transaction._gasPrice = event.transaction.gasPrice;
+    transaction._value = event.transaction.value;
+    transaction._type = eventType;
+    transaction.save();
+  }
+}
+
 function createUserObject(eventAddress: Address, userAddress: Address, timeStamp: BigInt): void {
   let user = User.load(userAddress.toHex());
   if (user == null){
@@ -154,6 +169,9 @@ function createUserObject(eventAddress: Address, userAddress: Address, timeStamp
 
 
 export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
+  createTransactionObject(event, 'PriceUpdated');
+  let transaction = Transaction.load(event.transaction.hash.toHex());
+  
   createEventObject(event, 'PriceUpdated','');
   let priceUpdated = PriceUpdated.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   if(priceUpdated == null){
@@ -164,6 +182,7 @@ export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
     priceUpdated._timeStamp = event.params._timestamp;
     priceUpdated._txHash = event.transaction.hash;
     priceUpdated._block = event.block.number;
+    priceUpdated._transaction = transaction.id;
     priceUpdated.save();
   }
 
@@ -300,6 +319,7 @@ export function handleExecuted(event: ExecutedEvent): void {
 }
 
 export function handleUserRegistered(event: UserRegisteredEvent): void{
+  createTransactionObject(event, 'UserRegistered');
   createEventObject(event, 'UserRegistered','');
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
@@ -323,11 +343,13 @@ export function handleUserRegistered(event: UserRegisteredEvent): void{
 
   createUserObject(event.address, event.params._address, event.block.timestamp);
 
+  let transaction = Transaction.load(event.transaction.hash.toHex());
   let user = User.load(event.params._address.toHex());
 
   user._name = event.params._name;
   user._fullName = event.params._fullName;
   user._walletName = event.params._username_walletName;
+  user._transaction = transaction.id;
   user._email = event.params._email;
   user._updatedTimeStamp = event.block.timestamp;
   user._version = 0;
@@ -447,6 +469,7 @@ export function handleConvertedDonation(event: ConvertedDonationEvent): void{
 }
 
 export function handleDonation(event: DonationCampaignCreated): void {
+  createTransactionObject(event, 'DonationCampaignCreated');
   createEventObject(event, 'DonationCampaignCreated',event.params.contractor.toHex()+'-'+event.params.proxyDonationCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
@@ -457,9 +480,11 @@ export function handleDonation(event: DonationCampaignCreated): void {
   createUserObject(event.address, event.params.contractor, event.block.timestamp);
 
   let contractor = User.load(event.params.contractor.toHex());
+  let transaction = Transaction.load(event.transaction.hash.toHex());
 
   createCampaignObject(event.params.proxyDonationCampaign,event.block.timestamp);
   let newCampaign = Campaign.load(event.params.proxyDonationCampaign.toHex());
+  newCampaign._transaction = transaction.id;
   newCampaign._conversionHandler = event.params.proxyDonationConversionHandler;
   newCampaign._owner = contractor.id;
   newCampaign._logicHandler = event.params.proxyDonationLogicHandler;
@@ -468,6 +493,7 @@ export function handleDonation(event: DonationCampaignCreated): void {
 }
 
 export function handleAcquisition(event: AcquisitionCampaignCreated): void {
+  createTransactionObject(event, 'AcquisitionCampaignCreated');
   createEventObject(event, 'AcquisitionCampaignCreated', event.params.contractor.toHex()+'-'+event.params.proxyAcquisitionCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
@@ -479,9 +505,11 @@ export function handleAcquisition(event: AcquisitionCampaignCreated): void {
   createUserObject(event.address, event.params.contractor, event.block.timestamp);
 
   let contractor = User.load(event.params.contractor.toHex());
+  let transaction = Transaction.load(event.transaction.hash.toHex());
 
   createCampaignObject(event.params.proxyAcquisitionCampaign,event.block.timestamp);
   let newCampaign = Campaign.load(event.params.proxyAcquisitionCampaign.toHex());
+  newCampaign._transaction = transaction.id;
   newCampaign._purchasesHandler = event.params.proxyPurchasesHandler;
   newCampaign._conversionHandler = event.params.proxyConversionHandler;
   newCampaign._logicHandler = event.params.proxyLogicHandler;

@@ -21,15 +21,16 @@ dataSources:
         - Debug
         - Campaign
         - Conversion
-        - User
+        - Event
         - Created
         - Join
         - Reward
         - Rejected
-        - Web3ToUser
+        - Transaction
         - UserReg
+        - User
         - Variable
-        - Event
+        - Web3ToUser
       abis:
         - name: TwoKeyEventSource
           file: ./abis/TwoKeyEventSource.json
