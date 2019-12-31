@@ -13,10 +13,11 @@ enum GraphType{
 
 type Conversion @entity {
   id: ID!  # Web3 Address
-  _campaign: Campaign!
-  _converter: User!
-  _conversionId: BigInt!
-  _timeStamp: BigInt!
+  _campaign: Campaign
+  _converter: User
+  _status: ConversionStatus
+  _conversionId: BigInt
+  _timeStamp: BigInt
 }
 
 

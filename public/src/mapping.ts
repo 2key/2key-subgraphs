@@ -12,7 +12,8 @@ import {
   ConvertedDonation as ConvertedDonationEvent,
   Rejected as RejectedEvent,
   Executed as ExecutedEvent,
-  PriceUpdated as PriceUpdatedEvent
+  PriceUpdated as PriceUpdatedEvent,
+  CPCCampaignCreated as CPCCampaignCreatedEvent
 } from "../generated/Contract/TwoKeyEventSource"
 
 
@@ -50,6 +51,7 @@ function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
     metadata._joinedCounter = 0;
     metadata._rewardedCounter = 0;
     metadata._rejectedCounter = 0;
+    metadata._cpcCampaignCreatedCounter = 0;
     metadata._executedCounter = 0;
     metadata._version = 2;
     metadata._userRegisteredCounter = 0;
@@ -153,7 +155,7 @@ function createUserObject(eventAddress: Address, userAddress: Address, timeStamp
 
 
 
-export function handlerPriceUpdated(event: PriceUpdatedEvent): void {
+export function handlePriceUpdated(event: PriceUpdatedEvent): void {
   createEventObject(event, 'PriceUpdated','');
   let priceUpdated = PriceUpdated.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   if(priceUpdated == null){
@@ -350,7 +352,7 @@ export function handleConvertedAcquisition(event: ConvertedAcquisitionEvent): vo
   createConversionObject(conversionId, converterPlasmaAddress, event.params._campaign, event.block.timestamp);
   let acquisitionConversion = Conversion.load(campaign.id + '-' + conversionId.toString());
 
-  
+
   createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
   let converter = User.load(converterPlasmaAddress.toHex());
 
@@ -411,7 +413,7 @@ export function handleConvertedDonation(event: ConvertedDonationEvent): void{
     createConversionObject(conversionId, converterPlasmaAddress, event.params._campaign, event.block.timestamp);
     let donationConversion = Conversion.load(campaign.id + '-' + conversionId.toString());
 
-    
+
     createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
     let converter = User.load(converterPlasmaAddress.toHex());
 
@@ -464,6 +466,27 @@ export function handleDonation(event: DonationCampaignCreated): void {
   newCampaign._owner = contractor.id;
   newCampaign._logicHandler = event.params.proxyDonationLogicHandler;
   newCampaign._type = "Donation";
+  newCampaign.save()
+}
+
+export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
+  createEventObject(event, 'CPCCampaignCreated',event.params.contractor.toHex()+'-'+event.params.proxyCPCCampaign.toHex());
+  createMetadata(event.address, event.block.timestamp);
+  let metadata = Meta.load(event.address.toHex());
+  metadata._cpcCampaignCreatedCounter++;
+  metadata._updatedTimeStamp = event.block.timestamp;
+  metadata.save();
+
+  createUserObject(event.address, event.params.contractor, event.block.timestamp);
+
+  let contractor = User.load(event.params.contractor.toHex());
+
+  createCampaignObject(event.params.proxyCPCCampaign,event.block.timestamp);
+  let newCampaign = Campaign.load(event.params.proxyCPCCampaign.toHex());
+  // newCampaign._conversionHandler = event.params.proxyDonationConversionHandler;
+  newCampaign._owner = contractor.id;
+  // newCampaign._logicHandler = event.params.proxyDonationLogicHandler;
+  newCampaign._type = "Cpc";
   newCampaign.save()
 }
 
