@@ -75,7 +75,7 @@ function createConversion(event: ConversionCreatedEvent): void {
 }
 
 
-function createCampaignObject(eventAddress:Address, campaignAddress: Address, timeStamp: BigInt): void {
+function createCampaign(eventAddress:Address, campaignAddress: Address, timeStamp: BigInt): void {
   let campaign = Campaign.load(campaignAddress.toHex());
   if (campaign == null){
     let metadata = Meta.load('Meta');
@@ -100,7 +100,7 @@ export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
 
-  createCampaignObject(event.address, event.params.proxyCPCCampaignPlasma, event.block.timestamp);
+  createCampaign(event.address, event.params.proxyCPCCampaignPlasma, event.block.timestamp);
   let campaign = Campaign.load(event.params.proxyCPCCampaignPlasma.toHex());
 
   createUser(event.params.contractorPlasma, event.block.timestamp);
@@ -167,7 +167,7 @@ export function handleJoined(event: JoinedEvent): void {
   createUser(event.params.fromPlasma, event.block.timestamp);
   let visitor = User.load(event.params.toPlasma.toHex());
 
-  createCampaignObject(event.address, event.params.campaignAddress, event.block.timestamp);
+  createCampaign(event.address, event.params.campaignAddress, event.block.timestamp);
   let campaign = Campaign.load(event.params.campaignAddress.toHex());
 
   campaign._n_joins++;
@@ -219,7 +219,7 @@ export function handleVisited(event: VisitedEvent): void {
   createUser(event.params.to, event.block.timestamp);
   let visitor = User.load(event.params.to.toHex());
 
-  createCampaignObject(event.address, event.params.c, event.block.timestamp);
+  createCampaign(event.address, event.params.c, event.block.timestamp);
   let campaign = Campaign.load(event.params.c.toHex());
 
   campaign._n_visits++;
