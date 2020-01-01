@@ -58,6 +58,7 @@ type Meta @entity {
   id: ID!
   _conversionsExecuted: Int
   _version: Int
+  _contracts: [Bytes!]
   _subgraphType: GraphType!
   _visitCounter: Int
   _joinsCounter: Int

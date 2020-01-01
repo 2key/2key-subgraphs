@@ -18,10 +18,11 @@ import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 
 function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
-  let metadata = Meta.load(eventAddress.toHex());
+  let metadata = Meta.load('Meta');
   if (metadata == null){
-    metadata = new Meta(eventAddress.toHex());
+    metadata = new Meta('Meta');
     metadata._conversionsExecuted = 0;
+    metadata._contracts = [];
     metadata._visitCounter = 0;
     metadata._joinsCounter = 0;
     metadata._subgraphType = 'PLASMA';
@@ -32,6 +33,13 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._plasmaToEthereumCounter = 0;
     metadata._timeStamp = timeStamp;
     metadata._updatedAt = timeStamp;
+    metadata.save();
+  }
+
+  if (metadata._contracts.indexOf(eventAddress) == -1) {
+    let contracts = metadata._contracts;
+    contracts.push(eventAddress);
+    metadata._contracts = contracts;
     metadata.save();
   }
 }
@@ -70,7 +78,7 @@ function createConversion(event: ConversionCreatedEvent): void {
 function createCampaignObject(eventAddress:Address, campaignAddress: Address, timeStamp: BigInt): void {
   let campaign = Campaign.load(campaignAddress.toHex());
   if (campaign == null){
-    let metadata = Meta.load(eventAddress.toHex());
+    let metadata = Meta.load('Meta');
     metadata._n_campaigns++;
     metadata._updatedAt = timeStamp;
     metadata.save();
@@ -88,7 +96,7 @@ function createCampaignObject(eventAddress:Address, campaignAddress: Address, ti
 
 export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
 
@@ -103,7 +111,7 @@ export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
 
 export function handleConversionCreated(event: ConversionCreatedEvent): void {
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._updatedAt = event.block.timestamp;
   metadata._n_conversions += 1;
   metadata.save();
@@ -127,7 +135,7 @@ export function handleConversionCreated(event: ConversionCreatedEvent): void {
 export function handleHandled(event: Plasma2HandleEvent): void {
   // log.debug('Handle {} Visited))))))))',['string arg']);
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._plasmaToHandleCounter = metadata._plasmaToHandleCounter + 1;
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
@@ -142,7 +150,7 @@ export function handleHandled(event: Plasma2HandleEvent): void {
 
 export function handleJoined(event: JoinedEvent): void {
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._joinsCounter++;
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
@@ -195,7 +203,7 @@ export function handleVisited(event: VisitedEvent): void {
   // event.params.from          - Previous plasma Address
 
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._visitCounter++;
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
@@ -246,7 +254,7 @@ export function handlePlasma2Ethereum(event: Plasma2EthereumEvent ): void {
   // log.info('INFO - Handle {} Plasma2EthereumEvent))))))))',['string arg']);
 
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._plasmaToEthereumCounter = metadata._plasmaToEthereumCounter + 1;
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
@@ -268,7 +276,7 @@ export function handlePlasma2Ethereum(event: Plasma2EthereumEvent ): void {
 
 export function handleConversionExecuted(event: ConversionExecutedEvent): void {
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._conversionsExecuted += 1;
   // metadata._updatedAt = event.block.timestamp;
   metadata.save();
