@@ -371,6 +371,23 @@
     "inputs": [
       {
         "indexed": false,
+        "name": "proxyCPCCampaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "contractor",
+        "type": "address"
+      }
+    ],
+    "name": "CPCCampaignCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "name": "_currency",
         "type": "bytes32"
       },
@@ -450,6 +467,28 @@
       }
     ],
     "name": "Executed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "conversionID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "tokensAmountWithdrawn",
+        "type": "uint256"
+      }
+    ],
+    "name": "TokenWithdrawnFromPurchasesHandler",
     "type": "event"
   },
   {
@@ -748,6 +787,24 @@
     "constant": false,
     "inputs": [
       {
+        "name": "proxyCPC",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      }
+    ],
+    "name": "cpcCampaignCreated",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "name": "_currency",
         "type": "bytes32"
       },
@@ -795,6 +852,28 @@
       }
     ],
     "name": "userRegistered",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "_conversionID",
+        "type": "uint256"
+      },
+      {
+        "name": "_tokensAmountWithdrawn",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokensWithdrawnFromPurchasesHandler",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

@@ -33,6 +33,7 @@ enum ConversionStatus{
 enum CampaignType {
     Donation
     Acquisition
+    Cpc
  }
 
 
@@ -54,6 +55,7 @@ type Meta @entity {
     _convertedDonationCounter: Int!
     _total_rewards_amount: BigInt!
     _n_conversions: Int
+    _cpcCampaignCreatedCounter: Int
     _total_conversions_amount: BigInt!
     _createdCounter: Int!
     _joinedCounter: Int!
