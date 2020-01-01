@@ -66,10 +66,18 @@ function createConversion(event: ConversionCreatedEvent): void {
   if (conversion == null){
     conversion = new Conversion(campaign.id + '-' + event.params.conversionID.toString());
     conversion._campaign = campaign.id;
+    conversion._subgraphType = 'PLASMA';
     conversion._timeStamp = event.block.timestamp;
     conversion._participate = converter.id;
     conversion._status = 'PENDING';
     conversion._conversionId = event.params.conversionID;
+    conversion._updatedTimeStamp = event.block.timestamp;
+    conversion._version = 10;
+    conversion._fiatAmountSpent = BigInt.fromI32(0);
+    conversion._ethAmountSpent = BigInt.fromI32(0);
+    conversion._tokens = BigInt.fromI32(0);
+    conversion._refundable = true;
+    conversion._isFiatConversion = false;
     conversion.save();
   }
 }

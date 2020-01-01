@@ -1,3 +1,28 @@
+enum CurrencyType {
+    ETH
+    BTC
+    TWOKEY
+    NIS
+    JPY
+    EUR
+    USD
+    ILS
+    DAI
+    TUSD
+    GBP
+    USDT
+}
+
+enum GraphType{
+    PLASMA
+    PUBLIC
+}
+
+enum VariableName{
+    Meta
+    Block
+}
+
 enum ConversionStatus{
     PENDING
     APPROVED
@@ -5,19 +30,29 @@ enum ConversionStatus{
     REJECTED
 }
 
-enum GraphType{
-  PLASMA
-  PUBLIC
-}
+enum CampaignType {
+    Donation
+    Acquisition
+    Cpc
+ }
 
 
 type Conversion @entity {
   id: ID!  # Web3 Address
+  _campaignType: CampaignType
+  _subgraphType: GraphType!
+  _status: ConversionStatus
   _campaign: Campaign
   _participate: User
-  _status: ConversionStatus
+  _fiatAmountSpent: BigInt
+  _ethAmountSpent: BigInt
+  _tokens: BigInt
+  _isFiatConversion: Boolean
+  _refundable: Boolean
+  _version:Int
   _conversionId: BigInt
   _timeStamp: BigInt
+  _updatedTimeStamp: BigInt
 }
 
 

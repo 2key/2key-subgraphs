@@ -184,7 +184,7 @@ type Conversion @entity {
     _campaign: Campaign!
     _participate: User! # address
     _fiatAmountSpent: BigInt
-    _ethAmountSpent: BigInt!
+    _ethAmountSpent: BigInt
     _tokens: BigInt
     _isFiatConversion: Boolean
     _refundable: Boolean
