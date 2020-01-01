@@ -67,7 +67,7 @@ function createConversion(event: ConversionCreatedEvent): void {
     conversion = new Conversion(campaign.id + '-' + event.params.conversionID.toString());
     conversion._campaign = campaign.id;
     conversion._timeStamp = event.block.timestamp;
-    conversion._converter = converter.id;
+    conversion._participate = converter.id;
     conversion._status = 'PENDING';
     conversion._conversionId = event.params.conversionID;
     conversion.save();
@@ -87,6 +87,7 @@ function createCampaign(eventAddress:Address, campaignAddress: Address, timeStam
     campaign._timeStamp = timeStamp;
     campaign._n_visits = 0;
     campaign._n_joins = 0;
+    campaign._n_conversions = 0;
     campaign._subgraphType = 'PLASMA';
     campaign._updatedTimeStamp = timeStamp;
     campaign._version = 12;
@@ -116,8 +117,13 @@ export function handleConversionCreated(event: ConversionCreatedEvent): void {
   metadata._n_conversions += 1;
   metadata.save();
 
+  let campaignAddress = event.params.campaignAddressPlasma;
+  createCampaign(event.address, campaignAddress, event.block.timestamp);
 
-  // let campaign = Campaign.load(event.params.campaignAddressPlasma.toHex());
+  let campaign = Campaign.load(campaignAddress.toHex());
+  
+  campaign._n_conversions += 1;
+  campaign.save();
   // let conversionId = event.params.conversionID;
 
   createUser(event.params.converter, event.block.timestamp);
