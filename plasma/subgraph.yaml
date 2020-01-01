@@ -3,7 +3,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Contract
+    name: TwoKeyPlasmaEvents
     network: plasma
     source:
       address: "0xfbfdc84668c7094f2e6c957b9045f157b999a7a6"
@@ -14,6 +14,7 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Campaign
+        - Conversion
         - Join
         - JoinEvent
         - Meta
@@ -29,9 +30,45 @@ dataSources:
         - event: Visited(indexed address,indexed address,indexed address,address)
           handler: handleVisited
         - event: Plasma2Ethereum(address,address)
+          handler: handlePlasma2Ethereum # from around 20/12/2019 it's been called from PlasmaEventsSource
+        - event: Plasma2Handle(address,string)
+          handler: handleHandled # from around 20/12/2019 it's been called from PlasmaEventsSource
+        - event: Joined(address,address,address)
+          handler: handleJoined
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: TwoKeyPlasmaEventSource
+    network: plasma
+    source:
+      address: "0x82155db9c79250370ed11e9c1166473a6b2c2600"
+      abi: TwoKeyPlasmaEventSource
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Campaign
+        - Conversion
+        - Join
+        - JoinEvent
+        - Meta
+        - PlasmaToEthereumMappingEvent
+        - User
+        - Test
+        - Visit
+        - VisitEvent
+      abis:
+        - name: TwoKeyPlasmaEventSource
+          file: ./abis/TwoKeyPlasmaEventSource.json
+      eventHandlers:
+        - event: Plasma2Ethereum(address,address)
           handler: handlePlasma2Ethereum
         - event: Plasma2Handle(address,string)
           handler: handleHandled
-        - event: Joined(address,address,address)
-          handler: handleJoined
+        - event: CPCCampaignCreated(address,address)
+          handler: handleCPCCampaignCreated
+        - event: ConversionCreated(address,address,uint256,address,address)
+          handler: handleConversionCreated
+        - event: ConversionExecuted(address,uint256)
+          handler: handleConversionExecuted
       file: ./src/mapping.ts

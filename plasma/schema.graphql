@@ -1,16 +1,37 @@
+enum ConversionStatus{
+    PENDING
+    APPROVED
+    EXECUTED
+    REJECTED
+}
+
 enum GraphType{
   PLASMA
   PUBLIC
 }
 
+
+type Conversion @entity {
+  id: ID!  # Web3 Address
+  _campaign: Campaign
+  _converter: User
+  _status: ConversionStatus
+  _conversionId: BigInt
+  _timeStamp: BigInt
+}
+
+
 type Campaign @entity {
   id: ID!  # Web3 Address
   _subgraphType: GraphType!
   _version: Int
+  _contractor: User
+  _plasmaAddress: Bytes
   _n_visits: Int
   _n_joins: Int
   _timeStamp:BigInt!
   _updatedTimeStamp: BigInt!
+  _conversions: [Conversion!] @derivedFrom(field: "_campaign")
   _visitors: [Visit!] @derivedFrom(field: "_campaign")
   _joins: [Join!] @derivedFrom(field: "_campaign")
 }
@@ -35,12 +56,15 @@ type JoinEvent @entity {
 
 type Meta @entity {
   id: ID!
+  _conversionsExecuted: Int
   _version: Int
+  _contracts: [Bytes!]
   _subgraphType: GraphType!
   _visitCounter: Int
   _joinsCounter: Int
   _plasmaToHandleCounter: Int
   _plasmaToEthereumCounter: Int
+  _n_conversions: Int
   _n_campaigns: Int
   _timeStamp:BigInt!
   _updatedAt:BigInt!
