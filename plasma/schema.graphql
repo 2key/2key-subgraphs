@@ -38,7 +38,7 @@ enum CampaignType {
 
 
 type Conversion @entity {
-  id: ID!  # Web3 Address
+  id: ID!
   _campaignType: CampaignType
   _subgraphType: GraphType!
   _status: ConversionStatus
@@ -55,12 +55,35 @@ type Conversion @entity {
   _updatedTimeStamp: BigInt
 }
 
+type Price @entity{
+    id:ID!
+    _currency: CurrencyType
+    _rate: BigInt!
+    _updater: User!
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
+
+type UserReg @entity {
+    """The user's plasma address"""
+    id: ID!
+    _name: String
+    _fullName: String
+    _email: String
+    _walletName: String
+    _web3: Bytes
+    _address: Bytes
+    _version: Int
+    _timeStamp: BigInt!
+    _tx_hash: String
+    _updatedTimeStamp: BigInt
+}
 
 type Campaign @entity {
   id: ID!  # Web3 Address
   _subgraphType: GraphType!
   _version: Int
-  _contractor: User
+  _owner: User
   _plasmaAddress: Bytes
   _n_conversions: Int
   _n_visits: Int
@@ -71,7 +94,6 @@ type Campaign @entity {
   _visitors: [Visit!] @derivedFrom(field: "_campaign")
   _joins: [Join!] @derivedFrom(field: "_campaign")
 }
-
 
 type Join @entity {
   id: ID!
@@ -131,6 +153,7 @@ type User @entity {
   _timeStamp:BigInt!
   _updatedAt: BigInt!
 }
+
 
 
 type Visit @entity {

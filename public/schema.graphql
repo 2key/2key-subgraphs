@@ -37,6 +37,48 @@ enum CampaignType {
  }
 
 
+type Conversion @entity {
+    id: ID!
+    _campaignType: CampaignType
+    _subgraphType: GraphType!
+    _status: ConversionStatus
+    _campaign: Campaign!
+    _participate: User! # address
+    _fiatAmountSpent: BigInt
+    _ethAmountSpent: BigInt
+    _tokens: BigInt
+    _isFiatConversion: Boolean
+    _refundable: Boolean
+    _version:Int
+    _conversionId: BigInt
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
+
+type Price @entity{
+    id:ID!
+    _currency: CurrencyType
+    _rate: BigInt!
+    _updater: User!
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
+
+ type UserReg @entity {
+    """The user's plasma address"""
+    id: ID!
+    _name: String
+    _fullName: String
+    _email: String
+    _walletName: String
+    _web3: Bytes
+    _address: Bytes
+    _version: Int
+    _timeStamp: BigInt!
+    _tx_hash: String
+    _updatedTimeStamp: BigInt
+}
+ 
  enum EventType{
      Joined
      AcquisitionCampaignCreated
@@ -133,22 +175,6 @@ type Campaign @entity {
     _updatedTimeStamp: BigInt
 }
 
-
-type UserReg @entity {
-    """The user's plasma address"""
-    id: ID!
-    _name: String
-    _fullName: String
-    _email: String
-    _walletName: String
-    _web3: Bytes
-    _address: Bytes
-    _version: Int
-    _timeStamp: BigInt!
-    _tx_hash: String
-    _updatedTimeStamp: BigInt
-}
-
 type User @entity {
     """The user's plasma address"""
     id: ID!
@@ -175,25 +201,6 @@ type User @entity {
     _updatedTimeStamp: BigInt
 }
 
-type Conversion @entity {
-    """Campaign + conversionid"""
-    id: ID!
-    _campaignType: CampaignType
-    _subgraphType: GraphType!
-    _status: ConversionStatus
-    _campaign: Campaign!
-    _participate: User! # address
-    _fiatAmountSpent: BigInt
-    _ethAmountSpent: BigInt
-    _tokens: BigInt
-    _isFiatConversion: Boolean
-    _refundable: Boolean
-    _version:Int
-    _conversionId: BigInt
-    _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt
-}
-
 type Event @entity {
     id: ID!
     _address: Bytes!
@@ -201,15 +208,6 @@ type Event @entity {
     _tx_hash: String!
     _type: String!
     _notes: String
-}
-
-type Price @entity{
-    id:ID!
-    _currency: CurrencyType
-    _rate: BigInt!
-    _updater: User!
-    _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt
 }
 
 type Join @entity {

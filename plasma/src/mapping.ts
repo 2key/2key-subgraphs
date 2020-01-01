@@ -114,7 +114,7 @@ export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
 
   createUser(event.params.contractorPlasma, event.block.timestamp);
   let contractor = User.load(event.params.contractorPlasma.toHex());
-  campaign._contractor = contractor.id;
+  campaign._owner = contractor.id;
   campaign.save();
 }
 
