@@ -310,6 +310,10 @@ export function handleConversionExecuted(event: ConversionExecutedEvent): void {
   // metadata._updatedAt = event.block.timestamp;
   metadata.save();
 
+  let campaign = Campaign.load(event.params.campaignAddressPlasma.toHex());
+  campaign._n_conversions_executed += 1;
+  campaign.save();
+
   let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex() + '-' + event.params.conversionID.toString());
   conversion._status = 'EXECUTED';
   conversion.save();
