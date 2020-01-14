@@ -78,7 +78,7 @@ type Price @entity{
     _tx_hash: String
     _updatedTimeStamp: BigInt
 }
- 
+
  enum EventType{
      Joined
      AcquisitionCampaignCreated
@@ -87,6 +87,35 @@ type Price @entity{
      PriceUpdated
  }
 
+type Campaign @entity {
+    id: ID! # Web3 address.
+    _owner: User # address
+    _subgraphType: GraphType!
+    _n_conversions: Int
+    _n_conversions_executed: Int
+    _n_unique_converters: Int
+    _n_conversions_approved: Int
+    _n_conversions_rejected: Int
+    _converters_addresses: [String!]
+    _type: CampaignType
+    _pricePerUnit: BigInt
+    _conversionHandler: Bytes
+    _logicHandler: Bytes
+    _purchasesHandler: Bytes
+    _total_rewards: BigInt
+    _moderator: User # address
+    _n_joined: Int
+    _n_rewards: Int
+    _total_rewards_amount: BigInt
+    _total_conversions_amount: BigInt
+    _rejected_conversions: Int
+    _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
+    _joins: [Join!]! @derivedFrom(field: "_campaign")
+    _rewards: [Reward!]! @derivedFrom(field: "_campaign")
+    _version: Int
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
 
 type Meta @entity {
     """The Proxy address of the environment."""
@@ -142,38 +171,6 @@ type PriceUpdated @entity {
     _txHash: Bytes!
 }
 
-
-type Campaign @entity {
-    """The web3 address of campaign."""
-    id: ID! # Web3 address.
-    _owner: User # address
-    """Acquisition/Donation"""
-    _type: CampaignType
-    _subgraphType: GraphType!
-    _pricePerUnit: BigInt
-    _converters_addresses: [String!]
-    _conversionHandler: Bytes
-    _logicHandler: Bytes
-    _purchasesHandler: Bytes
-    _total_rewards: BigInt
-    _moderator: User # address
-    _n_joined: Int
-    _n_rewards: Int
-    _total_rewards_amount: BigInt
-    _n_conversions: Int
-    _total_conversions_amount: BigInt
-    _rejected_conversions: Int
-    _n_conversions_executed: Int
-    _n_unique_converters: Int
-    _n_conversions_approved: Int
-    _n_conversions_rejected: Int
-    _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
-    _joins: [Join!]! @derivedFrom(field: "_campaign")
-    _rewards: [Reward!]! @derivedFrom(field: "_campaign")
-    _version: Int
-    _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt
-}
 
 type User @entity {
     """The user's plasma address"""

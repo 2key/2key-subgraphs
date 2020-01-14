@@ -82,7 +82,6 @@ function createConversion(event: ConversionCreatedEvent): void {
   }
 }
 
-
 function createCampaign(eventAddress:Address, campaignAddress: Address, timeStamp: BigInt): void {
   let campaign = Campaign.load(campaignAddress.toHex());
   if (campaign == null){
@@ -93,6 +92,11 @@ function createCampaign(eventAddress:Address, campaignAddress: Address, timeStam
 
     campaign = new Campaign(campaignAddress.toHex());
     campaign._timeStamp = timeStamp;
+    campaign._n_conversions_executed = 0;
+    campaign._n_unique_converters = 0;
+    campaign._n_conversions_approved = 0;
+    campaign._n_conversions_rejected = 0;
+    campaign._converters_addresses = [];
     campaign._n_visits = 0;
     campaign._n_joins = 0;
     campaign._n_conversions = 0;
@@ -128,20 +132,31 @@ export function handleConversionCreated(event: ConversionCreatedEvent): void {
   let campaignAddress = event.params.campaignAddressPlasma;
   createCampaign(event.address, campaignAddress, event.block.timestamp);
 
-  let campaign = Campaign.load(campaignAddress.toHex());
-  
-  campaign._n_conversions += 1;
-  campaign.save();
   // let conversionId = event.params.conversionID;
 
   createUser(event.params.converter, event.block.timestamp);
 
   createConversion(event);
+
+
   //TODO: need to create it with parameters and not event (To Support other type of conversions in Future)
 
   let converter = User.load(event.params.converter.toHex());
   converter._n_conversions += 1;
   converter.save();
+
+  let campaign = Campaign.load(campaignAddress.toHex());
+
+  if (campaign._converters_addresses.indexOf(converter.id) == -1){
+    let convertersAddresses = campaign._converters_addresses;
+    convertersAddresses.push(converter.id);
+    campaign._converters_addresses = convertersAddresses;
+    campaign._n_unique_converters++;
+  }
+
+  campaign._n_conversions += 1;
+  campaign.save();
+
 }
 
 

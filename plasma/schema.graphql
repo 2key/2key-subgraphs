@@ -79,13 +79,26 @@ type UserReg @entity {
     _updatedTimeStamp: BigInt
 }
 
+enum EventType{
+    Joined
+    AcquisitionCampaignCreated
+    DonationCampaignCreated
+    UserRegistered
+    PriceUpdated
+}
+
 type Campaign @entity {
   id: ID!  # Web3 Address
-  _subgraphType: GraphType!
-  _version: Int
   _owner: User
-  _plasmaAddress: Bytes
+  _subgraphType: GraphType!
   _n_conversions: Int
+  _n_conversions_executed: Int
+  _n_unique_converters: Int
+  _n_conversions_approved: Int
+  _n_conversions_rejected: Int
+  _converters_addresses: [String!]
+  _version: Int
+  _plasmaAddress: Bytes
   _n_visits: Int
   _n_joins: Int
   _timeStamp:BigInt!
