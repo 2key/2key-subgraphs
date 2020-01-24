@@ -21,6 +21,8 @@ dataSources:
         - Debug
         - Campaign
         - Conversion
+        - Debt
+        - Fee
         - User
         - Created
         - Join
@@ -56,4 +58,6 @@ dataSources:
           handler: handlePriceUpdated
         - event : CPCCampaignCreated(address,address)
           handler: handleCPCCampaignCreated
+        - event : Debt(address,uint256,bool)
+          handler: handleDebt
       file: ./src/mapping.ts

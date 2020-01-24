@@ -121,6 +121,10 @@ type Meta @entity {
     """The Proxy address of the environment."""
     id: ID!
     _subgraphType: GraphType!
+    _totalDebtAdded: BigInt
+    _totalDebtRemoved: BigInt
+    _n_debtAdded: Int
+    _n_debtRemoved: Int
     _userRegisteredCounter: Int!
     _convertedAcquisitionCounter: Int!
     _convertedDonationCounter: Int!
@@ -176,6 +180,10 @@ type User @entity {
     """The user's plasma address"""
     id: ID!
     _subgraphType: GraphType!
+    _totalDebtAdded: BigInt
+    _totalDebtRemoved: BigInt
+    _n_debtAdded: Int
+    _n_debtRemoved: Int
     _name: String
     _fullName: String
     _email: String
@@ -184,6 +192,7 @@ type User @entity {
     _campaign_owner: [Campaign!]! @derivedFrom(field: "_owner")
     _campaign_moderator: [Campaign!]! @derivedFrom(field: "_moderator")
     _conversions: [Conversion!]! @derivedFrom(field: "_participate")
+    _fees: [Fee!]! @derivedFrom(field: "_user")
     _rewards: [Reward!]! @derivedFrom(field: "_user")
     _total_rewards_amount: BigInt
     _n_rewards: Int
@@ -253,4 +262,12 @@ type Debug @entity {
     _join: Join
     _price: Price
     _reason: String!
+}
+
+
+type Fee @entity{
+    id: ID!
+    _user: User!
+    _addition: Boolean!
+    _weiAmount: BigInt!
 }

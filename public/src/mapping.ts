@@ -13,7 +13,8 @@ import {
   Rejected as RejectedEvent,
   Executed as ExecutedEvent,
   PriceUpdated as PriceUpdatedEvent,
-  CPCCampaignCreated as CPCCampaignCreatedEvent
+  CPCCampaignCreated as CPCCampaignCreatedEvent,
+  Debt as DebtEvent
 } from "../generated/Contract/TwoKeyEventSource"
 
 
@@ -22,6 +23,7 @@ import {
     Variable,
     Campaign,
     Conversion,
+    Fee,
     User,
     Join,
     Reward,
@@ -40,6 +42,10 @@ function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
     metadata = new Meta(eventAddress.toHex());
     metadata._convertedAcquisitionCounter = 0;
     metadata._convertedDonationCounter = 0;
+    metadata._totalDebtAdded = BigInt.fromI32(0);
+    metadata._totalDebtRemoved = BigInt.fromI32(0);
+    metadata._n_debtAdded = 0;
+    metadata._n_debtRemoved = 0;
     metadata._donationCampaignCreatedCounter = 0;
     metadata._acquisitionCampaignCreatedCounter = 0;
     metadata._subgraphType = 'PUBLIC';
@@ -130,6 +136,10 @@ function createUserObject(eventAddress: Address, userAddress: Address, timeStamp
   if (user == null){
     user = new User(userAddress.toHex());
     user._timeStamp = timeStamp;
+    user._totalDebtAdded = BigInt.fromI32(0);
+    user._totalDebtRemoved = BigInt.fromI32(0);
+    user._n_debtAdded = 0;
+    user._n_debtRemoved = 0;
     user._subgraphType = 'PUBLIC';
     user._updatedTimeStamp = timeStamp;
     user._version = 0;
@@ -282,13 +292,16 @@ export function handleExecuted(event: ExecutedEvent): void {
     }
 
     let conversionEthWei = conversion._ethAmountSpent;
-    campaign._total_conversions_amount = campaign._total_conversions_amount.plus(conversionEthWei);
+    let campaignTotalConversionAmount = campaign._total_conversions_amount;
+    campaign._total_conversions_amount = campaignTotalConversionAmount.plus(conversionEthWei as BigInt);
     campaign.save();
 
-    user._total_conversions_amount = user._total_conversions_amount.plus(conversionEthWei);
+    let userTotalConversionAmount = user._total_conversions_amount;
+    user._total_conversions_amount = userTotalConversionAmount.plus(conversionEthWei as BigInt);
     user.save();
 
-    metadata._total_conversions_amount.plus(conversionEthWei);
+    let metaTotalConversionAmount = metadata._total_conversions_amount;
+    metadata._total_conversions_amount = metaTotalConversionAmount.plus(conversionEthWei as BigInt);
     metadata.save();
   }
   else{
@@ -558,14 +571,17 @@ export function handleRewarded(event: RewardedEvent): void {
   let user = User.load(event.params._to.toHex());
 
   campaign._n_rewards++;
-  campaign._total_rewards_amount = campaign._total_rewards_amount.plus(rewardAmount);
+  let campaignTotalRewarsAmount = campaign._total_rewards_amount;
+  campaign._total_rewards_amount = campaignTotalRewarsAmount.plus(rewardAmount);
   campaign.save();
 
   user._n_rewards++;
-  user._total_rewards_amount = user._total_rewards_amount.plus(rewardAmount);
+  let userTotalRewarsAmount = user._total_rewards_amount;
+  user._total_rewards_amount = userTotalRewarsAmount.plus(rewardAmount);
   user.save();
 
-  metadata._total_rewards_amount.plus(rewardAmount);
+  let metaTotalRewardsAmount = metadata._total_rewards_amount
+  metadata._total_rewards_amount = metaTotalRewardsAmount.plus(rewardAmount);
   metadata.save();
 
   newReward._campaign = campaign.id;
@@ -575,6 +591,45 @@ export function handleRewarded(event: RewardedEvent): void {
   newReward._updatedTimeStamp = event.block.timestamp;
   newReward.save();
 }
+
+
+export function handleDebt(event: DebtEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+  createUserObject(event.address, event.params.plasmaAddress, event.block.timestamp);
+
+  let fee = new Fee(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  fee._addition = event.params.addition;
+  fee._weiAmount = event.params.weiAmount;
+
+  let user = User.load(event.params.plasmaAddress.toHex());
+  fee._user = user.id;
+  fee.save();
+
+  let metadata = Meta.load(event.address.toHex());
+
+
+  if (fee._addition){
+    let userDebtAdded = user._totalDebtAdded;
+    user._totalDebtAdded = userDebtAdded.plus(event.params.weiAmount);
+    user._n_debtAdded += 1;
+
+    let metadataDebtAdded = metadata._totalDebtAdded;
+    metadata._totalDebtAdded = metadataDebtAdded.plus(event.params.weiAmount);
+    metadata._n_debtAdded += 1;
+  }
+  else{
+    let userDebtRemoved = user._totalDebtRemoved;
+    user._totalDebtRemoved = userDebtRemoved.plus(event.params.weiAmount);
+    user._n_debtRemoved += 1;
+    let metadataDebtRemoved = metadata._totalDebtRemoved;
+    metadata._totalDebtRemoved = metadataDebtRemoved.plus(event.params.weiAmount);
+    metadata._n_debtRemoved += 1;
+  }
+
+  user.save();
+  metadata.save();
+}
+
 
 // log.debug(
 //     'Block number: {}, block hash: {}, transaction hash: {}',

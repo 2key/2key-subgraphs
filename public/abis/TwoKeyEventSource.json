@@ -492,6 +492,28 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "plasmaAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "weiAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "addition",
+        "type": "bool"
+      }
+    ],
+    "name": "Debt",
+    "type": "event"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -849,9 +871,35 @@
       {
         "name": "_username_walletName",
         "type": "string"
+      },
+      {
+        "name": "_registrationFee",
+        "type": "uint256"
       }
     ],
     "name": "userRegistered",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_plasmaAddress",
+        "type": "address"
+      },
+      {
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "name": "_isAddition",
+        "type": "bool"
+      }
+    ],
+    "name": "emitDebtEvent",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
