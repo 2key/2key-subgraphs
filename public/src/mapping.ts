@@ -580,7 +580,7 @@ export function handleRewarded(event: RewardedEvent): void {
   user._total_rewards_amount = userTotalRewarsAmount.plus(rewardAmount);
   user.save();
 
-  let metaTotalRewardsAmount = metadata._total_rewards_amount
+  let metaTotalRewardsAmount = metadata._total_rewards_amount;
   metadata._total_rewards_amount = metaTotalRewardsAmount.plus(rewardAmount);
   metadata.save();
 
