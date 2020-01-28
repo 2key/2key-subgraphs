@@ -514,6 +514,40 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReceivedTokensAsModerator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReceivedTokensDeepFreezeTokenPool",
+    "type": "event"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -900,6 +934,42 @@
       }
     ],
     "name": "emitDebtEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "_amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "emitReceivedTokensAsModerator",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "_amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "emitReceivedTokensToDeepFreezeTokenPool",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

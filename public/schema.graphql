@@ -50,9 +50,16 @@ type Conversion @entity {
     _isFiatConversion: Boolean
     _refundable: Boolean
     _version:Int
+    _execution_tx_hash: Bytes
     _conversionId: BigInt
     _timeStamp: BigInt!
     _updatedTimeStamp: BigInt
+}
+
+
+type ConversionByTxHash @entity {
+    id: ID!
+    _conversion: Conversion
 }
 
 type Price @entity{
@@ -112,19 +119,23 @@ type Campaign @entity {
     _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
     _joins: [Join!]! @derivedFrom(field: "_campaign")
     _rewards: [Reward!]! @derivedFrom(field: "_campaign")
+    _fee: [Fee!]! @derivedFrom(field: "_campaign")
     _version: Int
     _timeStamp: BigInt!
     _updatedTimeStamp: BigInt
 }
 
 type Meta @entity {
-    """The Proxy address of the environment."""
     id: ID!
     _subgraphType: GraphType!
     _totalDebtAdded: BigInt
     _totalDebtRemoved: BigInt
     _n_debtAdded: Int
     _n_debtRemoved: Int
+    _n_moderatorFee: Int
+    _n_tokenPoolFee: Int
+    _totalTokenPoolFee: BigInt
+    _totalModeratorFee: BigInt
     _userRegisteredCounter: Int!
     _convertedAcquisitionCounter: Int!
     _convertedDonationCounter: Int!
@@ -267,7 +278,11 @@ type Debug @entity {
 
 type Fee @entity{
     id: ID!
-    _user: User!
+    _user: User
     _addition: Boolean!
-    _weiAmount: BigInt!
+    _weiAmount: BigInt
+    _tokens: BigInt
+    _campaign: Campaign
+    _conversion: Conversion
+    _type: String # [Debt, TokenPool, Moderator]
 }

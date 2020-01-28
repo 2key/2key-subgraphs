@@ -14,7 +14,10 @@ import {
   Executed as ExecutedEvent,
   PriceUpdated as PriceUpdatedEvent,
   CPCCampaignCreated as CPCCampaignCreatedEvent,
-  Debt as DebtEvent
+  Debt as DebtEvent,
+  ReceivedTokensDeepFreezeTokenPool as TokenPoolFeeEvent,
+  ReceivedTokensAsModerator as ModeratorFeeEvent
+
 } from "../generated/Contract/TwoKeyEventSource"
 
 
@@ -23,6 +26,7 @@ import {
     Variable,
     Campaign,
     Conversion,
+    ConversionByTxHash,
     Fee,
     User,
     Join,
@@ -61,6 +65,10 @@ function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
     metadata._executedCounter = 0;
     metadata._version = 2;
     metadata._userRegisteredCounter = 0;
+    metadata._n_moderatorFee = 0;
+    metadata._n_tokenPoolFee = 0;
+    metadata._totalTokenPoolFee = BigInt.fromI32(0);
+    metadata._totalModeratorFee = BigInt.fromI32(0);
     metadata._timeStamp = timeStamp;
     metadata._updatedTimeStamp = timeStamp;
     metadata.save();
@@ -274,45 +282,51 @@ export function handleExecuted(event: ExecutedEvent): void {
   let user = User.load(event.params.converterPlasmaAddress.toHex());
   user._n_conversions_executed++;
 
-
-
   let conversion = Conversion.load(campaign.id +'-'+event.params.conversionId.toString());
-  if (conversion != null){
-    conversion._status = 'EXECUTED';
-    conversion._tokens = event.params.tokens;
-    conversion._version = 2;
-    conversion._refundable = false;
-    conversion.save();
-
-    if (campaign._converters_addresses.indexOf(user.id) == -1){
-      let convertersAddresses = campaign._converters_addresses;
-      convertersAddresses.push(user.id);
-      campaign._converters_addresses = convertersAddresses;
-      campaign._n_unique_converters++;
-    }
-
-    let conversionEthWei = conversion._ethAmountSpent;
-    let campaignTotalConversionAmount = campaign._total_conversions_amount;
-    campaign._total_conversions_amount = campaignTotalConversionAmount.plus(conversionEthWei as BigInt);
-    campaign.save();
-
-    let userTotalConversionAmount = user._total_conversions_amount;
-    user._total_conversions_amount = userTotalConversionAmount.plus(conversionEthWei as BigInt);
-    user.save();
-
-    let metaTotalConversionAmount = metadata._total_conversions_amount;
-    metadata._total_conversions_amount = metaTotalConversionAmount.plus(conversionEthWei as BigInt);
-    metadata.save();
-  }
-  else{
+  if (conversion == null){
     log.debug(
         'converter null in executedEvent',
         [
 
         ]
     );
+    return;
   }
+
+  conversion._status = 'EXECUTED';
+  conversion._tokens = event.params.tokens;
+  conversion._version = 2;
+  conversion._refundable = false;
+  conversion._execution_tx_hash = event.transaction.hash;
+  conversion.save();
+
+
+  let conversionByTxHash = new ConversionByTxHash(event.transaction.hash.toHex());
+  conversionByTxHash._conversion = conversion.id;
+  conversionByTxHash.save();
+
+
+  if (campaign._converters_addresses.indexOf(user.id) == -1){
+    let convertersAddresses = campaign._converters_addresses;
+    convertersAddresses.push(user.id);
+    campaign._converters_addresses = convertersAddresses;
+    campaign._n_unique_converters++;
+  }
+
+  let conversionEthWei = conversion._ethAmountSpent;
+  let campaignTotalConversionAmount = campaign._total_conversions_amount;
+  campaign._total_conversions_amount = campaignTotalConversionAmount.plus(conversionEthWei as BigInt);
+  campaign.save();
+
+  let userTotalConversionAmount = user._total_conversions_amount;
+  user._total_conversions_amount = userTotalConversionAmount.plus(conversionEthWei as BigInt);
+  user.save();
+
+  let metaTotalConversionAmount = metadata._total_conversions_amount;
+  metadata._total_conversions_amount = metaTotalConversionAmount.plus(conversionEthWei as BigInt);
+  metadata.save();
 }
+
 
 export function handleUserRegistered(event: UserRegisteredEvent): void{
   createEventObject(event, 'UserRegistered','');
@@ -364,7 +378,6 @@ export function handleConvertedAcquisition(event: ConvertedAcquisitionEvent): vo
 
   createConversionObject(conversionId, converterPlasmaAddress, event.params._campaign, event.block.timestamp);
   let acquisitionConversion = Conversion.load(campaign.id + '-' + conversionId.toString());
-
 
   createUserObject(event.address, converterPlasmaAddress, event.block.timestamp);
   let converter = User.load(converterPlasmaAddress.toHex());
@@ -600,6 +613,7 @@ export function handleDebt(event: DebtEvent): void {
   let fee = new Fee(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   fee._addition = event.params.addition;
   fee._weiAmount = event.params.weiAmount;
+  fee._type = 'Debt';
 
   let user = User.load(event.params.plasmaAddress.toHex());
   fee._user = user.id;
@@ -627,6 +641,74 @@ export function handleDebt(event: DebtEvent): void {
   }
 
   user.save();
+  metadata.save();
+}
+
+
+export function handleModeratorFee(event: ModeratorFeeEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+
+  let fee = new Fee(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  fee._addition = true;
+  fee._weiAmount = BigInt.fromI32(0);
+  fee._type = 'Moderator';
+  fee._tokens = event.params.amountOfTokens;
+
+  let conversionByTxHash = ConversionByTxHash.load(event.transaction.hash.toHex());
+  if (conversionByTxHash == null){
+    return;
+  }
+
+  let conversion = Conversion.load(conversionByTxHash._conversion);
+
+  fee._conversion = conversion.id;
+
+  let campaign = Campaign.load(conversion._campaign);
+
+  fee._campaign = campaign.id;
+  fee.save();
+
+  let metadata = Meta.load(event.address.toHex());
+
+  metadata._n_moderatorFee += 1;
+
+  let totalModeratorFee = metadata._totalModeratorFee;
+  metadata._totalModeratorFee = totalModeratorFee.plus(fee._tokens as BigInt);
+
+  metadata.save();
+}
+
+
+export function handlerTokenPoolFee(event: TokenPoolFeeEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+
+  let fee = new Fee(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  fee._addition = true;
+  fee._weiAmount = BigInt.fromI32(0);
+  fee._type = 'TokenPool';
+  fee._tokens = event.params.amountOfTokens;
+
+  let conversionByTxHash = ConversionByTxHash.load(event.transaction.hash.toHex());
+  if (conversionByTxHash == null){
+    return;
+  }
+
+  let conversion = Conversion.load(conversionByTxHash._conversion);
+
+  fee._conversion = conversion.id;
+
+  let campaign = Campaign.load(conversion._campaign);
+
+  fee._campaign = campaign.id;
+  fee.save();
+
+  let metadata = Meta.load(event.address.toHex());
+
+  metadata._n_tokenPoolFee += 1;
+
+  let _totalTokenPoolFee = metadata._totalTokenPoolFee;
+  metadata._totalTokenPoolFee = _totalTokenPoolFee.plus(fee._tokens as BigInt);
+
   metadata.save();
 }
 

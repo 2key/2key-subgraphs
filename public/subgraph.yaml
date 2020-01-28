@@ -60,4 +60,8 @@ dataSources:
           handler: handleCPCCampaignCreated
         - event : Debt(address,uint256,bool)
           handler: handleDebt
+        - event : ReceivedTokensAsModerator(address,uint256)
+          handler: handleModeratorFee
+        - event : ReceivedTokensDeepFreezeTokenPool(address,uint256)
+          handler: handlerTokenPoolFee
       file: ./src/mapping.ts
