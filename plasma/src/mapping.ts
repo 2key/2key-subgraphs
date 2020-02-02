@@ -93,7 +93,7 @@ export function handleJoined(event: JoinedEvent): void {
   let referrer = User.load(event.params.fromPlasma.toHex());
 
   // log.info('info - Handle {} 2))))))))',['string arg']);
-  createUser(event.params.fromPlasma, event.block.timestamp);
+  createUser(event.params.toPlasma, event.block.timestamp);
   let visitor = User.load(event.params.toPlasma.toHex());
 
   createCampaignObject(event.address, event.params.campaignAddress, event.block.timestamp);
