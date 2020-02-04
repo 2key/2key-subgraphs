@@ -58,7 +58,7 @@ dataSources:
           handler: handlePriceUpdated
         - event : CPCCampaignCreated(address,address)
           handler: handleCPCCampaignCreated
-        - event : Debt(address,uint256,bool)
+        - event : Debt(address,uint256,bool,string)
           handler: handleDebt
         - event : ReceivedTokensAsModerator(address,uint256)
           handler: handleModeratorFee

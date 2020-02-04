@@ -46,8 +46,12 @@ function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
     metadata = new Meta(eventAddress.toHex());
     metadata._convertedAcquisitionCounter = 0;
     metadata._convertedDonationCounter = 0;
-    metadata._totalDebtAdded = BigInt.fromI32(0);
-    metadata._totalDebtRemoved = BigInt.fromI32(0);
+    metadata._totalDebtAdded2key = BigInt.fromI32(0);
+    metadata._totalDebtRemoved2key = BigInt.fromI32(0);
+    metadata._totalDebtAddedDAI = BigInt.fromI32(0);
+    metadata._totalDebtRemovedDAI = BigInt.fromI32(0);
+    metadata._totalDebtAddedETHWEI = BigInt.fromI32(0);
+    metadata._totalDebtRemovedETHWEI = BigInt.fromI32(0);
     metadata._n_debtAdded = 0;
     metadata._n_debtRemoved = 0;
     metadata._donationCampaignCreatedCounter = 0;
@@ -144,8 +148,12 @@ function createUserObject(eventAddress: Address, userAddress: Address, timeStamp
   if (user == null){
     user = new User(userAddress.toHex());
     user._timeStamp = timeStamp;
-    user._totalDebtAdded = BigInt.fromI32(0);
-    user._totalDebtRemoved = BigInt.fromI32(0);
+    user._totalDebtAdded2key = BigInt.fromI32(0);
+    user._totalDebtRemoved2key = BigInt.fromI32(0);
+    user._totalDebtAddedDAI = BigInt.fromI32(0);
+    user._totalDebtRemovedDAI = BigInt.fromI32(0);
+    user._totalDebtAddedETHWEI = BigInt.fromI32(0);
+    user._totalDebtRemovedETHWEI = BigInt.fromI32(0);
     user._n_debtAdded = 0;
     user._n_debtRemoved = 0;
     user._subgraphType = 'PUBLIC';
@@ -611,9 +619,11 @@ export function handleDebt(event: DebtEvent): void {
   createUserObject(event.address, event.params.plasmaAddress, event.block.timestamp);
 
   let fee = new Fee(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  fee._timeStamp = event.block.timestamp;
   fee._addition = event.params.addition;
   fee._weiAmount = event.params.weiAmount;
   fee._type = 'Debt';
+  fee._currency = event.params.currency;
 
   let user = User.load(event.params.plasmaAddress.toHex());
   fee._user = user.id;
@@ -621,23 +631,62 @@ export function handleDebt(event: DebtEvent): void {
 
   let metadata = Meta.load(event.address.toHex());
 
+  let currency = fee._currency.toString();
+  let ethCurrency = 'ETH'.toString();
+  let daiCurrency = 'DAI'.toString();
+  let twoKeyCurrency = '2KEY'.toString();
 
   if (fee._addition){
-    let userDebtAdded = user._totalDebtAdded;
-    user._totalDebtAdded = userDebtAdded.plus(event.params.weiAmount);
     user._n_debtAdded += 1;
-
-    let metadataDebtAdded = metadata._totalDebtAdded;
-    metadata._totalDebtAdded = metadataDebtAdded.plus(event.params.weiAmount);
     metadata._n_debtAdded += 1;
+
+    if (currency == ethCurrency) {
+        let userDebtAddedETHWEI = user._totalDebtAddedETHWEI;
+        user._totalDebtAddedETHWEI = userDebtAddedETHWEI.plus(event.params.weiAmount);
+
+        let metadataDebtAddedETHWEI = metadata._totalDebtAddedETHWEI;
+        metadata._totalDebtAddedETHWEI = metadataDebtAddedETHWEI.plus(event.params.weiAmount);
+      }
+    else if (currency == twoKeyCurrency) {
+      let userDebtAdded2key = user._totalDebtAdded2key;
+      user._totalDebtAdded2key = userDebtAdded2key.plus(event.params.weiAmount);
+
+      let metadataDebtAdded2key = metadata._totalDebtAdded2key;
+      metadata._totalDebtAdded2key = metadataDebtAdded2key.plus(event.params.weiAmount);
+    }
+    else if (currency == daiCurrency) {
+      let userDebtAddedDAI = user._totalDebtAddedDAI;
+      user._totalDebtAddedDAI = userDebtAddedDAI.plus(event.params.weiAmount);
+
+      let metadataDebtAddedDAI = metadata._totalDebtAddedDAI;
+      metadata._totalDebtAddedDAI = metadataDebtAddedDAI.plus(event.params.weiAmount);
+    }
   }
   else{
-    let userDebtRemoved = user._totalDebtRemoved;
-    user._totalDebtRemoved = userDebtRemoved.plus(event.params.weiAmount);
     user._n_debtRemoved += 1;
-    let metadataDebtRemoved = metadata._totalDebtRemoved;
-    metadata._totalDebtRemoved = metadataDebtRemoved.plus(event.params.weiAmount);
     metadata._n_debtRemoved += 1;
+
+    if (currency == ethCurrency) {
+      let userDebtRemovedETHWEI = user._totalDebtRemovedETHWEI;
+      user._totalDebtRemovedETHWEI = userDebtRemovedETHWEI.plus(event.params.weiAmount);
+
+      let metadataDebtRemovedETHWEI = metadata._totalDebtRemovedETHWEI;
+      metadata._totalDebtRemovedETHWEI = metadataDebtRemovedETHWEI.plus(event.params.weiAmount);
+    }
+    else if (currency == twoKeyCurrency) {
+      let userDebtRemoved2key = user._totalDebtRemoved2key;
+      user._totalDebtRemoved2key = userDebtRemoved2key.plus(event.params.weiAmount);
+
+      let metadataDebtRemoved2key = metadata._totalDebtRemoved2key;
+      metadata._totalDebtRemoved2key = metadataDebtRemoved2key.plus(event.params.weiAmount);
+    }
+    else if (currency == daiCurrency) {
+      let userDebtRemovedDAI = user._totalDebtRemovedDAI;
+      user._totalDebtRemovedDAI = userDebtRemovedDAI.plus(event.params.weiAmount);
+
+      let metadataDebtRemovedDAI = metadata._totalDebtRemovedDAI;
+      metadata._totalDebtRemovedDAI = metadataDebtRemovedDAI.plus(event.params.weiAmount);
+    }
   }
 
   user.save();
@@ -650,9 +699,10 @@ export function handleModeratorFee(event: ModeratorFeeEvent): void {
 
   let fee = new Fee(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   fee._addition = true;
-  fee._weiAmount = BigInt.fromI32(0);
+  fee._timeStamp = event.block.timestamp;
+  fee._weiAmount = event.params.amountOfTokens;
   fee._type = 'Moderator';
-  fee._tokens = event.params.amountOfTokens;
+  fee._currency = '2KEY';
 
   let conversionByTxHash = ConversionByTxHash.load(event.transaction.hash.toHex());
   if (conversionByTxHash == null){
@@ -684,9 +734,10 @@ export function handlerTokenPoolFee(event: TokenPoolFeeEvent): void {
 
   let fee = new Fee(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   fee._addition = true;
-  fee._weiAmount = BigInt.fromI32(0);
+  fee._timeStamp = event.block.timestamp;
+  fee._weiAmount = event.params.amountOfTokens;
   fee._type = 'TokenPool';
-  fee._tokens = event.params.amountOfTokens;
+  fee._currency = '2KEY';
 
   let conversionByTxHash = ConversionByTxHash.load(event.transaction.hash.toHex());
   if (conversionByTxHash == null){

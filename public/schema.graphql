@@ -128,8 +128,12 @@ type Campaign @entity {
 type Meta @entity {
     id: ID!
     _subgraphType: GraphType!
-    _totalDebtAdded: BigInt
-    _totalDebtRemoved: BigInt
+    _totalDebtAdded2key: BigInt
+    _totalDebtRemoved2key: BigInt
+    _totalDebtAddedDAI: BigInt
+    _totalDebtRemovedDAI: BigInt
+    _totalDebtAddedETHWEI: BigInt
+    _totalDebtRemovedETHWEI: BigInt
     _n_debtAdded: Int
     _n_debtRemoved: Int
     _n_moderatorFee: Int
@@ -191,8 +195,12 @@ type User @entity {
     """The user's plasma address"""
     id: ID!
     _subgraphType: GraphType!
-    _totalDebtAdded: BigInt
-    _totalDebtRemoved: BigInt
+    _totalDebtAdded2key: BigInt
+    _totalDebtRemoved2key: BigInt
+    _totalDebtAddedDAI: BigInt
+    _totalDebtRemovedDAI: BigInt
+    _totalDebtAddedETHWEI: BigInt
+    _totalDebtRemovedETHWEI: BigInt
     _n_debtAdded: Int
     _n_debtRemoved: Int
     _name: String
@@ -282,7 +290,9 @@ type Fee @entity{
     _addition: Boolean!
     _weiAmount: BigInt
     _tokens: BigInt
+    _currency: String!
     _campaign: Campaign
     _conversion: Conversion
     _type: String # [Debt, TokenPool, Moderator]
+    _timeStamp: BigInt!
 }

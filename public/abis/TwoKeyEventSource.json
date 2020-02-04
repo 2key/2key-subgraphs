@@ -508,6 +508,11 @@
         "indexed": false,
         "name": "addition",
         "type": "bool"
+      },
+      {
+        "indexed": false,
+        "name": "currency",
+        "type": "string"
       }
     ],
     "name": "Debt",
@@ -931,6 +936,10 @@
       {
         "name": "_isAddition",
         "type": "bool"
+      },
+      {
+        "name": "_currency",
+        "type": "string"
       }
     ],
     "name": "emitDebtEvent",
