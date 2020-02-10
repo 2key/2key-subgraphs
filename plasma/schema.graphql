@@ -163,6 +163,10 @@ type User @entity {
   _n_campaigns: Int!
   _n_conversions: Int!
   _n_joins: Int!
+  _visits_referrer: [Visit!] @derivedFrom(field: "_referrer")
+  _visits_visitor: [Visit!] @derivedFrom(field: "_visitor")
+  _joins_referrer: [Visit!] @derivedFrom(field: "_referrer")
+  _joins_visitor: [Visit!] @derivedFrom(field: "_visitor")
   _timeStamp:BigInt!
   _updatedAt: BigInt!
 }
@@ -174,7 +178,12 @@ type Visit @entity {
   _campaign: Campaign! # address
   _referrer: User! # address
   _visitor: User! # address
-  _timeStamp:BigInt!
+  _createdByJoin: Boolean!
+  _overridJoinCreationWithVisit: Boolean!
+  _overrideTxHash: Bytes!
+  _tx_hash: Bytes!
+  _timeStamp: BigInt!
+  _updatedAt: BigInt!
 }
 
 

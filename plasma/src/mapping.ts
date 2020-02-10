@@ -222,6 +222,21 @@ export function handleJoined(event: JoinedEvent): void {
     joinEvent._timeStamp = event.block.timestamp;
     joinEvent.save();
   }
+
+  let visit = Visit.load(event.params.fromPlasma.toHex()+'-'+event.params.toPlasma.toHex()+'-'+ event.params.campaignAddress.toHex());
+  if (visit == null){
+    visit = new Visit(event.params.fromPlasma.toHex()+'-'+event.params.toPlasma.toHex()+'-'+ event.params.campaignAddress.toHex());
+    visit._visitor = visitor.id;
+    visit._campaign = campaign.id;
+    visit._createdByJoin = true;
+    visit._overrideTxHash = event.transaction.hash;
+    visit._overridJoinCreationWithVisit = false;
+    visit._tx_hash = event.transaction.hash;
+    visit._referrer = referrer.id;
+    visit._timeStamp = event.block.timestamp;
+    visit._updatedAt = event.block.timestamp;
+    visit.save();
+  }
 }
 
 
@@ -260,10 +275,21 @@ export function handleVisited(event: VisitedEvent): void {
     visit = new Visit(event.params.from.toHex()+'-'+event.params.to.toHex()+'-'+ event.params.c.toHex());
     visit._visitor = visitor.id;
     visit._campaign = campaign.id;
+    visit._createdByJoin = false;
+    visit._overridJoinCreationWithVisit = false;
+    visit._overrideTxHash = event.transaction.hash;
+    visit._tx_hash = event.transaction.hash;
     visit._referrer = referrer.id;
     visit._timeStamp = event.block.timestamp;
-    visit.save();
+    visit._updatedAt = event.block.timestamp;
   }
+  else{
+    visit._overrideTxHash = event.transaction.hash;
+    visit._overridJoinCreationWithVisit = true;
+    visit._updatedAt = event.block.timestamp;
+  }
+
+  visit.save();
 
   let visitEvent = VisitEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   if(visitEvent == null){
