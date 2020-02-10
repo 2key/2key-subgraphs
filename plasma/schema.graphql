@@ -1,20 +1,112 @@
+enum CurrencyType {
+    ETH
+    BTC
+    TWOKEY
+    NIS
+    JPY
+    EUR
+    USD
+    ILS
+    DAI
+    TUSD
+    GBP
+    USDT
+}
+
 enum GraphType{
-  PLASMA
-  PUBLIC
+    PLASMA
+    PUBLIC
+}
+
+enum VariableName{
+    Meta
+    Block
+}
+
+enum ConversionStatus{
+    PENDING
+    APPROVED
+    EXECUTED
+    REJECTED
+}
+
+enum CampaignType {
+    Donation
+    Acquisition
+    Cpc
+ }
+
+
+type Conversion @entity {
+  id: ID!
+  _campaignType: CampaignType
+  _subgraphType: GraphType!
+  _status: ConversionStatus
+  _campaign: Campaign
+  _participate: User
+  _fiatAmountSpent: BigInt
+  _ethAmountSpent: BigInt
+  _tokens: BigInt
+  _isFiatConversion: Boolean
+  _refundable: Boolean
+  _version:Int
+  _conversionId: BigInt
+  _timeStamp: BigInt
+  _updatedTimeStamp: BigInt
+}
+
+type Price @entity{
+    id:ID!
+    _currency: CurrencyType
+    _rate: BigInt!
+    _updater: User!
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
+
+type UserReg @entity {
+    """The user's plasma address"""
+    id: ID!
+    _name: String
+    _fullName: String
+    _email: String
+    _walletName: String
+    _web3: Bytes
+    _address: Bytes
+    _version: Int
+    _timeStamp: BigInt!
+    _tx_hash: String
+    _updatedTimeStamp: BigInt
+}
+
+enum EventType{
+    Joined
+    AcquisitionCampaignCreated
+    DonationCampaignCreated
+    UserRegistered
+    PriceUpdated
 }
 
 type Campaign @entity {
   id: ID!  # Web3 Address
+  _owner: User
   _subgraphType: GraphType!
+  _n_conversions: Int
+  _n_conversions_executed: Int
+  _n_unique_converters: Int
+  _n_conversions_approved: Int
+  _n_conversions_rejected: Int
+  _converters_addresses: [String!]
   _version: Int
+  _plasmaAddress: Bytes
   _n_visits: Int
   _n_joins: Int
   _timeStamp:BigInt!
   _updatedTimeStamp: BigInt!
+  _conversions: [Conversion!] @derivedFrom(field: "_campaign")
   _visitors: [Visit!] @derivedFrom(field: "_campaign")
   _joins: [Join!] @derivedFrom(field: "_campaign")
 }
-
 
 type Join @entity {
   id: ID!
@@ -35,12 +127,15 @@ type JoinEvent @entity {
 
 type Meta @entity {
   id: ID!
+  _conversionsExecuted: Int
   _version: Int
+  _contracts: [Bytes!]
   _subgraphType: GraphType!
   _visitCounter: Int
   _joinsCounter: Int
   _plasmaToHandleCounter: Int
   _plasmaToEthereumCounter: Int
+  _n_conversions: Int
   _n_campaigns: Int
   _timeStamp:BigInt!
   _updatedAt:BigInt!
@@ -68,9 +163,14 @@ type User @entity {
   _n_campaigns: Int!
   _n_conversions: Int!
   _n_joins: Int!
+  _visits_referrer: [Visit!] @derivedFrom(field: "_referrer")
+  _visits_visitor: [Visit!] @derivedFrom(field: "_visitor")
+  _joins_referrer: [Visit!] @derivedFrom(field: "_referrer")
+  _joins_visitor: [Visit!] @derivedFrom(field: "_visitor")
   _timeStamp:BigInt!
   _updatedAt: BigInt!
 }
+
 
 
 type Visit @entity {
@@ -78,7 +178,12 @@ type Visit @entity {
   _campaign: Campaign! # address
   _referrer: User! # address
   _visitor: User! # address
-  _timeStamp:BigInt!
+  _createdByJoin: Boolean!
+  _overridJoinCreationWithVisit: Boolean!
+  _overrideTxHash: Bytes!
+  _tx_hash: Bytes!
+  _timeStamp: BigInt!
+  _updatedAt: BigInt!
 }
 
 
