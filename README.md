@@ -13,8 +13,7 @@ ___
 ## Installation
 #### Testnet subgraph:
 ###### Steps to run Testnet subgraph locally and deploy it to another hosted solution.
-1. `git clone https://github.com/2key/2key-subgraphs.git`
-1. `git checkout staging` - Later it will be for prod as well. 
+1. Clone the project.
 1. `yarn install`
 1. `yarn codegen`
 1. Create an account on [The Graph](https://thegraph.com/) your own subgraph.

@@ -33,8 +33,97 @@ enum ConversionStatus{
 enum CampaignType {
     Donation
     Acquisition
+    Cpc
  }
 
+
+type Conversion @entity {
+    id: ID!
+    _campaignType: CampaignType
+    _subgraphType: GraphType!
+    _status: ConversionStatus
+    _campaign: Campaign!
+    _participate: User! # address
+    _fiatAmountSpent: BigInt
+    _ethAmountSpent: BigInt
+    _tokens: BigInt
+    _isFiatConversion: Boolean
+    _refundable: Boolean
+    _version:Int
+    _execution_tx_hash: Bytes
+    _conversionId: BigInt
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
+
+
+type ConversionByTxHash @entity {
+    id: ID!
+    _conversion: Conversion
+}
+
+type Price @entity{
+    id:ID!
+    _currency: CurrencyType
+    _rate: BigInt!
+    _updater: User!
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
+
+ type UserReg @entity {
+    """The user's plasma address"""
+    id: ID!
+    _name: String
+    _fullName: String
+    _email: String
+    _walletName: String
+    _web3: Bytes
+    _address: Bytes
+    _version: Int
+    _timeStamp: BigInt!
+    _tx_hash: String
+    _updatedTimeStamp: BigInt
+}
+
+ enum EventType{
+     Joined
+     AcquisitionCampaignCreated
+     DonationCampaignCreated
+     UserRegistered
+     PriceUpdated
+ }
+
+type Campaign @entity {
+    id: ID! # Web3 address.
+    _owner: User # address
+    _subgraphType: GraphType!
+    _n_conversions: Int
+    _n_conversions_executed: Int
+    _n_unique_converters: Int
+    _n_conversions_approved: Int
+    _n_conversions_rejected: Int
+    _converters_addresses: [String!]
+    _type: CampaignType
+    _pricePerUnit: BigInt
+    _conversionHandler: Bytes
+    _logicHandler: Bytes
+    _purchasesHandler: Bytes
+    _total_rewards: BigInt
+    _moderator: User # address
+    _n_joined: Int
+    _n_rewards: Int
+    _total_rewards_amount: BigInt
+    _total_conversions_amount: BigInt
+    _rejected_conversions: Int
+    _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
+    _joins: [Join!]! @derivedFrom(field: "_campaign")
+    _rewards: [Reward!]! @derivedFrom(field: "_campaign")
+    _fee: [Fee!]! @derivedFrom(field: "_campaign")
+    _version: Int
+    _timeStamp: BigInt!
+    _updatedTimeStamp: BigInt
+}
 
  enum EventType{
      Joined
@@ -46,14 +135,26 @@ enum CampaignType {
 
 
 type Meta @entity {
-    """The Proxy address of the environment."""
     id: ID!
     _subgraphType: GraphType!
+    _totalDebtAdded2key: BigInt
+    _totalDebtRemoved2key: BigInt
+    _totalDebtAddedDAI: BigInt
+    _totalDebtRemovedDAI: BigInt
+    _totalDebtAddedETHWEI: BigInt
+    _totalDebtRemovedETHWEI: BigInt
+    _n_debtAdded: Int
+    _n_debtRemoved: Int
+    _n_moderatorFee: Int
+    _n_tokenPoolFee: Int
+    _totalTokenPoolFee: BigInt
+    _totalModeratorFee: BigInt
     _userRegisteredCounter: Int!
     _convertedAcquisitionCounter: Int!
     _convertedDonationCounter: Int!
     _total_rewards_amount: BigInt!
     _n_conversions: Int
+    _cpcCampaignCreatedCounter: Int
     _total_conversions_amount: BigInt!
     _createdCounter: Int!
     _joinedCounter: Int!
@@ -99,58 +200,18 @@ type PriceUpdated @entity {
 }
 
 
-type Campaign @entity {
-    """The web3 address of campaign."""
-    id: ID! # Web3 address.
-    _owner: User # address
-    """Acquisition/Donation"""
-    _type: CampaignType
-    _subgraphType: GraphType!
-    _pricePerUnit: BigInt
-    _converters_addresses: [String!]
-    _conversionHandler: Bytes
-    _logicHandler: Bytes
-    _purchasesHandler: Bytes
-    _total_rewards: BigInt
-    _moderator: User # address
-    _n_joined: Int
-    _n_rewards: Int
-    _total_rewards_amount: BigInt
-    _n_conversions: Int
-    _total_conversions_amount: BigInt
-    _rejected_conversions: Int
-    _n_conversions_executed: Int
-    _n_unique_converters: Int
-    _n_conversions_approved: Int
-    _n_conversions_rejected: Int
-    _conversions: [Conversion!]! @derivedFrom(field: "_campaign")
-    _joins: [Join!]! @derivedFrom(field: "_campaign")
-    _rewards: [Reward!]! @derivedFrom(field: "_campaign")
-    _version: Int
-    _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt
-}
-
-
-type UserReg @entity {
-    """The user's plasma address"""
-    id: ID!
-    _name: String
-    _fullName: String
-    _email: String
-    _walletName: String
-    _web3: Bytes
-    _address: Bytes
-    _version: Int
-    _timeStamp: BigInt!
-    _tx_hash: String
-    _updatedTimeStamp: BigInt
-}
-
 type User @entity {
     """The user's plasma address"""
     id: ID!
     _subgraphType: GraphType!
+    _totalDebtAdded2key: BigInt
+    _totalDebtRemoved2key: BigInt
+    _totalDebtAddedDAI: BigInt
+    _totalDebtRemovedDAI: BigInt
+    _totalDebtAddedETHWEI: BigInt
+    _totalDebtRemovedETHWEI: BigInt
+    _n_debtAdded: Int
+    _n_debtRemoved: Int
     _name: String
     _fullName: String
     _email: String
@@ -159,6 +220,7 @@ type User @entity {
     _campaign_owner: [Campaign!]! @derivedFrom(field: "_owner")
     _campaign_moderator: [Campaign!]! @derivedFrom(field: "_moderator")
     _conversions: [Conversion!]! @derivedFrom(field: "_participate")
+    _fees: [Fee!]! @derivedFrom(field: "_user")
     _rewards: [Reward!]! @derivedFrom(field: "_user")
     _total_rewards_amount: BigInt
     _n_rewards: Int
@@ -173,25 +235,6 @@ type User @entity {
     _updatedTimeStamp: BigInt
 }
 
-type Conversion @entity {
-    """Campaign + conversionid"""
-    id: ID!
-    _campaignType: CampaignType
-    _subgraphType: GraphType!
-    _status: ConversionStatus
-    _campaign: Campaign!
-    _participate: User! # address
-    _fiatAmountSpent: BigInt
-    _ethAmountSpent: BigInt!
-    _tokens: BigInt
-    _isFiatConversion: Boolean
-    _refundable: Boolean
-    _version:Int
-    _conversionId: BigInt
-    _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt
-}
-
 type Event @entity {
     id: ID!
     _address: Bytes!
@@ -199,15 +242,6 @@ type Event @entity {
     _tx_hash: String!
     _type: String!
     _notes: String
-}
-
-type Price @entity{
-    id:ID!
-    _currency: CurrencyType
-    _rate: BigInt!
-    _updater: User!
-    _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt
 }
 
 type Join @entity {
@@ -256,4 +290,18 @@ type Debug @entity {
     _join: Join
     _price: Price
     _reason: String!
+}
+
+
+type Fee @entity{
+    id: ID!
+    _user: User
+    _addition: Boolean!
+    _weiAmount: BigInt
+    _tokens: BigInt
+    _currency: String!
+    _campaign: Campaign
+    _conversion: Conversion
+    _type: String # [Debt, TokenPool, Moderator]
+    _timeStamp: BigInt!
 }

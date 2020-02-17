@@ -21,6 +21,8 @@ dataSources:
         - Debug
         - Campaign
         - Conversion
+        - Debt
+        - Fee
         - User
         - Created
         - Join
@@ -53,5 +55,13 @@ dataSources:
         - event: Executed(address,address,uint256,uint256)
           handler: handleExecuted
         - event : PriceUpdated(bytes32,uint256,uint256,address)
-          handler: handlerPriceUpdated
+          handler: handlePriceUpdated
+        - event : CPCCampaignCreated(address,address)
+          handler: handleCPCCampaignCreated
+        - event : Debt(address,uint256,bool,string)
+          handler: handleDebt
+        - event : ReceivedTokensAsModerator(address,uint256)
+          handler: handleModeratorFee
+        - event : ReceivedTokensDeepFreezeTokenPool(address,uint256)
+          handler: handlerTokenPoolFee
       file: ./src/mapping.ts

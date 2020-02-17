@@ -371,6 +371,23 @@
     "inputs": [
       {
         "indexed": false,
+        "name": "proxyCPCCampaign",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "contractor",
+        "type": "address"
+      }
+    ],
+    "name": "CPCCampaignCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "name": "_currency",
         "type": "bytes32"
       },
@@ -450,6 +467,89 @@
       }
     ],
     "name": "Executed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "conversionID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "tokensAmountWithdrawn",
+        "type": "uint256"
+      }
+    ],
+    "name": "TokenWithdrawnFromPurchasesHandler",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "plasmaAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "weiAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "addition",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "name": "currency",
+        "type": "string"
+      }
+    ],
+    "name": "Debt",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReceivedTokensAsModerator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReceivedTokensDeepFreezeTokenPool",
     "type": "event"
   },
   {
@@ -748,6 +848,24 @@
     "constant": false,
     "inputs": [
       {
+        "name": "proxyCPC",
+        "type": "address"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      }
+    ],
+    "name": "cpcCampaignCreated",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "name": "_currency",
         "type": "bytes32"
       },
@@ -792,9 +910,97 @@
       {
         "name": "_username_walletName",
         "type": "string"
+      },
+      {
+        "name": "_registrationFee",
+        "type": "uint256"
       }
     ],
     "name": "userRegistered",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_plasmaAddress",
+        "type": "address"
+      },
+      {
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "name": "_isAddition",
+        "type": "bool"
+      },
+      {
+        "name": "_currency",
+        "type": "string"
+      }
+    ],
+    "name": "emitDebtEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "_amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "emitReceivedTokensAsModerator",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "_amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "emitReceivedTokensToDeepFreezeTokenPool",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_campaignAddress",
+        "type": "address"
+      },
+      {
+        "name": "_conversionID",
+        "type": "uint256"
+      },
+      {
+        "name": "_tokensAmountWithdrawn",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokensWithdrawnFromPurchasesHandler",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
