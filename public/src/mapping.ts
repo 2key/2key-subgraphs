@@ -91,7 +91,7 @@ function createCampaignObject(campaignAddress: Address, timeStamp: BigInt): void
     campaign._timeStamp = timeStamp;
     campaign._subgraphType = 'PUBLIC';
     campaign._updatedTimeStamp = timeStamp;
-    campaign._version = 11;
+    campaign._version = 1;
     campaign._n_conversions_executed = 0;
     campaign._n_conversions = 0;
     campaign._n_conversions_rejected = 0;
@@ -762,7 +762,6 @@ export function handlerTokenPoolFee(event: TokenPoolFeeEvent): void {
 
   metadata.save();
 }
-
 
 // log.debug(
 //     'Block number: {}, block hash: {}, transaction hash: {}',
