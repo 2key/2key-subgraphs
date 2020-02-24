@@ -125,15 +125,6 @@ type Campaign @entity {
     _updatedTimeStamp: BigInt
 }
 
- enum EventType{
-     Joined
-     AcquisitionCampaignCreated
-     DonationCampaignCreated
-     UserRegistered
-     PriceUpdated
- }
-
-
 type Meta @entity {
     id: ID!
     _subgraphType: GraphType!
