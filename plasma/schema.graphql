@@ -55,6 +55,11 @@ type Conversion @entity {
   _updatedTimeStamp: BigInt
 }
 
+type Debug @entity {
+    id: ID!
+    _info: String!
+}
+
 type Price @entity{
     id:ID!
     _currency: CurrencyType
