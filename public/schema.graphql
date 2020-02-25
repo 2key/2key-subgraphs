@@ -274,13 +274,7 @@ type Web3ToUser @entity {
 
 type Debug @entity {
     id: ID!
-    _campaign: Campaign
-    _user: User
-    _conversion: Conversion
-    _reward: Reward
-    _join: Join
-    _price: Price
-    _reason: String!
+    _info: String!
 }
 
 
