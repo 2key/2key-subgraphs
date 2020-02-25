@@ -14,7 +14,8 @@ import {
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
 import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join} from "../generated/schema"
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, EthereumEvent } from '@graphprotocol/graph-ts'
+import {Debug} from "../../public/generated/schema";
 
 
 function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
@@ -107,6 +108,21 @@ function createCampaign(eventAddress:Address, campaignAddress: Address, timeStam
   }
 }
 
+function createDebugObject(event: EthereumEvent, info: string): void {
+  let debug = Debug.load(event.transaction.hash.toHex());
+
+  if (debug != null){
+    let temp = debug._info;
+    debug._info = temp + info;
+  }
+  else{
+    debug = new Debug(event.transaction.hash.toHex());
+    debug._info = info;
+  }
+
+  debug.save();
+}
+
 export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load('Meta');
@@ -178,15 +194,14 @@ export function handleHandled(event: Plasma2HandleEvent): void {
 }
 
 export function handleJoined(event: JoinedEvent): void {
-  createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load('Meta');
-  metadata._joinsCounter++;
-  metadata._updatedAt = event.block.timestamp;
-  metadata.save();
-
   //Add user by new visitor address
   // log.debug('Handle {} Visited))))))))',['string arg']);
   // log.info('info - Handle {} 1))))))))',['string arg']);
+
+  if (event.params.fromPlasma.toHex() == event.params.toPlasma.toHex()){
+    createDebugObject(event, `JoinedEvent: ${event.params.fromPlasma.toHex()} is on 2 vertex of that joined edge.`);
+    return;
+  }
 
   createUser(event.params.fromPlasma, event.block.timestamp);
 
@@ -213,15 +228,15 @@ export function handleJoined(event: JoinedEvent): void {
     join.save();
   }
 
-  let joinEvent = JoinEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
-  if(joinEvent == null){
-    joinEvent = new JoinEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
-    joinEvent._campaign = campaign.id;
-    joinEvent._referrer = referrer.id;
-    joinEvent._visitor = visitor.id;
-    joinEvent._timeStamp = event.block.timestamp;
-    joinEvent.save();
-  }
+  // let joinEvent = JoinEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  // if(joinEvent == null){
+  //   joinEvent = new JoinEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  //   joinEvent._campaign = campaign.id;
+  //   joinEvent._referrer = referrer.id;
+  //   joinEvent._visitor = visitor.id;
+  //   joinEvent._timeStamp = event.block.timestamp;
+  //   joinEvent.save();
+  // }
 
   let visit = Visit.load(event.params.fromPlasma.toHex()+'-'+event.params.toPlasma.toHex()+'-'+ event.params.campaignAddress.toHex());
   if (visit == null){
@@ -237,6 +252,12 @@ export function handleJoined(event: JoinedEvent): void {
     visit._updatedAt = event.block.timestamp;
     visit.save();
   }
+
+  createMetadata(event.address, event.block.timestamp);
+  let metadata = Meta.load('Meta');
+  metadata._joinsCounter++;
+  metadata._updatedAt = event.block.timestamp;
+  metadata.save();
 }
 
 
@@ -246,19 +267,13 @@ export function handleVisited(event: VisitedEvent): void {
   // event.params.contractor    - Contractor Web3 Address
   // event.params.from          - Previous plasma Address
 
-  createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load('Meta');
-  metadata._visitCounter++;
-  metadata._updatedAt = event.block.timestamp;
-  metadata.save();
-
-  //Add user by new visitor address
-  // log.debug('Handle {} Visited))))))))',['string arg']);
-  // log.info('info - Handle {} 1))))))))',['string arg']);
+  if (event.params.from.toHex() == event.params.to.toHex()){
+    createDebugObject(event, `VisitedEvent: ${event.params.from.toHex()} is on 2 vertex of that joined edge.`);
+    return;
+  }
 
   createUser(event.params.from, event.block.timestamp);
   let referrer = User.load(event.params.from.toHex());
-
 
   createUser(event.params.to, event.block.timestamp);
   let visitor = User.load(event.params.to.toHex());
@@ -291,15 +306,21 @@ export function handleVisited(event: VisitedEvent): void {
 
   visit.save();
 
-  let visitEvent = VisitEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
-  if(visitEvent == null){
-    visitEvent = new VisitEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
-    visitEvent._campaign = campaign.id;
-    visitEvent._referrer = referrer.id;
-    visitEvent._visitor = visitor.id;
-    visitEvent._timeStamp = event.block.timestamp;
-    visitEvent.save();
-  }
+  // let visitEvent = VisitEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  // if(visitEvent == null){
+  //   visitEvent = new VisitEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  //   visitEvent._campaign = campaign.id;
+  //   visitEvent._referrer = referrer.id;
+  //   visitEvent._visitor = visitor.id;
+  //   visitEvent._timeStamp = event.block.timestamp;
+  //   visitEvent.save();
+  // }
+
+  createMetadata(event.address, event.block.timestamp);
+  let metadata = Meta.load('Meta');
+  metadata._visitCounter++;
+  metadata._updatedAt = event.block.timestamp;
+  metadata.save();
 }
 
 export function handlePlasma2Ethereum(event: Plasma2EthereumEvent ): void {
