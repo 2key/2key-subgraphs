@@ -129,6 +129,21 @@ function createConversionObject(conversionId: BigInt, participant: Address,campa
   }
 }
 
+function createDebugObject(event: EthereumEvent, info: string): void {
+  let debug = Debug.load(event.transaction.hash.toHex());
+
+  if (debug != null){
+    let temp = debug._info;
+    debug._info = temp + info;
+  }
+  else{
+    debug = new Debug(event.transaction.hash.toHex());
+    debug._info = info;
+  }
+
+  debug.save();
+}
+
 
 function createEventObject(event: EthereumEvent, eventType: string, notes: string): void {
   let inputEvent = Event.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
@@ -244,11 +259,7 @@ export function handleRejected(event: RejectedEvent): void {
 
   let conversionsForCampaignBySpecificUser = ConCampUser.load(campaign.id+'-'+user.id);
   if(conversionsForCampaignBySpecificUser == null){
-    let deb = new Debug(event.block.number.toString()+'-'+event.transaction.hash.toHexString()+'conCampUser');
-    deb._reason = 'conCampUser not exist for this campaign and user';
-    deb._campaign = campaign.id;
-    deb._user = user.id;
-    deb.save();
+    createDebugObject(event, 'RejectedEvent - conCampUser not exist for this campaign and user')
   }
   else{
     let conversions = conversionsForCampaignBySpecificUser._conversions;
@@ -264,10 +275,7 @@ export function handleRejected(event: RejectedEvent): void {
         campaign._n_conversions_rejected++;
       }
       else{
-        let deb = new Debug(event.block.number.toString()+'-'+event.transaction.hash.toHexString()+'conversions');
-        deb._reason = 'conversion id '+conversionId+' for that campaign does not exist';
-        deb._campaign = campaign.id;
-        deb.save();
+        createDebugObject(event, 'RejectedEvent - conversion id '+conversionId+' for that campaign does not exist');
       }
     }
     campaign.save();
@@ -578,6 +586,11 @@ export function handleJoined(event: JoinedEvent): void {
 }
 
 export function handleRewarded(event: RewardedEvent): void {
+  if (event.params._to.toHex() == '0x0000000000000000000000000000000000000000'){
+    createDebugObject(event,'RewardedEvent - rewarded user: '+event.params._to.toHex());
+    return;
+  }
+
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
   metadata._rewardedCounter++;
