@@ -57,6 +57,7 @@ dataSources:
         - Test
         - Visit
         - VisitEvent
+        - ForwardedByCampaign
       abis:
         - name: TwoKeyPlasmaEventSource
           file: ./abis/TwoKeyPlasmaEventSource.json
