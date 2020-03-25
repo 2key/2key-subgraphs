@@ -13,7 +13,7 @@ import {
 
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
-import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join} from "../generated/schema"
+import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join, ForwardedByCampaign} from "../generated/schema"
 import { Address, BigInt, EthereumEvent } from '@graphprotocol/graph-ts'
 import {Debug} from "../../public/generated/schema";
 
@@ -28,6 +28,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._joinsCounter = 0;
     metadata._subgraphType = 'PLASMA';
     metadata._n_campaigns = 0;
+    metadata._n_forwarded = 0;
     metadata._version = 11;
     metadata._plasmaToHandleCounter = 0;
     metadata._n_conversions = 0;
@@ -96,6 +97,7 @@ function createCampaign(eventAddress:Address, campaignAddress: Address, timeStam
     campaign._n_conversions_executed = 0;
     campaign._n_unique_converters = 0;
     campaign._n_conversions_approved = 0;
+    campaign._n_forwarded = 0;
     campaign._n_conversions_rejected = 0;
     campaign._converters_addresses = [];
     campaign._n_visits = 0;
@@ -134,6 +136,7 @@ export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
 
   createUser(event.params.contractorPlasma, event.block.timestamp);
   let contractor = User.load(event.params.contractorPlasma.toHex());
+
   campaign._owner = contractor.id;
   campaign.save();
 }
@@ -228,15 +231,6 @@ export function handleJoined(event: JoinedEvent): void {
     join.save();
   }
 
-  // let joinEvent = JoinEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
-  // if(joinEvent == null){
-  //   joinEvent = new JoinEvent(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
-  //   joinEvent._campaign = campaign.id;
-  //   joinEvent._referrer = referrer.id;
-  //   joinEvent._visitor = visitor.id;
-  //   joinEvent._timeStamp = event.block.timestamp;
-  //   joinEvent.save();
-  // }
 
   let visit = Visit.load(event.params.fromPlasma.toHex()+'-'+event.params.toPlasma.toHex()+'-'+ event.params.campaignAddress.toHex());
   if (visit == null){
@@ -252,6 +246,16 @@ export function handleJoined(event: JoinedEvent): void {
     visit._updatedAt = event.block.timestamp;
     visit.save();
   }
+
+  let forwarded = ForwardedByCampaign.load(campaign.id + '-' + event.params.fromPlasma.toHex());
+  if (forwarded == null) {
+    forwarded = new ForwardedByCampaign(campaign.id + '-' + event.params.fromPlasma.toHex());
+    forwarded._exists = 1;
+    campaign._n_forwarded +=1;
+    campaign.save();
+  }
+
+  forwarded.save();
 
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load('Meta');
@@ -305,6 +309,16 @@ export function handleVisited(event: VisitedEvent): void {
   }
 
   visit.save();
+
+  let forwarded = ForwardedByCampaign.load(campaign.id + '-' + event.params.from.toHex());
+  if (forwarded == null) {
+    forwarded = new ForwardedByCampaign(campaign.id + '-' + event.params.from.toHex());
+    forwarded._exists = 1;
+    campaign._n_forwarded +=1;
+    campaign.save()
+  }
+
+  forwarded.save();
 
   // let visitEvent = VisitEvent.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
   // if(visitEvent == null){

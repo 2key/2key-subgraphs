@@ -3,7 +3,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Contract
+    name: TwoKeyPlasmaEvents
     network: plasma
     source:
       address: "0x039fbbb9cb6f898480cc292f04d546d4224145d9"
@@ -57,6 +57,7 @@ dataSources:
         - Test
         - Visit
         - VisitEvent
+        - ForwardedByCampaign
       abis:
         - name: TwoKeyPlasmaEventSource
           file: ./abis/TwoKeyPlasmaEventSource.json
