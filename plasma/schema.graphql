@@ -93,24 +93,25 @@ enum EventType{
 }
 
 type Campaign @entity {
-  id: ID!  # Web3 Address
-  _owner: User
-  _subgraphType: GraphType!
-  _n_conversions: Int
-  _n_conversions_executed: Int
-  _n_unique_converters: Int
-  _n_conversions_approved: Int
-  _n_conversions_rejected: Int
-  _converters_addresses: [String!]
-  _version: Int
-  _plasmaAddress: Bytes
-  _n_visits: Int
-  _n_joins: Int
-  _timeStamp:BigInt!
-  _updatedTimeStamp: BigInt!
-  _conversions: [Conversion!] @derivedFrom(field: "_campaign")
-  _visitors: [Visit!] @derivedFrom(field: "_campaign")
-  _joins: [Join!] @derivedFrom(field: "_campaign")
+    id: ID!  # Web3 Address
+    _owner: User
+    _subgraphType: GraphType!
+    _n_conversions: Int
+    _n_conversions_executed: Int
+    _n_unique_converters: Int
+    _n_conversions_approved: Int
+    _n_forwarded: Int
+    _n_conversions_rejected: Int
+    _converters_addresses: [String!]
+    _version: Int
+    _plasmaAddress: Bytes
+    _n_visits: Int
+    _n_joins: Int
+    _timeStamp:BigInt!
+    _updatedTimeStamp: BigInt!
+    _conversions: [Conversion!] @derivedFrom(field: "_campaign")
+    _visitors: [Visit!] @derivedFrom(field: "_campaign")
+    _joins: [Join!] @derivedFrom(field: "_campaign")
 }
 
 type Join @entity {
@@ -137,6 +138,7 @@ type Meta @entity {
   _contracts: [Bytes!]
   _subgraphType: GraphType!
   _visitCounter: Int
+  _n_forwarded: Int
   _joinsCounter: Int
   _plasmaToHandleCounter: Int
   _plasmaToEthereumCounter: Int
@@ -176,6 +178,10 @@ type User @entity {
   _updatedAt: BigInt!
 }
 
+type ForwardedByCampaign @entity {
+    id: ID!
+    _exists: Int!
+}
 
 
 type Visit @entity {
