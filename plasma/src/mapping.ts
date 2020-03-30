@@ -9,8 +9,8 @@ import {
   Plasma2Handle as Plasma2HandleEvent,
   CPCCampaignCreated as CPCCampaignCreatedEvent,
   ConversionCreated as ConversionCreatedEvent,
-  ConversionExecuted as ConversionExecutedEvent
-
+  ConversionExecuted as ConversionExecutedEvent,
+  ConversionRejected as ConversionRejectedEvent
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
 import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join, ForwardedByCampaign} from "../generated/schema"
@@ -29,6 +29,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._subgraphType = 'PLASMA';
     metadata._n_campaigns = 0;
     metadata._n_forwarded = 0;
+    metadata._n_conversions_rejected = 0;
     metadata._version = 11;
     metadata._plasmaToHandleCounter = 0;
     metadata._n_conversions = 0;
@@ -377,5 +378,24 @@ export function handleConversionExecuted(event: ConversionExecutedEvent): void {
 
   let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex() + '-' + event.params.conversionID.toString());
   conversion._status = 'EXECUTED';
+  conversion.save();
+}
+
+
+export function handleConversionRejected(event: ConversionRejectedEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+  let metadata = Meta.load('Meta');
+  metadata._n_conversions_rejected += 1;
+  // metadata._updatedAt = event.block.timestamp;
+  metadata.save();
+
+  let campaign = Campaign.load(event.params.campaignAddressPlasma.toHex());
+  campaign._n_conversions_rejected += 1;
+  campaign.save();
+
+  let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex() + '-' + event.params.conversionID.toString());
+  conversion._status = 'REJECTED';
+  conversion._rejected_status_code = event.params.statusCode.toI32();
+  conversion._rejected_at = event.block.timestamp;
   conversion.save();
 }

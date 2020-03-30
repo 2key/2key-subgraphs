@@ -72,4 +72,6 @@ dataSources:
           handler: handleConversionCreated
         - event: ConversionExecuted(address,uint256)
           handler: handleConversionExecuted
+        - event: ConversionRejected(address,uint256,uint256)
+          handler: handleConversionRejected
       file: ./src/mapping.ts
