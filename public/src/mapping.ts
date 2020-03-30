@@ -736,7 +736,7 @@ export function handleModeratorFee(event: ModeratorFeeEvent): void {
   metadata._n_moderatorFee += 1;
 
   let totalModeratorFee = metadata._totalModeratorFee;
-  metadata._totalModeratorFee = totalModeratorFee.plus(fee._tokens as BigInt);
+  metadata._totalModeratorFee = totalModeratorFee.plus(fee._weiAmount as BigInt);
 
   metadata.save();
 }
@@ -771,7 +771,7 @@ export function handlerTokenPoolFee(event: TokenPoolFeeEvent): void {
   metadata._n_tokenPoolFee += 1;
 
   let _totalTokenPoolFee = metadata._totalTokenPoolFee;
-  metadata._totalTokenPoolFee = _totalTokenPoolFee.plus(fee._tokens as BigInt);
+  metadata._totalTokenPoolFee = _totalTokenPoolFee.plus(fee._weiAmount as BigInt);
 
   metadata.save();
 }
