@@ -58,6 +58,8 @@ dataSources:
         - Visit
         - VisitEvent
         - ForwardedByCampaign
+        - CampaignPlasmaByWeb3
+        - CampaignWeb3ByPlasma
       abis:
         - name: TwoKeyPlasmaEventSource
           file: ./abis/TwoKeyPlasmaEventSource.json
@@ -74,4 +76,8 @@ dataSources:
           handler: handleConversionExecuted
         - event: ConversionRejected(address,uint256,uint256)
           handler: handleConversionRejected
+        - event: PlasmaMirrorCampaigns(address,address)
+          handler: handlePlasmaMirrorCampaigns
+        - event: HandleChanged(address,string)
+          handler: handleChangedHandle
       file: ./src/mapping.ts

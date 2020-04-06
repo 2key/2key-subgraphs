@@ -178,6 +178,40 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "proxyPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "proxyPublicAddress",
+        "type": "address"
+      }
+    ],
+    "name": "PlasmaMirrorCampaigns",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "userPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "newHandle",
+        "type": "string"
+      }
+    ],
+    "name": "HandleChanged",
+    "type": "event"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -275,6 +309,24 @@
     "constant": false,
     "inputs": [
       {
+        "name": "proxyAddressPlasma",
+        "type": "address"
+      },
+      {
+        "name": "proxyAddressPublic",
+        "type": "address"
+      }
+    ],
+    "name": "emitCPCCampaignMirrored",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "name": "_plasma",
         "type": "address"
       },
@@ -302,6 +354,24 @@
       }
     ],
     "name": "emitPlasma2HandleEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_userPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "name": "_newHandle",
+        "type": "string"
+      }
+    ],
+    "name": "emitHandleChangedEvent",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

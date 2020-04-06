@@ -145,6 +145,8 @@ type Meta @entity {
   _joinsCounter: Int
   _plasmaToHandleCounter: Int
   _plasmaToEthereumCounter: Int
+  _handleChanged: Int
+  _plasmaWeb3Mapping: Int
   _n_conversions: Int
   _n_campaigns: Int
   _timeStamp:BigInt!
@@ -207,6 +209,16 @@ type VisitEvent @entity {
   _referrer: User! # address
   _visitor: User! # address
   _timeStamp:BigInt!
+}
+
+type CampaignPlasmaByWeb3 @entity {
+  id: ID!
+  _address: Bytes!
+}
+
+type CampaignWeb3ByPlasma @entity {
+  id: ID!
+  _address: Bytes!
 }
 
 

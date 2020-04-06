@@ -10,10 +10,13 @@ import {
   CPCCampaignCreated as CPCCampaignCreatedEvent,
   ConversionCreated as ConversionCreatedEvent,
   ConversionExecuted as ConversionExecutedEvent,
-  ConversionRejected as ConversionRejectedEvent
+  ConversionRejected as ConversionRejectedEvent,
+  HandleChanged as HandleChangedEvent,
+  PlasmaMirrorCampaigns as PlasmaMirrorCampaignsEvent
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
-import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join, ForwardedByCampaign} from "../generated/schema"
+
+import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join, ForwardedByCampaign, CampaignPlasmaByWeb3, CampaignWeb3ByPlasma} from "../generated/schema"
 import { Address, BigInt, EthereumEvent } from '@graphprotocol/graph-ts'
 import {Debug} from "../../public/generated/schema";
 
@@ -32,6 +35,8 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._n_conversions_rejected = 0;
     metadata._version = 11;
     metadata._plasmaToHandleCounter = 0;
+    metadata._handleChanged = 0;
+    metadata._plasmaWeb3Mapping = 0;
     metadata._n_conversions = 0;
     metadata._plasmaToEthereumCounter = 0;
     metadata._timeStamp = timeStamp;
@@ -364,6 +369,47 @@ export function handlePlasma2Ethereum(event: Plasma2EthereumEvent ): void {
     mappingEvent.save();
   }
 }
+
+export function handlePlasmaMirrorCampaigns(event: PlasmaMirrorCampaignsEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+  let metadata = Meta.load('Meta');
+  metadata._plasmaWeb3Mapping = metadata._plasmaWeb3Mapping + 1;
+  metadata._updatedAt = event.block.timestamp;
+  metadata.save();
+
+  let campaignPlasmaAddress = event.params.proxyPlasmaAddress;
+  let campaignPublicAddress = event.params.proxyPublicAddress;
+
+  let campaignPlasmaByWeb3 = CampaignPlasmaByWeb3.load(campaignPublicAddress.toHex());
+  if (campaignPlasmaByWeb3 == null){
+    campaignPlasmaByWeb3 = new CampaignPlasmaByWeb3(campaignPublicAddress.toHex());
+    campaignPlasmaByWeb3._address = campaignPlasmaAddress;
+    campaignPlasmaByWeb3.save();
+  }
+
+  let campaignWeb3ByPlasma = CampaignWeb3ByPlasma.load(campaignPlasmaAddress.toHex());
+  if (campaignWeb3ByPlasma == null){
+    campaignWeb3ByPlasma = new CampaignWeb3ByPlasma(campaignPlasmaAddress.toHex());
+    campaignWeb3ByPlasma._address = campaignPublicAddress;
+    campaignWeb3ByPlasma.save();
+  }
+}
+
+export function handleChangedHandle(event: HandleChangedEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+  let metadata = Meta.load('Meta');
+  metadata._handleChanged = metadata._handleChanged + 1;
+  metadata._updatedAt = event.block.timestamp;
+  metadata.save();
+
+  // let user = User.load(event.params.plasma.toHex());
+  createUser(event.params.userPlasmaAddress, event.block.timestamp);
+
+  let user = User.load(event.params.userPlasmaAddress.toHex());
+  user._handle = event.params.newHandle;
+  user.save();
+}
+
 
 export function handleConversionExecuted(event: ConversionExecutedEvent): void {
   createMetadata(event.address, event.block.timestamp);
