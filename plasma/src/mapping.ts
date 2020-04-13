@@ -33,7 +33,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._n_campaigns = 0;
     metadata._n_forwarded = 0;
     metadata._n_conversions_rejected = 0;
-    metadata._version = 11;
+    metadata._version = 12;
     metadata._plasmaToHandleCounter = 0;
     metadata._handleChanged = 0;
     metadata._plasmaWeb3Mapping = 0;
@@ -237,6 +237,7 @@ export function handleJoined(event: JoinedEvent): void {
     join.save();
   }
 
+  let visitCreated = false;
 
   let visit = Visit.load(event.params.fromPlasma.toHex()+'-'+event.params.toPlasma.toHex()+'-'+ event.params.campaignAddress.toHex());
   if (visit == null){
@@ -251,6 +252,7 @@ export function handleJoined(event: JoinedEvent): void {
     visit._timeStamp = event.block.timestamp;
     visit._updatedAt = event.block.timestamp;
     visit.save();
+    visitCreated = true;
   }
 
   let forwarded = ForwardedByCampaign.load(campaign.id + '-' + event.params.fromPlasma.toHex());
@@ -266,6 +268,9 @@ export function handleJoined(event: JoinedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load('Meta');
   metadata._joinsCounter++;
+  if (visitCreated){
+    metadata._visitCounter++;
+  }
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
 }
