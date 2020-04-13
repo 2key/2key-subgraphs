@@ -231,6 +231,7 @@ export function handleJoined(event: JoinedEvent): void {
     join.save();
   }
 
+  let visitCreated = false;
 
   let visit = Visit.load(event.params.fromPlasma.toHex()+'-'+event.params.toPlasma.toHex()+'-'+ event.params.campaignAddress.toHex());
   if (visit == null){
@@ -245,6 +246,7 @@ export function handleJoined(event: JoinedEvent): void {
     visit._timeStamp = event.block.timestamp;
     visit._updatedAt = event.block.timestamp;
     visit.save();
+    visitCreated = true;
   }
 
   let forwarded = ForwardedByCampaign.load(campaign.id + '-' + event.params.fromPlasma.toHex());
@@ -260,6 +262,9 @@ export function handleJoined(event: JoinedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load('Meta');
   metadata._joinsCounter++;
+  if (visitCreated){
+    metadata._visitCounter++;
+  }
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
 }
