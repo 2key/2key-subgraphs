@@ -264,6 +264,8 @@ export function handleJoined(event: JoinedEvent): void {
   metadata._joinsCounter++;
   if (visitCreated){
     metadata._visitCounter++;
+    campaign._n_visits++;
+    campaign.save();
   }
   metadata._updatedAt = event.block.timestamp;
   metadata.save();
@@ -290,10 +292,6 @@ export function handleVisited(event: VisitedEvent): void {
   createCampaign(event.address, event.params.c, event.block.timestamp);
   let campaign = Campaign.load(event.params.c.toHex());
 
-  campaign._n_visits++;
-  campaign._updatedTimeStamp = event.block.timestamp;
-  campaign.save();
-
   let visit = Visit.load(event.params.from.toHex()+'-'+event.params.to.toHex()+'-'+ event.params.c.toHex());
   if (visit == null){
     visit = new Visit(event.params.from.toHex()+'-'+event.params.to.toHex()+'-'+ event.params.c.toHex());
@@ -306,6 +304,9 @@ export function handleVisited(event: VisitedEvent): void {
     visit._referrer = referrer.id;
     visit._timeStamp = event.block.timestamp;
     visit._updatedAt = event.block.timestamp;
+    campaign._n_visits++;
+    campaign._updatedTimeStamp = event.block.timestamp;
+    campaign.save();
   }
   else{
     visit._overrideTxHash = event.transaction.hash;
