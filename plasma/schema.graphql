@@ -47,6 +47,8 @@ type Conversion @entity {
   _fiatAmountSpent: BigInt
   _ethAmountSpent: BigInt
   _tokens: BigInt
+  _rejected_status_code: Int
+  _rejected_at: BigInt
   _isFiatConversion: Boolean
   _refundable: Boolean
   _version:Int
@@ -134,6 +136,7 @@ type JoinEvent @entity {
 type Meta @entity {
   id: ID!
   _conversionsExecuted: Int
+  _n_conversions_rejected: Int
   _version: Int
   _contracts: [Bytes!]
   _subgraphType: GraphType!
@@ -142,6 +145,8 @@ type Meta @entity {
   _joinsCounter: Int
   _plasmaToHandleCounter: Int
   _plasmaToEthereumCounter: Int
+  _handleChanged: Int
+  _plasmaWeb3Mapping: Int
   _n_conversions: Int
   _n_campaigns: Int
   _timeStamp:BigInt!
@@ -204,6 +209,16 @@ type VisitEvent @entity {
   _referrer: User! # address
   _visitor: User! # address
   _timeStamp:BigInt!
+}
+
+type CampaignPlasmaByWeb3 @entity {
+  id: ID!
+  _address: Bytes!
+}
+
+type CampaignWeb3ByPlasma @entity {
+  id: ID!
+  _address: Bytes!
 }
 
 
