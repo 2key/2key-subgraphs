@@ -1,270 +1,380 @@
 [
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "PROXY_STORAGE_CONTRACT",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "implementation",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "TWO_KEY_PLASMA_SINGLETON_REGISTRY",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "sender",
-          "type": "address"
-        }
-      ],
-      "name": "initialize",
-      "outputs": [],
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "plasma",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "eth",
-          "type": "address"
-        }
-      ],
-      "name": "Plasma2Ethereum",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "plasma",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "handle",
-          "type": "string"
-        }
-      ],
-      "name": "Plasma2Handle",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "campaignAddressPlasma",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "campaignAddressPublic",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "conversionID",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "name": "contractor",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "converter",
-          "type": "address"
-        }
-      ],
-      "name": "ConversionCreated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "campaignAddressPlasma",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "conversionID",
-          "type": "uint256"
-        }
-      ],
-      "name": "ConversionExecuted",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "proxyCPCCampaignPlasma",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "contractorPlasma",
-          "type": "address"
-        }
-      ],
-      "name": "CPCCampaignCreated",
-      "type": "event"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_twoKeyPlasmaSingletonRegistry",
-          "type": "address"
-        },
-        {
-          "name": "_proxyStorage",
-          "type": "address"
-        }
-      ],
-      "name": "setInitialParams",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "campaignAddressPublic",
-          "type": "address"
-        },
-        {
-          "name": "conversionID",
-          "type": "uint256"
-        },
-        {
-          "name": "contractor",
-          "type": "address"
-        },
-        {
-          "name": "converter",
-          "type": "address"
-        }
-      ],
-      "name": "emitConversionCreatedEvent",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "conversionID",
-          "type": "uint256"
-        }
-      ],
-      "name": "emitConversionExecutedEvent",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "proxyCPCCampaignPlasma",
-          "type": "address"
-        },
-        {
-          "name": "contractorPlasma",
-          "type": "address"
-        }
-      ],
-      "name": "emitCPCCampaignCreatedEvent",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_plasma",
-          "type": "address"
-        },
-        {
-          "name": "_ethereum",
-          "type": "address"
-        }
-      ],
-      "name": "emitPlasma2EthereumEvent",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_plasma",
-          "type": "address"
-        },
-        {
-          "name": "_handle",
-          "type": "string"
-        }
-      ],
-      "name": "emitPlasma2HandleEvent",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ]
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "PROXY_STORAGE_CONTRACT",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "implementation",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "TWO_KEY_PLASMA_SINGLETON_REGISTRY",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "plasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "eth",
+        "type": "address"
+      }
+    ],
+    "name": "Plasma2Ethereum",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "plasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "handle",
+        "type": "string"
+      }
+    ],
+    "name": "Plasma2Handle",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddressPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "campaignAddressPublic",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "conversionID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "converter",
+        "type": "address"
+      }
+    ],
+    "name": "ConversionCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddressPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "conversionID",
+        "type": "uint256"
+      }
+    ],
+    "name": "ConversionExecuted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignAddressPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "conversionID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "statusCode",
+        "type": "uint256"
+      }
+    ],
+    "name": "ConversionRejected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "proxyCPCCampaignPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "contractorPlasma",
+        "type": "address"
+      }
+    ],
+    "name": "CPCCampaignCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "proxyPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "proxyPublicAddress",
+        "type": "address"
+      }
+    ],
+    "name": "PlasmaMirrorCampaigns",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "userPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "newHandle",
+        "type": "string"
+      }
+    ],
+    "name": "HandleChanged",
+    "type": "event"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_twoKeyPlasmaSingletonRegistry",
+        "type": "address"
+      },
+      {
+        "name": "_proxyStorage",
+        "type": "address"
+      }
+    ],
+    "name": "setInitialParams",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "campaignAddressPublic",
+        "type": "address"
+      },
+      {
+        "name": "conversionID",
+        "type": "uint256"
+      },
+      {
+        "name": "contractor",
+        "type": "address"
+      },
+      {
+        "name": "converter",
+        "type": "address"
+      }
+    ],
+    "name": "emitConversionCreatedEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "conversionID",
+        "type": "uint256"
+      }
+    ],
+    "name": "emitConversionExecutedEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "conversionID",
+        "type": "uint256"
+      },
+      {
+        "name": "statusCode",
+        "type": "uint256"
+      }
+    ],
+    "name": "emitConversionRejectedEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "proxyCPCCampaignPlasma",
+        "type": "address"
+      },
+      {
+        "name": "contractorPlasma",
+        "type": "address"
+      }
+    ],
+    "name": "emitCPCCampaignCreatedEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "proxyAddressPlasma",
+        "type": "address"
+      },
+      {
+        "name": "proxyAddressPublic",
+        "type": "address"
+      }
+    ],
+    "name": "emitCPCCampaignMirrored",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_plasma",
+        "type": "address"
+      },
+      {
+        "name": "_ethereum",
+        "type": "address"
+      }
+    ],
+    "name": "emitPlasma2EthereumEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_plasma",
+        "type": "address"
+      },
+      {
+        "name": "_handle",
+        "type": "string"
+      }
+    ],
+    "name": "emitPlasma2HandleEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_userPlasmaAddress",
+        "type": "address"
+      },
+      {
+        "name": "_newHandle",
+        "type": "string"
+      }
+    ],
+    "name": "emitHandleChangedEvent",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
