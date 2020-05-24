@@ -422,6 +422,23 @@
         "indexed": false,
         "name": "_address",
         "type": "address"
+      }
+    ],
+    "name": "UserRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "_address",
+        "type": "address"
       },
       {
         "indexed": false,

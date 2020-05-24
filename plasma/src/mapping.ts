@@ -17,7 +17,7 @@ import {
 
 
 import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join, ForwardedByCampaign, CampaignPlasmaByWeb3, CampaignWeb3ByPlasma} from "../generated/schema"
-import { Address, BigInt, EthereumEvent } from '@graphprotocol/graph-ts'
+import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {Debug} from "../../public/generated/schema";
 
 
@@ -116,7 +116,7 @@ function createCampaign(eventAddress:Address, campaignAddress: Address, timeStam
   }
 }
 
-function createDebugObject(event: EthereumEvent, info: string): void {
+function createDebugObject(event: ethereum.Event, info: string): void {
   let debug = Debug.load(event.transaction.hash.toHex());
 
   if (debug != null){

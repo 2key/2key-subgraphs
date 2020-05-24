@@ -10,7 +10,7 @@ dataSources:
       abi: TwoKeyEventSource #1.1.37
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Meta
@@ -37,6 +37,8 @@ dataSources:
           file: ./abis/TwoKeyEventSource.json
       eventHandlers:
         - event: UserRegistered(string,address,string,string,string)
+          handler: handleUserRegisteredDeprecated
+        - event: UserRegistered(string,address)
           handler: handleUserRegistered
         - event: Joined(address,address,address)
           handler: handleJoined

@@ -1,4 +1,4 @@
-import {log, Address, EthereumEvent, EthereumBlock, BigInt} from '@graphprotocol/graph-ts'
+import {log, Address, ethereum, BigInt} from '@graphprotocol/graph-ts'
 import {SetInitialParamsCall} from '../generated/Contract/TwoKeyEventSource'
 
 import {
@@ -8,6 +8,7 @@ import {
   AcquisitionCampaignCreated,
   TwoKeyEventSource,
   UserRegistered as UserRegisteredEvent,
+  UserRegistered1 as UserRegisteredEvent1,
   ConvertedAcquisition as ConvertedAcquisitionEvent,
   ConvertedDonation as ConvertedDonationEvent,
   Rejected as RejectedEvent,
@@ -129,7 +130,7 @@ function createConversionObject(conversionId: BigInt, participant: Address,campa
   }
 }
 
-function createDebugObject(event: EthereumEvent, info: string): void {
+function createDebugObject(event: ethereum.Event, info: string): void {
   let debug = Debug.load(event.transaction.hash.toHex());
 
   if (debug != null){
@@ -145,7 +146,7 @@ function createDebugObject(event: EthereumEvent, info: string): void {
 }
 
 
-function createEventObject(event: EthereumEvent, eventType: string, notes: string): void {
+function createEventObject(event: ethereum.Event, eventType: string, notes: string): void {
   let inputEvent = Event.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
   if (inputEvent == null){
     inputEvent = new Event(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
@@ -344,7 +345,7 @@ export function handleExecuted(event: ExecutedEvent): void {
 }
 
 
-export function handleUserRegistered(event: UserRegisteredEvent): void{
+export function handleUserRegisteredDeprecated(event: UserRegisteredEvent1): void{
   createEventObject(event, 'UserRegistered','');
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load(event.address.toHex());
@@ -374,6 +375,37 @@ export function handleUserRegistered(event: UserRegisteredEvent): void{
   user._fullName = event.params._fullName;
   user._walletName = event.params._username_walletName;
   user._email = event.params._email;
+  user._updatedTimeStamp = event.block.timestamp;
+  user._version = 0;
+  user._event = userReg.id;
+  user.save();
+}
+
+
+export function handleUserRegistered(event: UserRegisteredEvent): void{
+  createEventObject(event, 'UserRegistered','');
+  createMetadata(event.address, event.block.timestamp);
+  let metadata = Meta.load(event.address.toHex());
+  metadata._userRegisteredCounter++;
+  metadata._updatedTimeStamp = event.block.timestamp;
+  metadata.save();
+
+  let twoKeyEventSource = TwoKeyEventSource.bind(event.address);
+
+  let userReg = new UserReg(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  userReg._address = event.params._address;
+  userReg._name = event.params._name;
+  userReg._timeStamp = event.block.timestamp;
+  userReg._tx_hash = event.transaction.hash.toHexString();
+  userReg._web3 = twoKeyEventSource.ethereumOf(event.params._address);
+  userReg.save();
+
+
+  createUserObject(event.address, event.params._address, event.block.timestamp);
+
+  let user = User.load(event.params._address.toHex());
+
+  user._name = event.params._name;
   user._updatedTimeStamp = event.block.timestamp;
   user._version = 0;
   user._event = userReg.id;
