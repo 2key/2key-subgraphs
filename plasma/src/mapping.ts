@@ -12,7 +12,8 @@ import {
   ConversionExecuted as ConversionExecutedEvent,
   ConversionRejected as ConversionRejectedEvent,
   HandleChanged as HandleChangedEvent,
-  PlasmaMirrorCampaigns as PlasmaMirrorCampaignsEvent
+  PlasmaMirrorCampaigns as PlasmaMirrorCampaignsEvent,
+  ConversionPaid as ConversionPaidEvent
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
 
@@ -28,6 +29,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._conversionsExecuted = 0;
     metadata._contracts = [];
     metadata._visitCounter = 0;
+    metadata._n_conversions_paid = 0;
     metadata._joinsCounter = 0;
     metadata._subgraphType = 'PLASMA';
     metadata._n_campaigns = 0;
@@ -66,20 +68,19 @@ function createUser(userAddress: Address, timeStamp: BigInt): void {
   }
 }
 
-function createConversion(event: ConversionCreatedEvent): void {
-  let campaign = Campaign.load(event.params.campaignAddressPlasma.toHex());
-  let converter = User.load(event.params.converter.toHex());
+function createConversion(campaignAddress: Address, conversionID: BigInt, timestamp: BigInt): void {
+  let campaign = Campaign.load(campaignAddress.toHex());
 
-  let conversion = Conversion.load(campaign.id + '-' + event.params.conversionID.toString());
+  let conversion = Conversion.load(campaign.id + '-' + conversionID.toString());
   if (conversion == null){
-    conversion = new Conversion(campaign.id + '-' + event.params.conversionID.toString());
+    conversion = new Conversion(campaign.id + '-' + conversionID.toString());
     conversion._campaign = campaign.id;
     conversion._subgraphType = 'PLASMA';
-    conversion._timeStamp = event.block.timestamp;
-    conversion._participate = converter.id;
+    conversion._timeStamp = timestamp;
+
     conversion._status = 'PENDING';
-    conversion._conversionId = event.params.conversionID;
-    conversion._updatedTimeStamp = event.block.timestamp;
+    conversion._conversionId = conversionID;
+    conversion._updatedTimeStamp = timestamp;
     conversion._version = 10;
     conversion._fiatAmountSpent = BigInt.fromI32(0);
     conversion._ethAmountSpent = BigInt.fromI32(0);
@@ -101,6 +102,7 @@ function createCampaign(eventAddress:Address, campaignAddress: Address, timeStam
     campaign = new Campaign(campaignAddress.toHex());
     campaign._timeStamp = timeStamp;
     campaign._n_conversions_executed = 0;
+    campaign._n_conversions_paid = 0;
     campaign._n_unique_converters = 0;
     campaign._n_conversions_approved = 0;
     campaign._n_forwarded = 0;
@@ -131,6 +133,29 @@ function createDebugObject(event: ethereum.Event, info: string): void {
   debug.save();
 }
 
+
+export function handleConversionPaid(event: ConversionPaidEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+
+  let metadata = Meta.load('Meta');
+  metadata._updatedAt = event.block.timestamp;
+  metadata._n_conversions_paid += 1;
+  metadata.save();
+
+  createCampaign(event.address, event.params.campaignAddressPlasma, event.block.timestamp);
+  let campaign = Campaign.load(event.params.campaignAddressPlasma.toHex());
+
+  campaign._n_conversions_paid += 1;
+  campaign.save();
+
+  createConversion(event.params.campaignAddressPlasma, event.params.conversionID, event.block.timestamp);
+  let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex()+'-'+ event.params.conversionID.toString());
+
+  conversion._paid = true;
+  conversion.save();
+}
+
+
 export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load('Meta');
@@ -160,15 +185,15 @@ export function handleConversionCreated(event: ConversionCreatedEvent): void {
   // let conversionId = event.params.conversionID;
 
   createUser(event.params.converter, event.block.timestamp);
-
-  createConversion(event);
-
-
-  //TODO: need to create it with parameters and not event (To Support other type of conversions in Future)
-
   let converter = User.load(event.params.converter.toHex());
   converter._n_conversions += 1;
   converter.save();
+
+  createConversion(event.params.campaignAddressPlasma, event.params.conversionID, event.block.timestamp);
+  let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex()+'-'+ event.params.conversionID.toString());
+
+  conversion._participate = converter.id;
+  conversion.save();
 
   let campaign = Campaign.load(campaignAddress.toHex());
 
@@ -183,7 +208,6 @@ export function handleConversionCreated(event: ConversionCreatedEvent): void {
   campaign.save();
 
 }
-
 
 
 export function handleHandled(event: Plasma2HandleEvent): void {

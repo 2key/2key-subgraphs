@@ -10,7 +10,7 @@ dataSources:
       abi: TwoKeyPlasmaEvents
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Campaign
@@ -44,7 +44,7 @@ dataSources:
       abi: TwoKeyPlasmaEventSource
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Campaign
@@ -80,4 +80,6 @@ dataSources:
           handler: handlePlasmaMirrorCampaigns
         - event: HandleChanged(address,string)
           handler: handleChangedHandle
+        - event: ConversionPaid(address,uint256)
+          handler: handleConversionPaid
       file: ./src/mapping.ts

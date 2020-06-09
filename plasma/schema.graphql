@@ -51,6 +51,7 @@ type Conversion @entity {
   _rejected_at: BigInt
   _isFiatConversion: Boolean
   _refundable: Boolean
+  _paid: Boolean
   _version:Int
   _conversionId: BigInt
   _timeStamp: BigInt
@@ -103,6 +104,7 @@ type Campaign @entity {
     _n_unique_converters: Int
     _n_conversions_approved: Int
     _n_forwarded: Int
+    _n_conversions_paid: Int
     _n_conversions_rejected: Int
     _converters_addresses: [String!]
     _version: Int
@@ -148,6 +150,7 @@ type Meta @entity {
   _handleChanged: Int
   _plasmaWeb3Mapping: Int
   _n_conversions: Int
+  _n_conversions_paid: Int
   _n_campaigns: Int
   _timeStamp:BigInt!
   _updatedAt:BigInt!
