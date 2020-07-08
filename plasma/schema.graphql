@@ -178,6 +178,7 @@ type User @entity {
   _n_campaigns: Int!
   _n_conversions: Int!
   _n_joins: Int!
+  _n_conversions_paid: Int
   _visits_referrer: [Visit!] @derivedFrom(field: "_referrer")
   _visits_visitor: [Visit!] @derivedFrom(field: "_visitor")
   _joins_referrer: [Visit!] @derivedFrom(field: "_referrer")

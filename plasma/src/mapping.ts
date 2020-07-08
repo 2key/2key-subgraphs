@@ -17,9 +17,8 @@ import {
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
 
-import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join, ForwardedByCampaign, CampaignPlasmaByWeb3, CampaignWeb3ByPlasma} from "../generated/schema"
+import { Campaign, Conversion, User, Visit, Meta, Debug, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join, ForwardedByCampaign, CampaignPlasmaByWeb3, CampaignWeb3ByPlasma} from "../generated/schema"
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
-import {Debug} from "../../public/generated/schema";
 
 
 function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
@@ -62,6 +61,7 @@ function createUser(userAddress: Address, timeStamp: BigInt): void {
     user._n_campaigns = 0;
     user._n_conversions = 0;
     user._n_joins = 0;
+    user._n_conversions_paid = 0;
     user._timeStamp = timeStamp;
     user._updatedAt = timeStamp;
     user.save();
@@ -153,6 +153,10 @@ export function handleConversionPaid(event: ConversionPaidEvent): void {
 
   conversion._paid = true;
   conversion.save();
+
+  let converter = User.load(conversion._participate);
+  converter._n_conversions_paid += 1;
+  converter.save()
 }
 
 
