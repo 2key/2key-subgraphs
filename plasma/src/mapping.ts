@@ -180,22 +180,22 @@ export function handleReputationUpdated(event: ReputationUpdatedEvent): void {
   reputation.save();
 
   if (reputation._role == 'CONTRACTOR' && reputation._type == 'MONETARY') {
-    user._contractorMonetaryRep.plus(reputation._pointsWei as BigInt);
+    user._contractorMonetaryRep = user._contractorMonetaryRep.plus(reputation._pointsWei as BigInt);
   }
   else if (reputation._role == 'CONTRACTOR' && reputation._type == 'BUDGET') {
-    user._contractorBudgetRep.plus(reputation._pointsWei as BigInt);
+    user._contractorBudgetRep = user._contractorBudgetRep.plus(reputation._pointsWei as BigInt);
   }
   else if (reputation._role == 'REFERRER' && reputation._type == 'MONETARY') {
-    user._referrerMonetaryRep.plus(reputation._pointsWei as BigInt);
+    user._referrerMonetaryRep = user._referrerMonetaryRep.plus(reputation._pointsWei as BigInt);
   }
   else if (reputation._role == 'REFERRER' && reputation._type == 'BUDGET') {
-    user._referrerBudgetRep.plus(reputation._pointsWei as BigInt);
+    user._referrerBudgetRep = user._referrerBudgetRep.plus(reputation._pointsWei as BigInt);
   }
   else if (reputation._role == 'CONVERTER' && reputation._type == 'MONETARY') {
-    user._converterMonetaryRep.plus(reputation._pointsWei as BigInt);
+    user._converterMonetaryRep = user._converterMonetaryRep.plus(reputation._pointsWei as BigInt);
   }
   else if (reputation._role == 'CONVERTER' && reputation._type == 'BUDGET') {
-    user._converterBudgetRep.plus(reputation._pointsWei as BigInt);
+    user._converterBudgetRep = user._converterBudgetRep.plus(reputation._pointsWei as BigInt);
   }
   user.save();
 }
@@ -230,13 +230,13 @@ export function handleFeedbackSubmitted(event: FeedbackSubmittedEvent): void {
   feedback.save();
 
   if (feedback._role == 'CONTRACTOR') {
-    user._contractorFeedbackRep.plus(feedback._pointsWei as BigInt);
+    user._contractorFeedbackRep = user._contractorFeedbackRep.plus(feedback._pointsWei as BigInt);
   }
   else if (feedback._role == 'REFERRER') {
-    user._referrerFeedbackRep.plus(feedback._pointsWei as BigInt);
+    user._referrerFeedbackRep = user._referrerFeedbackRep.plus(feedback._pointsWei as BigInt);
   }
   else if (feedback._role == 'CONVERTER') {
-    user._converterFeedbackRep.plus(feedback._pointsWei as BigInt);
+    user._converterFeedbackRep = user._converterFeedbackRep.plus(feedback._pointsWei as BigInt);
   }
   user.save();
 }

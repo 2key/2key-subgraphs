@@ -87,7 +87,7 @@ dataSources:
     name: TwoKeyPlasmaReputationRegistry
     network: plasma
     source:
-      address: "0x1898f79aa325975ee80b13f26b1ff9aaac5f8371"
+      address: "0x2c04c2408c7e05034617413ddc46f0076168b6df"
       abi: TwoKeyPlasmaReputationRegistry
     mapping:
       kind: ethereum/events
@@ -95,6 +95,7 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Reputation
+        - Feedback
       abis:
         - name: TwoKeyPlasmaReputationRegistry
           file: ./abis/TwoKeyPlasmaReputationRegistry.json
@@ -102,5 +103,5 @@ dataSources:
         - event: ReputationUpdated(address,string,string,int256,address)
           handler: handleReputationUpdated
         - event: FeedbackSubmitted(address,string,string,int256,address,address)
-          handler: handleReputationUpdated
+          handler: handleFeedbackSubmitted
       file: ./src/mapping.ts
