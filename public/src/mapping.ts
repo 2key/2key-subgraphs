@@ -1,5 +1,4 @@
 import {log, Address, ethereum, BigInt} from '@graphprotocol/graph-ts'
-import {SetInitialParamsCall} from '../generated/Contract/TwoKeyEventSource'
 
 import {
   Joined as JoinedEvent,
@@ -19,7 +18,11 @@ import {
   ReceivedTokensDeepFreezeTokenPool as TokenPoolFeeEvent,
   ReceivedTokensAsModerator as ModeratorFeeEvent
 
-} from "../generated/Contract/TwoKeyEventSource"
+} from "../generated/TwoKeyEventSource/TwoKeyEventSource"
+
+import {
+  ReputationUpdated as ReputationUpdatedEvent,
+} from "../generated/TwoKeyBaseReputationRegistry/TwoKeyBaseReputationRegistry"
 
 
 import {
@@ -37,7 +40,8 @@ import {
     UserReg,
     PriceUpdated,
     Rate,
-    Event
+    Event,
+    Reputation
 } from "../generated/schema"
 
 
@@ -70,6 +74,7 @@ function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
     metadata._executedCounter = 0;
     metadata._version = 2;
     metadata._userRegisteredCounter = 0;
+    metadata._n_reputationEvents = 0;
     metadata._n_moderatorFee = 0;
     metadata._n_tokenPoolFee = 0;
     metadata._totalTokenPoolFee = BigInt.fromI32(0);
@@ -181,6 +186,15 @@ function createUserObject(eventAddress: Address, userAddress: Address, timeStamp
     user._n_conversions_rejected = 0;
     user._n_conversions_approved = 0;
     user._n_conversions_executed = 0;
+    user._contractorMonetaryRep = BigInt.fromI32(0);
+    user._contractorBudgetRep = BigInt.fromI32(0);
+    user._contractorFeedbackRep = BigInt.fromI32(0);
+    user._referrerMonetaryRep = BigInt.fromI32(0);
+    user._referrerBudgetRep = BigInt.fromI32(0);
+    user._referrerFeedbackRep = BigInt.fromI32(0);
+    user._converterMonetaryRep = BigInt.fromI32(0);
+    user._converterBudgetRep = BigInt.fromI32(0);
+    user._converterFeedbackRep = BigInt.fromI32(0);
     user._total_conversions_amount = BigInt.fromI32(0);
     user.save();
   }
@@ -231,6 +245,61 @@ export function handlePriceUpdated(event: PriceUpdatedEvent): void {
     rate.save();
   }
 }
+
+export function handleReputationUpdated(event: ReputationUpdatedEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+
+  let metadata = Meta.load('Meta');
+  metadata._updatedTimeStamp = event.block.timestamp;
+  metadata._n_reputationEvents += 1;
+  metadata.save();
+
+  createCampaignObject(event.params._campaignAddress, event.block.timestamp);
+  let campaign = Campaign.load(event.params._campaignAddress.toHex());
+
+  createUserObject(event.address, event.params._plasmaAddress, event.block.timestamp);
+
+  let user = User.load(event.params._plasmaAddress.toHex());
+
+  let reputation = new Reputation(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  reputation._user = user.id;
+  reputation._role = event.params._role;
+  reputation._type = event.params._type;
+  reputation._pointsWei = event.params._points;
+  reputation._campaign = campaign.id;
+
+  reputation.save();
+
+  if (reputation._role == 'CONTRACTOR' && reputation._type == 'MONETARY') {
+    user._contractorMonetaryRep = user._contractorMonetaryRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'CONTRACTOR' && reputation._type == 'BUDGET') {
+    user._contractorBudgetRep = user._contractorBudgetRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'CONTRACTOR' && reputation._type == 'FEEDBACK') {
+    user._contractorFeedbackRep = user._contractorFeedbackRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'REFERRER' && reputation._type == 'MONETARY') {
+    user._referrerMonetaryRep = user._referrerMonetaryRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'REFERRER' && reputation._type == 'BUDGET') {
+    user._referrerBudgetRep = user._referrerBudgetRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'REFERRER' && reputation._type == 'FEEDBACK') {
+    user._referrerFeedbackRep = user._referrerFeedbackRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'CONVERTER' && reputation._type == 'MONETARY') {
+    user._converterMonetaryRep = user._converterMonetaryRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'CONVERTER' && reputation._type == 'BUDGET') {
+    user._converterBudgetRep = user._converterBudgetRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'CONVERTER' && reputation._type == 'FEEDBACK') {
+    user._converterFeedbackRep = user._converterFeedbackRep.plus(reputation._pointsWei as BigInt);
+  }
+  user.save();
+}
+
 
 // export function handleBlock(block: EthereumBlock): void{
 //   let metadata = Meta.load(Variable.load('Meta')._variableId);

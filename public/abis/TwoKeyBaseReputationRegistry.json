@@ -1,0 +1,32 @@
+[{
+  "anonymous": false,
+  "inputs": [
+    {
+      "indexed": false,
+      "name": "_plasmaAddress",
+      "type": "address"
+    },
+    {
+      "indexed": false,
+      "name": "_role",
+      "type": "string"
+    },
+    {
+      "indexed": false,
+      "name": "_type",
+      "type": "string"
+    },
+    {
+      "indexed": false,
+      "name": "_points",
+      "type": "int256"
+    },
+    {
+      "indexed": false,
+      "name": "_campaignAddress",
+      "type": "address"
+    }
+  ],
+  "name": "ReputationUpdated",
+  "type": "event"
+}]
