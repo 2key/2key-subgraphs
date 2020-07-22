@@ -160,6 +160,7 @@ type Meta @entity {
     _timeStamp: BigInt!
     _lastBlock: BigInt
     _updatedTimeStamp: BigInt
+    _contracts: [Bytes!]
 }
 
 

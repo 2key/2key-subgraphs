@@ -46,9 +46,9 @@ import {
 
 
 function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
-  let metadata = Meta.load(eventAddress.toHex());
+  let metadata = Meta.load('Meta');
   if (metadata == null){
-    metadata = new Meta(eventAddress.toHex());
+    metadata = new Meta('Meta');
     metadata._convertedAcquisitionCounter = 0;
     metadata._convertedDonationCounter = 0;
     metadata._totalDebtAdded2key = BigInt.fromI32(0);
@@ -77,15 +77,19 @@ function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
     metadata._n_reputationEvents = 0;
     metadata._n_moderatorFee = 0;
     metadata._n_tokenPoolFee = 0;
+    metadata._contracts = [];
     metadata._totalTokenPoolFee = BigInt.fromI32(0);
     metadata._totalModeratorFee = BigInt.fromI32(0);
     metadata._timeStamp = timeStamp;
     metadata._updatedTimeStamp = timeStamp;
     metadata.save();
+  }
 
-    let metaVariable = new Variable('Meta');
-    metaVariable._variableId = eventAddress.toHex()
-    metaVariable.save();
+  if (metadata._contracts.indexOf(eventAddress) == -1) {
+    let contracts = metadata._contracts;
+    contracts.push(eventAddress);
+    metadata._contracts = contracts;
+    metadata.save();
   }
 }
 
@@ -314,7 +318,7 @@ export function handleReputationUpdated(event: ReputationUpdatedEvent): void {
 
 export function handleRejected(event: RejectedEvent): void {
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._rejectedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -355,7 +359,7 @@ export function handleRejected(event: RejectedEvent): void {
 
 export function handleExecuted(event: ExecutedEvent): void {
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._executedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
 
@@ -417,7 +421,7 @@ export function handleExecuted(event: ExecutedEvent): void {
 export function handleUserRegisteredDeprecated(event: UserRegisteredEvent1): void{
   createEventObject(event, 'UserRegistered','');
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._userRegisteredCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -454,7 +458,7 @@ export function handleUserRegisteredDeprecated(event: UserRegisteredEvent1): voi
 export function handleUserRegistered(event: UserRegisteredEvent): void{
   createEventObject(event, 'UserRegistered','');
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._userRegisteredCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -483,7 +487,7 @@ export function handleUserRegistered(event: UserRegisteredEvent): void{
 
 export function handleConvertedAcquisition(event: ConvertedAcquisitionEvent): void{
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._convertedAcquisitionCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -544,7 +548,7 @@ export function handleConvertedAcquisition(event: ConvertedAcquisitionEvent): vo
 
 export function handleConvertedDonation(event: ConvertedDonationEvent): void{
     createMetadata(event.address, event.block.timestamp);
-    let metadata = Meta.load(event.address.toHex());
+    let metadata = Meta.load('Meta');
     metadata._convertedDonationCounter++;
     metadata._updatedTimeStamp = event.block.timestamp;
     metadata.save();
@@ -594,7 +598,7 @@ export function handleConvertedDonation(event: ConvertedDonationEvent): void{
 export function handleDonation(event: DonationCampaignCreated): void {
   createEventObject(event, 'DonationCampaignCreated',event.params.contractor.toHex()+'-'+event.params.proxyDonationCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._donationCampaignCreatedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -615,7 +619,7 @@ export function handleDonation(event: DonationCampaignCreated): void {
 export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
   createEventObject(event, 'CPCCampaignCreated',event.params.contractor.toHex()+'-'+event.params.proxyCPCCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._cpcCampaignCreatedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -636,7 +640,7 @@ export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
 export function handleAcquisition(event: AcquisitionCampaignCreated): void {
   createEventObject(event, 'AcquisitionCampaignCreated', event.params.contractor.toHex()+'-'+event.params.proxyAcquisitionCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._acquisitionCampaignCreatedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -659,7 +663,7 @@ export function handleAcquisition(event: AcquisitionCampaignCreated): void {
 export function handleJoined(event: JoinedEvent): void {
   createEventObject(event, 'Joined','');
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._joinedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -693,7 +697,7 @@ export function handleRewarded(event: RewardedEvent): void {
   }
 
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._rewardedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
 
@@ -743,7 +747,7 @@ export function handleDebt(event: DebtEvent): void {
   fee._user = user.id;
   fee.save();
 
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
 
   let currency = fee._currency.toString();
   let ethCurrency = 'ETH'.toString();
@@ -832,7 +836,7 @@ export function handleModeratorFee(event: ModeratorFeeEvent): void {
   fee._campaign = campaign.id;
   fee.save();
 
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
 
   metadata._n_moderatorFee += 1;
 
@@ -867,7 +871,7 @@ export function handlerTokenPoolFee(event: TokenPoolFeeEvent): void {
   fee._campaign = campaign.id;
   fee.save();
 
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
 
   metadata._n_tokenPoolFee += 1;
 

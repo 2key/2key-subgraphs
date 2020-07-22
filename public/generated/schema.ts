@@ -1346,6 +1346,23 @@ export class Meta extends Entity {
       this.set("_updatedTimeStamp", Value.fromBigInt(value as BigInt));
     }
   }
+
+  get _contracts(): Array<Bytes> | null {
+    let value = this.get("_contracts");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBytesArray();
+    }
+  }
+
+  set _contracts(value: Array<Bytes> | null) {
+    if (value === null) {
+      this.unset("_contracts");
+    } else {
+      this.set("_contracts", Value.fromBytesArray(value as Array<Bytes>));
+    }
+  }
 }
 
 export class Variable extends Entity {

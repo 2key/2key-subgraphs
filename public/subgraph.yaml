@@ -3,6 +3,25 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
+    name: TwoKeyBaseReputationRegistry
+    network: ropsten
+    source:
+      address: "0x1898f79aa325975ee80b13f26b1ff9aaac5f8371"
+      abi: TwoKeyBaseReputationRegistry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Reputation
+      abis:
+        - name: TwoKeyBaseReputationRegistry
+          file: ./abis/TwoKeyBaseReputationRegistry.json
+      eventHandlers:
+        - event: ReputationUpdated(address,string,string,int256,address)
+          handler: handleReputationUpdated
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
     name: TwoKeyEventSource
     network: ropsten
     source:
@@ -66,23 +85,4 @@ dataSources:
           handler: handleModeratorFee
         - event : ReceivedTokensDeepFreezeTokenPool(address,uint256)
           handler: handlerTokenPoolFee
-      file: ./src/mapping.ts
-  - kind: ethereum/contract
-    name: TwoKeyBaseReputationRegistry
-    network: ropsten
-    source:
-      address: "0x1898f79aa325975ee80b13f26b1ff9aaac5f8371"
-      abi: TwoKeyBaseReputationRegistry
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - Reputation
-      abis:
-        - name: TwoKeyBaseReputationRegistry
-          file: ./abis/TwoKeyBaseReputationRegistry.json
-      eventHandlers:
-        - event: ReputationUpdated(address,string,string,int256,address)
-          handler: handleReputationUpdated
       file: ./src/mapping.ts
