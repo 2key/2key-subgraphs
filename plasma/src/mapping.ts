@@ -404,6 +404,11 @@ export function handleJoined(event: JoinedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load('Meta');
   metadata._joinsCounter++;
+
+  if (visitCreated && campaign._n_visits == 0){
+    campaign._plasmaRootNode = referrer.id;
+  }
+
   if (visitCreated){
     metadata._visitCounter++;
     campaign._n_visits++;
@@ -433,6 +438,10 @@ export function handleVisited(event: VisitedEvent): void {
 
   createCampaign(event.address, event.params.c, event.block.timestamp);
   let campaign = Campaign.load(event.params.c.toHex());
+
+  if (campaign._n_visits == 0){
+    campaign._plasmaRootNode = referrer.id;
+  }
 
   let visit = Visit.load(event.params.from.toHex()+'-'+event.params.to.toHex()+'-'+ event.params.c.toHex());
   if (visit == null){

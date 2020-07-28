@@ -784,6 +784,23 @@ export class Campaign extends Entity {
     this.set("_n_joins", Value.fromI32(value));
   }
 
+  get _plasmaRootNode(): string | null {
+    let value = this.get("_plasmaRootNode");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set _plasmaRootNode(value: string | null) {
+    if (value === null) {
+      this.unset("_plasmaRootNode");
+    } else {
+      this.set("_plasmaRootNode", Value.fromString(value as string));
+    }
+  }
+
   get _timeStamp(): BigInt {
     let value = this.get("_timeStamp");
     return value.toBigInt();

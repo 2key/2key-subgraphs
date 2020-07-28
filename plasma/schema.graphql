@@ -111,6 +111,7 @@ type Campaign @entity {
     _plasmaAddress: Bytes
     _n_visits: Int
     _n_joins: Int
+    _plasmaRootNode: User
     _timeStamp:BigInt!
     _updatedTimeStamp: BigInt!
     _conversions: [Conversion!] @derivedFrom(field: "_campaign")
@@ -218,7 +219,7 @@ type Feedback @entity {
   _type: String!
   _role: String!
   _pointsWei: BigInt!
-  _reporter: User! 
+  _reporter: User!
   _campaign: Campaign!
 }
 
