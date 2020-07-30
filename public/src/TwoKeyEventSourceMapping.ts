@@ -232,7 +232,6 @@ export function handleUserRegisteredDeprecated(event: UserRegisteredEvent1): voi
   user.save();
 }
 
-
 export function handleUserRegistered(event: UserRegisteredEvent): void{
   createEventObject(event, 'UserRegistered','');
   createMetadata(event.address, event.block.timestamp);
