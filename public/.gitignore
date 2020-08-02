@@ -10,8 +10,6 @@ yarn-error.log*
 
 yarn.lock
 
-generated/
-
 # Runtime data
 pids
 *.pid

@@ -51,6 +51,7 @@ type Conversion @entity {
   _rejected_at: BigInt
   _isFiatConversion: Boolean
   _refundable: Boolean
+  _paid: Boolean
   _version:Int
   _conversionId: BigInt
   _timeStamp: BigInt
@@ -103,12 +104,14 @@ type Campaign @entity {
     _n_unique_converters: Int
     _n_conversions_approved: Int
     _n_forwarded: Int
+    _n_conversions_paid: Int
     _n_conversions_rejected: Int
     _converters_addresses: [String!]
     _version: Int
     _plasmaAddress: Bytes
     _n_visits: Int
     _n_joins: Int
+    _plasmaRootNode: User
     _timeStamp:BigInt!
     _updatedTimeStamp: BigInt!
     _conversions: [Conversion!] @derivedFrom(field: "_campaign")
@@ -148,7 +151,10 @@ type Meta @entity {
   _handleChanged: Int
   _plasmaWeb3Mapping: Int
   _n_conversions: Int
+  _n_conversions_paid: Int
   _n_campaigns: Int
+  _n_feedbackEvents: Int
+  _n_reputationEvents: Int
   _timeStamp:BigInt!
   _updatedAt:BigInt!
 }
@@ -175,6 +181,16 @@ type User @entity {
   _n_campaigns: Int!
   _n_conversions: Int!
   _n_joins: Int!
+  _n_conversions_paid: Int
+  _contractorMonetaryRep: BigInt
+  _contractorBudgetRep: BigInt
+  _contractorFeedbackRep: BigInt
+  _referrerMonetaryRep: BigInt
+  _referrerBudgetRep: BigInt
+  _referrerFeedbackRep: BigInt
+  _converterMonetaryRep: BigInt
+  _converterBudgetRep: BigInt
+  _converterFeedbackRep: BigInt
   _visits_referrer: [Visit!] @derivedFrom(field: "_referrer")
   _visits_visitor: [Visit!] @derivedFrom(field: "_visitor")
   _joins_referrer: [Visit!] @derivedFrom(field: "_referrer")
@@ -186,6 +202,25 @@ type User @entity {
 type ForwardedByCampaign @entity {
     id: ID!
     _exists: Int!
+}
+
+type Reputation @entity {
+  id: ID!
+  _campaign: Campaign!
+  _user: User!
+  _type: String!
+  _role: String!
+  _pointsWei: BigInt!
+}
+
+type Feedback @entity {
+  id: ID!
+  _user: User! # address
+  _type: String!
+  _role: String!
+  _pointsWei: BigInt!
+  _reporter: User!
+  _campaign: Campaign!
 }
 
 

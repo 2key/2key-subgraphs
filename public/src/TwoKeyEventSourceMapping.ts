@@ -1,5 +1,4 @@
 import {log, Address, ethereum, BigInt} from '@graphprotocol/graph-ts'
-import {SetInitialParamsCall} from '../generated/Contract/TwoKeyEventSource'
 
 import {
   Joined as JoinedEvent,
@@ -19,12 +18,11 @@ import {
   ReceivedTokensDeepFreezeTokenPool as TokenPoolFeeEvent,
   ReceivedTokensAsModerator as ModeratorFeeEvent
 
-} from "../generated/Contract/TwoKeyEventSource"
+} from "../generated/EventSource/TwoKeyEventSource"
 
 
 import {
     Meta,
-    Variable,
     Campaign,
     Conversion,
     ConversionByTxHash,
@@ -32,168 +30,21 @@ import {
     User,
     Join,
     Reward,
-    Debug,
     ConCampUser,
     UserReg,
     PriceUpdated,
-    Rate,
-    Event
+    Rate
 } from "../generated/schema"
 
 
-function createMetadata(eventAddress: Address, timeStamp: BigInt): void {
-  let metadata = Meta.load(eventAddress.toHex());
-  if (metadata == null){
-    metadata = new Meta(eventAddress.toHex());
-    metadata._convertedAcquisitionCounter = 0;
-    metadata._convertedDonationCounter = 0;
-    metadata._totalDebtAdded2key = BigInt.fromI32(0);
-    metadata._totalDebtRemoved2key = BigInt.fromI32(0);
-    metadata._totalDebtAddedDAI = BigInt.fromI32(0);
-    metadata._totalDebtRemovedDAI = BigInt.fromI32(0);
-    metadata._totalDebtAddedETHWEI = BigInt.fromI32(0);
-    metadata._totalDebtRemovedETHWEI = BigInt.fromI32(0);
-    metadata._n_debtAdded = 0;
-    metadata._n_debtRemoved = 0;
-    metadata._donationCampaignCreatedCounter = 0;
-    metadata._acquisitionCampaignCreatedCounter = 0;
-    metadata._subgraphType = 'PUBLIC';
-    metadata._total_rewards_amount = BigInt.fromI32(0);
-    metadata._n_conversions = 0;
-    metadata._total_conversions_amount = BigInt.fromI32(0);
-    metadata._createdCounter = 0;
-    metadata._convertedCounter = 0;
-    metadata._joinedCounter = 0;
-    metadata._rewardedCounter = 0;
-    metadata._rejectedCounter = 0;
-    metadata._cpcCampaignCreatedCounter = 0;
-    metadata._executedCounter = 0;
-    metadata._version = 2;
-    metadata._userRegisteredCounter = 0;
-    metadata._n_moderatorFee = 0;
-    metadata._n_tokenPoolFee = 0;
-    metadata._totalTokenPoolFee = BigInt.fromI32(0);
-    metadata._totalModeratorFee = BigInt.fromI32(0);
-    metadata._timeStamp = timeStamp;
-    metadata._updatedTimeStamp = timeStamp;
-    metadata.save();
-
-    let metaVariable = new Variable('Meta');
-    metaVariable._variableId = eventAddress.toHex()
-    metaVariable.save();
-  }
-}
-
-
-function createCampaignObject(campaignAddress: Address, timeStamp: BigInt): void {
-  let campaign = Campaign.load(campaignAddress.toHex());
-  if (campaign == null){
-    campaign = new Campaign(campaignAddress.toHex());
-    campaign._timeStamp = timeStamp;
-    campaign._subgraphType = 'PUBLIC';
-    campaign._updatedTimeStamp = timeStamp;
-    campaign._version = 1;
-    campaign._n_conversions_executed = 0;
-    campaign._n_conversions = 0;
-    campaign._n_conversions_rejected = 0;
-    campaign._n_joined = 0;
-    campaign._n_rewards = 0;
-    campaign._total_conversions_amount = BigInt.fromI32(0);
-    campaign._n_conversions_approved = 0;
-    campaign._total_rewards_amount = BigInt.fromI32(0);
-    campaign._converters_addresses = [];
-    campaign._n_unique_converters = 0;
-    campaign.save();
-  }
-}
-
-function createConversionObject(conversionId: BigInt, participant: Address,campaignAddress: Address, timeStamp: BigInt): void {
-  let campaign = Campaign.load(campaignAddress.toHex());
-  let conversion = Conversion.load(campaign.id + '-' + conversionId.toString());
-  let converter = User.load(participant.toHex());
-  if (conversion == null){
-    conversion = new Conversion(campaign.id + '-'+ conversionId.toString());
-    conversion._timeStamp = timeStamp;
-    conversion._participate = converter.id;
-    conversion._subgraphType = 'PUBLIC';
-    conversion._updatedTimeStamp = timeStamp;
-    conversion._version = 10;
-    conversion._fiatAmountSpent = BigInt.fromI32(0);
-    conversion._ethAmountSpent = BigInt.fromI32(0);
-    conversion._tokens = BigInt.fromI32(0);
-    conversion._campaign = campaign.id;
-    conversion._status = 'PENDING';
-    conversion._refundable = true;
-    conversion._isFiatConversion = false;
-    conversion._conversionId = conversionId;
-    conversion.save();
-  }
-}
-
-function createDebugObject(event: ethereum.Event, info: string): void {
-  let debug = Debug.load(event.transaction.hash.toHex());
-
-  if (debug != null){
-    let temp = debug._info;
-    debug._info = temp + info;
-  }
-  else{
-    debug = new Debug(event.transaction.hash.toHex());
-    debug._info = info;
-  }
-
-  debug.save();
-}
-
-
-function createEventObject(event: ethereum.Event, eventType: string, notes: string): void {
-  let inputEvent = Event.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString())
-  if (inputEvent == null){
-    inputEvent = new Event(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
-    inputEvent._address = event.address;
-    inputEvent._timeStamp = event.block.timestamp;
-    inputEvent._tx_hash = event.transaction.hash.toHex();
-    inputEvent._type = eventType;
-    inputEvent._notes = notes;
-    inputEvent.save();
-  }
-}
-
-function createUserObject(eventAddress: Address, userAddress: Address, timeStamp: BigInt): void {
-  let user = User.load(userAddress.toHex());
-  if (user == null){
-    user = new User(userAddress.toHex());
-    user._timeStamp = timeStamp;
-    user._totalDebtAdded2key = BigInt.fromI32(0);
-    user._totalDebtRemoved2key = BigInt.fromI32(0);
-    user._totalDebtAddedDAI = BigInt.fromI32(0);
-    user._totalDebtRemovedDAI = BigInt.fromI32(0);
-    user._totalDebtAddedETHWEI = BigInt.fromI32(0);
-    user._totalDebtRemovedETHWEI = BigInt.fromI32(0);
-    user._n_debtAdded = 0;
-    user._n_debtRemoved = 0;
-    user._subgraphType = 'PUBLIC';
-    user._updatedTimeStamp = timeStamp;
-    user._version = 0;
-    user._n_rewards = 0;
-    user._total_rewards_amount = BigInt.fromI32(0);
-    user._n_conversions = 0;
-    user._n_conversions_rejected = 0;
-    user._n_conversions_approved = 0;
-    user._n_conversions_executed = 0;
-    user._total_conversions_amount = BigInt.fromI32(0);
-    user.save();
-  }
-
-  let twoKeyEventSource = TwoKeyEventSource.bind(eventAddress);
-  let web3Address = twoKeyEventSource.ethereumOf(userAddress);
-
-  if (web3Address != userAddress){
-    user._web3Address = web3Address;
-    user._updatedTimeStamp = timeStamp;
-  }
-  user.save();
-}
+import {
+  createMetadata,
+  createCampaignObject,
+  createConversionObject,
+  createDebugObject,
+  createEventObject,
+  createUserObject
+} from "./baseFunctions"
 
 
 
@@ -245,7 +96,7 @@ export function handlePriceUpdated(event: PriceUpdatedEvent): void {
 
 export function handleRejected(event: RejectedEvent): void {
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._rejectedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -286,7 +137,7 @@ export function handleRejected(event: RejectedEvent): void {
 
 export function handleExecuted(event: ExecutedEvent): void {
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._executedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
 
@@ -348,7 +199,7 @@ export function handleExecuted(event: ExecutedEvent): void {
 export function handleUserRegisteredDeprecated(event: UserRegisteredEvent1): void{
   createEventObject(event, 'UserRegistered','');
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._userRegisteredCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -384,7 +235,7 @@ export function handleUserRegisteredDeprecated(event: UserRegisteredEvent1): voi
 export function handleUserRegistered(event: UserRegisteredEvent): void{
   createEventObject(event, 'UserRegistered','');
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._userRegisteredCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -413,7 +264,7 @@ export function handleUserRegistered(event: UserRegisteredEvent): void{
 
 export function handleConvertedAcquisition(event: ConvertedAcquisitionEvent): void{
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._convertedAcquisitionCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -474,7 +325,7 @@ export function handleConvertedAcquisition(event: ConvertedAcquisitionEvent): vo
 
 export function handleConvertedDonation(event: ConvertedDonationEvent): void{
     createMetadata(event.address, event.block.timestamp);
-    let metadata = Meta.load(event.address.toHex());
+    let metadata = Meta.load('Meta');
     metadata._convertedDonationCounter++;
     metadata._updatedTimeStamp = event.block.timestamp;
     metadata.save();
@@ -524,7 +375,7 @@ export function handleConvertedDonation(event: ConvertedDonationEvent): void{
 export function handleDonation(event: DonationCampaignCreated): void {
   createEventObject(event, 'DonationCampaignCreated',event.params.contractor.toHex()+'-'+event.params.proxyDonationCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._donationCampaignCreatedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -545,7 +396,7 @@ export function handleDonation(event: DonationCampaignCreated): void {
 export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
   createEventObject(event, 'CPCCampaignCreated',event.params.contractor.toHex()+'-'+event.params.proxyCPCCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._cpcCampaignCreatedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -566,7 +417,7 @@ export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
 export function handleAcquisition(event: AcquisitionCampaignCreated): void {
   createEventObject(event, 'AcquisitionCampaignCreated', event.params.contractor.toHex()+'-'+event.params.proxyAcquisitionCampaign.toHex());
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._acquisitionCampaignCreatedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -589,7 +440,7 @@ export function handleAcquisition(event: AcquisitionCampaignCreated): void {
 export function handleJoined(event: JoinedEvent): void {
   createEventObject(event, 'Joined','');
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._joinedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
   metadata.save();
@@ -623,7 +474,7 @@ export function handleRewarded(event: RewardedEvent): void {
   }
 
   createMetadata(event.address, event.block.timestamp);
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
   metadata._rewardedCounter++;
   metadata._updatedTimeStamp = event.block.timestamp;
 
@@ -673,7 +524,7 @@ export function handleDebt(event: DebtEvent): void {
   fee._user = user.id;
   fee.save();
 
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
 
   let currency = fee._currency.toString();
   let ethCurrency = 'ETH'.toString();
@@ -762,7 +613,7 @@ export function handleModeratorFee(event: ModeratorFeeEvent): void {
   fee._campaign = campaign.id;
   fee.save();
 
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
 
   metadata._n_moderatorFee += 1;
 
@@ -797,7 +648,7 @@ export function handlerTokenPoolFee(event: TokenPoolFeeEvent): void {
   fee._campaign = campaign.id;
   fee.save();
 
-  let metadata = Meta.load(event.address.toHex());
+  let metadata = Meta.load('Meta');
 
   metadata._n_tokenPoolFee += 1;
 
