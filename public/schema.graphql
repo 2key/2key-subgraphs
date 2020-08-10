@@ -151,6 +151,7 @@ type Meta @entity {
     _joinedCounter: Int!
     _convertedCounter: Int!
     _rewardedCounter: Int!
+    _n_reputationEvents: Int!
     _acquisitionCampaignCreatedCounter: Int!
     _donationCampaignCreatedCounter: Int!
     _rejectedCounter: Int!
@@ -159,6 +160,7 @@ type Meta @entity {
     _timeStamp: BigInt!
     _lastBlock: BigInt
     _updatedTimeStamp: BigInt
+    _contracts: [Bytes!]
 }
 
 
@@ -220,6 +222,15 @@ type User @entity {
     _n_conversions_rejected: Int
     _n_conversions_approved: Int
     _n_conversions_executed: Int
+    _contractorMonetaryRep: BigInt
+    _contractorBudgetRep: BigInt
+    _contractorFeedbackRep: BigInt
+    _referrerMonetaryRep: BigInt
+    _referrerBudgetRep: BigInt
+    _referrerFeedbackRep: BigInt
+    _converterMonetaryRep: BigInt
+    _converterBudgetRep: BigInt
+    _converterFeedbackRep: BigInt
     _version: Int
     _event: UserReg
     _timeStamp: BigInt!
@@ -275,6 +286,16 @@ type Web3ToUser @entity {
 type Debug @entity {
     id: ID!
     _info: String!
+}
+
+
+type Reputation @entity {
+    id: ID!
+    _campaign: Campaign!
+    _user: User!
+    _type: String!
+    _role: String!
+    _pointsWei: BigInt!
 }
 
 

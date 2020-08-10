@@ -5,6 +5,11 @@ import {
 } from "../generated/TwoKeyPlasmaEvents/TwoKeyPlasmaEvents"
 
 import {
+  ReputationUpdated as ReputationUpdatedEvent,
+  FeedbackSubmitted as FeedbackSubmittedEvent
+} from "../generated/TwoKeyPlasmaReputationRegistry/TwoKeyPlasmaReputationRegistry"
+
+import {
   Plasma2Ethereum as Plasma2EthereumEvent,
   Plasma2Handle as Plasma2HandleEvent,
   CPCCampaignCreated as CPCCampaignCreatedEvent,
@@ -12,13 +17,19 @@ import {
   ConversionExecuted as ConversionExecutedEvent,
   ConversionRejected as ConversionRejectedEvent,
   HandleChanged as HandleChangedEvent,
-  PlasmaMirrorCampaigns as PlasmaMirrorCampaignsEvent
+  PlasmaMirrorCampaigns as PlasmaMirrorCampaignsEvent,
+  ConversionPaid as ConversionPaidEvent
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
 
-import { Campaign, Conversion, User, Visit, Meta, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent, Join, ForwardedByCampaign, CampaignPlasmaByWeb3, CampaignWeb3ByPlasma} from "../generated/schema"
-import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
-import {Debug} from "../../public/generated/schema";
+import {
+  Campaign, Conversion, User, Visit, Meta, Debug, VisitEvent, PlasmaToEthereumMappingEvent, JoinEvent,
+  Join, ForwardedByCampaign, CampaignPlasmaByWeb3, CampaignWeb3ByPlasma, Reputation, Feedback
+} from "../generated/schema"
+
+import {
+  Address, BigInt, ethereum
+ } from '@graphprotocol/graph-ts'
 
 
 function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
@@ -28,10 +39,13 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._conversionsExecuted = 0;
     metadata._contracts = [];
     metadata._visitCounter = 0;
+    metadata._n_conversions_paid = 0;
     metadata._joinsCounter = 0;
     metadata._subgraphType = 'PLASMA';
     metadata._n_campaigns = 0;
     metadata._n_forwarded = 0;
+    metadata._n_reputationEvents = 0;
+    metadata._n_feedbackEvents = 0;
     metadata._n_conversions_rejected = 0;
     metadata._version = 11;
     metadata._plasmaToHandleCounter = 0;
@@ -60,26 +74,35 @@ function createUser(userAddress: Address, timeStamp: BigInt): void {
     user._n_campaigns = 0;
     user._n_conversions = 0;
     user._n_joins = 0;
+    user._n_conversions_paid = 0;
+    user._contractorMonetaryRep = BigInt.fromI32(0);
+    user._contractorBudgetRep = BigInt.fromI32(0);
+    user._contractorFeedbackRep = BigInt.fromI32(0);
+    user._referrerMonetaryRep = BigInt.fromI32(0);
+    user._referrerBudgetRep = BigInt.fromI32(0);
+    user._referrerFeedbackRep = BigInt.fromI32(0);
+    user._converterMonetaryRep = BigInt.fromI32(0);
+    user._converterBudgetRep = BigInt.fromI32(0);
+    user._converterFeedbackRep = BigInt.fromI32(0);
     user._timeStamp = timeStamp;
     user._updatedAt = timeStamp;
     user.save();
   }
 }
 
-function createConversion(event: ConversionCreatedEvent): void {
-  let campaign = Campaign.load(event.params.campaignAddressPlasma.toHex());
-  let converter = User.load(event.params.converter.toHex());
+function createConversion(campaignAddress: Address, conversionID: BigInt, timestamp: BigInt): void {
+  let campaign = Campaign.load(campaignAddress.toHex());
 
-  let conversion = Conversion.load(campaign.id + '-' + event.params.conversionID.toString());
+  let conversion = Conversion.load(campaign.id + '-' + conversionID.toString());
   if (conversion == null){
-    conversion = new Conversion(campaign.id + '-' + event.params.conversionID.toString());
+    conversion = new Conversion(campaign.id + '-' + conversionID.toString());
     conversion._campaign = campaign.id;
     conversion._subgraphType = 'PLASMA';
-    conversion._timeStamp = event.block.timestamp;
-    conversion._participate = converter.id;
+    conversion._timeStamp = timestamp;
+
     conversion._status = 'PENDING';
-    conversion._conversionId = event.params.conversionID;
-    conversion._updatedTimeStamp = event.block.timestamp;
+    conversion._conversionId = conversionID;
+    conversion._updatedTimeStamp = timestamp;
     conversion._version = 10;
     conversion._fiatAmountSpent = BigInt.fromI32(0);
     conversion._ethAmountSpent = BigInt.fromI32(0);
@@ -101,6 +124,7 @@ function createCampaign(eventAddress:Address, campaignAddress: Address, timeStam
     campaign = new Campaign(campaignAddress.toHex());
     campaign._timeStamp = timeStamp;
     campaign._n_conversions_executed = 0;
+    campaign._n_conversions_paid = 0;
     campaign._n_unique_converters = 0;
     campaign._n_conversions_approved = 0;
     campaign._n_forwarded = 0;
@@ -131,6 +155,119 @@ function createDebugObject(event: ethereum.Event, info: string): void {
   debug.save();
 }
 
+
+export function handleReputationUpdated(event: ReputationUpdatedEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+
+  let metadata = Meta.load('Meta');
+  metadata._updatedAt = event.block.timestamp;
+  metadata._n_reputationEvents += 1;
+  metadata.save();
+
+  createCampaign(event.address, event.params._campaignAddress, event.block.timestamp);
+  let campaign = Campaign.load(event.params._campaignAddress.toHex());
+
+  createUser(event.params._plasmaAddress, event.block.timestamp);
+  let user = User.load(event.params._plasmaAddress.toHex());
+
+  let reputation = new Reputation(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  reputation._user = user.id;
+  reputation._role = event.params._role;
+  reputation._type = event.params._type;
+  reputation._pointsWei = event.params._points;
+  reputation._campaign = campaign.id;
+
+  reputation.save();
+
+  if (reputation._role == 'CONTRACTOR' && reputation._type == 'MONETARY') {
+    user._contractorMonetaryRep = user._contractorMonetaryRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'CONTRACTOR' && reputation._type == 'BUDGET') {
+    user._contractorBudgetRep = user._contractorBudgetRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'REFERRER' && reputation._type == 'MONETARY') {
+    user._referrerMonetaryRep = user._referrerMonetaryRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'REFERRER' && reputation._type == 'BUDGET') {
+    user._referrerBudgetRep = user._referrerBudgetRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'CONVERTER' && reputation._type == 'MONETARY') {
+    user._converterMonetaryRep = user._converterMonetaryRep.plus(reputation._pointsWei as BigInt);
+  }
+  else if (reputation._role == 'CONVERTER' && reputation._type == 'BUDGET') {
+    user._converterBudgetRep = user._converterBudgetRep.plus(reputation._pointsWei as BigInt);
+  }
+  user.save();
+}
+
+
+export function handleFeedbackSubmitted(event: FeedbackSubmittedEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+
+  let metadata = Meta.load('Meta');
+  metadata._updatedAt = event.block.timestamp;
+  metadata._n_feedbackEvents += 1;
+  metadata.save();
+
+  createCampaign(event.address, event.params._campaignAddress, event.block.timestamp);
+  let campaign = Campaign.load(event.params._campaignAddress.toHex());
+
+  createUser(event.params._plasmaAddress, event.block.timestamp);
+  let user = User.load(event.params._plasmaAddress.toHex());
+
+  createUser(event.params._reporterPlasma, event.block.timestamp);
+  let reporter = User.load(event.params._reporterPlasma.toHex());
+
+
+  let feedback = new Feedback(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  feedback._user = user.id;
+  feedback._reporter = reporter.id;
+  feedback._role = event.params._role;
+  feedback._type = event.params._type;
+  feedback._pointsWei = event.params._points;
+  feedback._campaign = campaign.id;
+
+  feedback.save();
+
+  if (feedback._role == 'CONTRACTOR') {
+    user._contractorFeedbackRep = user._contractorFeedbackRep.plus(feedback._pointsWei as BigInt);
+  }
+  else if (feedback._role == 'REFERRER') {
+    user._referrerFeedbackRep = user._referrerFeedbackRep.plus(feedback._pointsWei as BigInt);
+  }
+  else if (feedback._role == 'CONVERTER') {
+    user._converterFeedbackRep = user._converterFeedbackRep.plus(feedback._pointsWei as BigInt);
+  }
+  user.save();
+}
+
+
+export function handleConversionPaid(event: ConversionPaidEvent): void {
+  createMetadata(event.address, event.block.timestamp);
+
+  let metadata = Meta.load('Meta');
+  metadata._updatedAt = event.block.timestamp;
+  metadata._n_conversions_paid += 1;
+  metadata.save();
+
+  createCampaign(event.address, event.params.campaignAddressPlasma, event.block.timestamp);
+  let campaign = Campaign.load(event.params.campaignAddressPlasma.toHex());
+
+  campaign._n_conversions_paid += 1;
+  campaign.save();
+
+  createConversion(event.params.campaignAddressPlasma, event.params.conversionID, event.block.timestamp);
+  let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex()+'-'+ event.params.conversionID.toString());
+
+  conversion._paid = true;
+  conversion.save();
+
+  let converter = User.load(conversion._participate);
+  converter._n_conversions_paid += 1;
+  converter.save()
+}
+
+
 export function handleCPCCampaignCreated(event: CPCCampaignCreatedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load('Meta');
@@ -160,15 +297,15 @@ export function handleConversionCreated(event: ConversionCreatedEvent): void {
   // let conversionId = event.params.conversionID;
 
   createUser(event.params.converter, event.block.timestamp);
-
-  createConversion(event);
-
-
-  //TODO: need to create it with parameters and not event (To Support other type of conversions in Future)
-
   let converter = User.load(event.params.converter.toHex());
   converter._n_conversions += 1;
   converter.save();
+
+  createConversion(event.params.campaignAddressPlasma, event.params.conversionID, event.block.timestamp);
+  let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex()+'-'+ event.params.conversionID.toString());
+
+  conversion._participate = converter.id;
+  conversion.save();
 
   let campaign = Campaign.load(campaignAddress.toHex());
 
@@ -183,7 +320,6 @@ export function handleConversionCreated(event: ConversionCreatedEvent): void {
   campaign.save();
 
 }
-
 
 
 export function handleHandled(event: Plasma2HandleEvent): void {
@@ -268,6 +404,11 @@ export function handleJoined(event: JoinedEvent): void {
   createMetadata(event.address, event.block.timestamp);
   let metadata = Meta.load('Meta');
   metadata._joinsCounter++;
+
+  if (visitCreated && campaign._n_visits == 0){
+    campaign._plasmaRootNode = referrer.id;
+  }
+
   if (visitCreated){
     metadata._visitCounter++;
     campaign._n_visits++;
@@ -297,6 +438,10 @@ export function handleVisited(event: VisitedEvent): void {
 
   createCampaign(event.address, event.params.c, event.block.timestamp);
   let campaign = Campaign.load(event.params.c.toHex());
+
+  if (campaign._n_visits == 0){
+    campaign._plasmaRootNode = referrer.id;
+  }
 
   let visit = Visit.load(event.params.from.toHex()+'-'+event.params.to.toHex()+'-'+ event.params.c.toHex());
   if (visit == null){
