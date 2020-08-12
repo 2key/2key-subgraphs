@@ -223,6 +223,15 @@ export class Conversion extends Entity {
     this.set("_paid", Value.fromBoolean(value));
   }
 
+  get _setPaid(): boolean {
+    let value = this.get("_setPaid");
+    return value.toBoolean();
+  }
+
+  set _setPaid(value: boolean) {
+    this.set("_setPaid", Value.fromBoolean(value));
+  }
+
   get _version(): i32 {
     let value = this.get("_version");
     return value.toI32();
@@ -711,6 +720,15 @@ export class Campaign extends Entity {
     this.set("_n_conversions_paid", Value.fromI32(value));
   }
 
+  get _n_conversions_unpaid(): i32 {
+    let value = this.get("_n_conversions_unpaid");
+    return value.toI32();
+  }
+
+  set _n_conversions_unpaid(value: i32) {
+    this.set("_n_conversions_unpaid", Value.fromI32(value));
+  }
+
   get _n_conversions_rejected(): i32 {
     let value = this.get("_n_conversions_rejected");
     return value.toI32();
@@ -1169,6 +1187,15 @@ export class Meta extends Entity {
     this.set("_n_conversions_paid", Value.fromI32(value));
   }
 
+  get _n_conversions_unpaid(): i32 {
+    let value = this.get("_n_conversions_unpaid");
+    return value.toI32();
+  }
+
+  set _n_conversions_unpaid(value: i32) {
+    this.set("_n_conversions_unpaid", Value.fromI32(value));
+  }
+
   get _n_campaigns(): i32 {
     let value = this.get("_n_campaigns");
     return value.toI32();
@@ -1417,6 +1444,15 @@ export class User extends Entity {
 
   set _n_conversions_paid(value: i32) {
     this.set("_n_conversions_paid", Value.fromI32(value));
+  }
+
+  get _n_conversions_unpaid(): i32 {
+    let value = this.get("_n_conversions_unpaid");
+    return value.toI32();
+  }
+
+  set _n_conversions_unpaid(value: i32) {
+    this.set("_n_conversions_unpaid", Value.fromI32(value));
   }
 
   get _contractorMonetaryRep(): BigInt | null {
