@@ -52,6 +52,7 @@ type Conversion @entity {
   _isFiatConversion: Boolean
   _refundable: Boolean
   _paid: Boolean
+  _setPaid: Boolean!
   _version:Int
   _conversionId: BigInt
   _timeStamp: BigInt
@@ -105,6 +106,7 @@ type Campaign @entity {
     _n_conversions_approved: Int
     _n_forwarded: Int
     _n_conversions_paid: Int
+    _n_conversions_unpaid: Int
     _n_conversions_rejected: Int
     _converters_addresses: [String!]
     _version: Int
@@ -152,6 +154,7 @@ type Meta @entity {
   _plasmaWeb3Mapping: Int
   _n_conversions: Int
   _n_conversions_paid: Int
+  _n_conversions_unpaid: Int
   _n_campaigns: Int
   _n_feedbackEvents: Int
   _n_reputationEvents: Int
@@ -182,6 +185,7 @@ type User @entity {
   _n_conversions: Int!
   _n_joins: Int!
   _n_conversions_paid: Int
+  _n_conversions_unpaid: Int
   _contractorMonetaryRep: BigInt
   _contractorBudgetRep: BigInt
   _contractorFeedbackRep: BigInt
