@@ -40,6 +40,7 @@ function createMetadata(eventAddress: Address, timeStamp:BigInt): void {
     metadata._contracts = [];
     metadata._visitCounter = 0;
     metadata._n_conversions_paid = 0;
+    metadata._n_conversions_unpaid = 0;
     metadata._joinsCounter = 0;
     metadata._subgraphType = 'PLASMA';
     metadata._n_campaigns = 0;
@@ -75,6 +76,7 @@ function createUser(userAddress: Address, timeStamp: BigInt): void {
     user._n_conversions = 0;
     user._n_joins = 0;
     user._n_conversions_paid = 0;
+    user._n_conversions_unpaid = 0;
     user._contractorMonetaryRep = BigInt.fromI32(0);
     user._contractorBudgetRep = BigInt.fromI32(0);
     user._contractorFeedbackRep = BigInt.fromI32(0);
@@ -99,7 +101,6 @@ function createConversion(campaignAddress: Address, conversionID: BigInt, timest
     conversion._campaign = campaign.id;
     conversion._subgraphType = 'PLASMA';
     conversion._timeStamp = timestamp;
-
     conversion._status = 'PENDING';
     conversion._conversionId = conversionID;
     conversion._updatedTimeStamp = timestamp;
@@ -107,6 +108,7 @@ function createConversion(campaignAddress: Address, conversionID: BigInt, timest
     conversion._fiatAmountSpent = BigInt.fromI32(0);
     conversion._ethAmountSpent = BigInt.fromI32(0);
     conversion._tokens = BigInt.fromI32(0);
+    conversion._setPaid = false;
     conversion._refundable = true;
     conversion._isFiatConversion = false;
     conversion.save();
@@ -125,6 +127,7 @@ function createCampaign(eventAddress:Address, campaignAddress: Address, timeStam
     campaign._timeStamp = timeStamp;
     campaign._n_conversions_executed = 0;
     campaign._n_conversions_paid = 0;
+    campaign._n_conversions_unpaid = 0;
     campaign._n_unique_converters = 0;
     campaign._n_conversions_approved = 0;
     campaign._n_forwarded = 0;
@@ -260,6 +263,7 @@ export function handleConversionPaid(event: ConversionPaidEvent): void {
   let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex()+'-'+ event.params.conversionID.toString());
 
   conversion._paid = true;
+  conversion._setPaid = true;
   conversion.save();
 
   let converter = User.load(conversion._participate);
@@ -567,14 +571,26 @@ export function handleConversionExecuted(event: ConversionExecutedEvent): void {
   let metadata = Meta.load('Meta');
   metadata._conversionsExecuted += 1;
   // metadata._updatedAt = event.block.timestamp;
-  metadata.save();
 
   let campaign = Campaign.load(event.params.campaignAddressPlasma.toHex());
   campaign._n_conversions_executed += 1;
-  campaign.save();
 
   let conversion = Conversion.load(event.params.campaignAddressPlasma.toHex() + '-' + event.params.conversionID.toString());
   conversion._status = 'EXECUTED';
+
+  if (conversion._setPaid == false || (conversion._setPaid && conversion._paid == false)){
+    conversion._paid = false;
+    campaign._n_conversions_unpaid += 1;
+    metadata._n_conversions_unpaid += 1;
+    conversion._setPaid = true;
+
+    let converter = User.load(conversion._participate);
+    converter._n_conversions_unpaid += 1;
+    converter.save();
+  }
+
+  metadata.save();
+  campaign.save();
   conversion.save();
 }
 
