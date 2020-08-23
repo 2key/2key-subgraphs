@@ -90,3 +90,69 @@ dataSources:
       eventHandlers:
         - event: ReputationUpdated(address,string,string,int256,address)
           handler: handleReputationUpdated
+  - kind: ethereum/contract
+    name: TwoKeyStandardToken
+    network: ropsten
+    source:
+      address: "0x58a19bd98d01727de9895ce39234f75cd5a1acd4"
+      abi: ERC20
+      startBlock: 6900000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/Holders.ts
+      entities:
+        - Transfer
+        - Holder
+        - Token
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+  - kind: ethereum/contract
+    name: TwoKeyETHStandardToken
+    network: ropsten
+    source:
+      address: "0xbd5f480e10e05d8b9c115ace3761deac00ceb7ff"
+      abi: ERC20
+      startBlock: 8300000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/Holders.ts
+      entities:
+        - Transfer
+        - Holder
+        - Token
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+  - kind: ethereum/contract
+    name: TwoKeyDAIStandardToken
+    network: ropsten
+    source:
+      address: "0xf0b5e09043bcf7f88b6c2d482c02eb0dce61fdac"
+      abi: ERC20
+      startBlock: 8400000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/Holders.ts
+      entities:
+        - Transfer
+        - Holder
+        - Token
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer

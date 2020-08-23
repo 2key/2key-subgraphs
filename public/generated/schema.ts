@@ -2831,3 +2831,244 @@ export class Fee extends Entity {
     this.set("_timeStamp", Value.fromBigInt(value));
   }
 }
+
+export class Token extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Token entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Token entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Token", id.toString(), this);
+  }
+
+  static load(id: string): Token | null {
+    return store.get("Token", id) as Token | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get _amountAdded(): BigInt | null {
+    let value = this.get("_amountAdded");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _amountAdded(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_amountAdded");
+    } else {
+      this.set("_amountAdded", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get _amountBurned(): BigInt | null {
+    let value = this.get("_amountBurned");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _amountBurned(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_amountBurned");
+    } else {
+      this.set("_amountBurned", Value.fromBigInt(value as BigInt));
+    }
+  }
+}
+
+export class Holder extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Holder entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Holder entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Holder", id.toString(), this);
+  }
+
+  static load(id: string): Holder | null {
+    return store.get("Holder", id) as Holder | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get _twokeyBalance(): BigInt | null {
+    let value = this.get("_twokeyBalance");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _twokeyBalance(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_twokeyBalance");
+    } else {
+      this.set("_twokeyBalance", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get _twokeyDaiBalance(): BigInt | null {
+    let value = this.get("_twokeyDaiBalance");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _twokeyDaiBalance(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_twokeyDaiBalance");
+    } else {
+      this.set("_twokeyDaiBalance", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get _twokeyEthBalance(): BigInt | null {
+    let value = this.get("_twokeyEthBalance");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _twokeyEthBalance(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_twokeyEthBalance");
+    } else {
+      this.set("_twokeyEthBalance", Value.fromBigInt(value as BigInt));
+    }
+  }
+}
+
+export class TokenTransfer extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save TokenTransfer entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save TokenTransfer entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("TokenTransfer", id.toString(), this);
+  }
+
+  static load(id: string): TokenTransfer | null {
+    return store.get("TokenTransfer", id) as TokenTransfer | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get _token(): string {
+    let value = this.get("_token");
+    return value.toString();
+  }
+
+  set _token(value: string) {
+    this.set("_token", Value.fromString(value));
+  }
+
+  get _sender(): Bytes {
+    let value = this.get("_sender");
+    return value.toBytes();
+  }
+
+  set _sender(value: Bytes) {
+    this.set("_sender", Value.fromBytes(value));
+  }
+
+  get _receiver(): Bytes {
+    let value = this.get("_receiver");
+    return value.toBytes();
+  }
+
+  set _receiver(value: Bytes) {
+    this.set("_receiver", Value.fromBytes(value));
+  }
+
+  get _amount(): BigInt {
+    let value = this.get("_amount");
+    return value.toBigInt();
+  }
+
+  set _amount(value: BigInt) {
+    this.set("_amount", Value.fromBigInt(value));
+  }
+
+  get _block(): BigInt {
+    let value = this.get("_block");
+    return value.toBigInt();
+  }
+
+  set _block(value: BigInt) {
+    this.set("_block", Value.fromBigInt(value));
+  }
+
+  get _timestamp(): BigInt {
+    let value = this.get("_timestamp");
+    return value.toBigInt();
+  }
+
+  set _timestamp(value: BigInt) {
+    this.set("_timestamp", Value.fromBigInt(value));
+  }
+
+  get _transaction(): Bytes {
+    let value = this.get("_transaction");
+    return value.toBytes();
+  }
+
+  set _transaction(value: Bytes) {
+    this.set("_transaction", Value.fromBytes(value));
+  }
+}
