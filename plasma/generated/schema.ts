@@ -666,6 +666,23 @@ export class Campaign extends Entity {
     this.set("_subgraphType", Value.fromString(value));
   }
 
+  get _type(): string | null {
+    let value = this.get("_type");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set _type(value: string | null) {
+    if (value === null) {
+      this.unset("_type");
+    } else {
+      this.set("_type", Value.fromString(value as string));
+    }
+  }
+
   get _n_conversions(): i32 {
     let value = this.get("_n_conversions");
     return value.toI32();
@@ -709,6 +726,15 @@ export class Campaign extends Entity {
 
   set _n_forwarded(value: i32) {
     this.set("_n_forwarded", Value.fromI32(value));
+  }
+
+  get _n_referred(): i32 {
+    let value = this.get("_n_referred");
+    return value.toI32();
+  }
+
+  set _n_referred(value: i32) {
+    this.set("_n_referred", Value.fromI32(value));
   }
 
   get _n_conversions_paid(): i32 {
@@ -1071,6 +1097,24 @@ export class Meta extends Entity {
     this.set("_n_conversions_rejected", Value.fromI32(value));
   }
 
+  get _n_ppcCampaignsCreated(): i32 {
+    let value = this.get("_n_ppcCampaignsCreated");
+    return value.toI32();
+  }
+
+  set _n_ppcCampaignsCreated(value: i32) {
+    this.set("_n_ppcCampaignsCreated", Value.fromI32(value));
+  }
+
+  get _n_clicks(): i32 {
+    let value = this.get("_n_clicks");
+    return value.toI32();
+  }
+
+  set _n_clicks(value: i32) {
+    this.set("_n_clicks", Value.fromI32(value));
+  }
+
   get _version(): i32 {
     let value = this.get("_version");
     return value.toI32();
@@ -1115,6 +1159,15 @@ export class Meta extends Entity {
     this.set("_visitCounter", Value.fromI32(value));
   }
 
+  get _visitCounterPpc(): i32 {
+    let value = this.get("_visitCounterPpc");
+    return value.toI32();
+  }
+
+  set _visitCounterPpc(value: i32) {
+    this.set("_visitCounterPpc", Value.fromI32(value));
+  }
+
   get _n_forwarded(): i32 {
     let value = this.get("_n_forwarded");
     return value.toI32();
@@ -1122,6 +1175,24 @@ export class Meta extends Entity {
 
   set _n_forwarded(value: i32) {
     this.set("_n_forwarded", Value.fromI32(value));
+  }
+
+  get _n_referred(): i32 {
+    let value = this.get("_n_referred");
+    return value.toI32();
+  }
+
+  set _n_referred(value: i32) {
+    this.set("_n_referred", Value.fromI32(value));
+  }
+
+  get _n_referredPpc(): i32 {
+    let value = this.get("_n_referredPpc");
+    return value.toI32();
+  }
+
+  set _n_referredPpc(value: i32) {
+    this.set("_n_referredPpc", Value.fromI32(value));
   }
 
   get _joinsCounter(): i32 {
@@ -1962,42 +2033,6 @@ export class Visit extends Entity {
     this.set("_visitor", Value.fromString(value));
   }
 
-  get _createdByJoin(): boolean {
-    let value = this.get("_createdByJoin");
-    return value.toBoolean();
-  }
-
-  set _createdByJoin(value: boolean) {
-    this.set("_createdByJoin", Value.fromBoolean(value));
-  }
-
-  get _overridJoinCreationWithVisit(): boolean {
-    let value = this.get("_overridJoinCreationWithVisit");
-    return value.toBoolean();
-  }
-
-  set _overridJoinCreationWithVisit(value: boolean) {
-    this.set("_overridJoinCreationWithVisit", Value.fromBoolean(value));
-  }
-
-  get _overrideTxHash(): Bytes {
-    let value = this.get("_overrideTxHash");
-    return value.toBytes();
-  }
-
-  set _overrideTxHash(value: Bytes) {
-    this.set("_overrideTxHash", Value.fromBytes(value));
-  }
-
-  get _tx_hash(): Bytes {
-    let value = this.get("_tx_hash");
-    return value.toBytes();
-  }
-
-  set _tx_hash(value: Bytes) {
-    this.set("_tx_hash", Value.fromBytes(value));
-  }
-
   get _timeStamp(): BigInt {
     let value = this.get("_timeStamp");
     return value.toBigInt();
@@ -2014,73 +2049,6 @@ export class Visit extends Entity {
 
   set _updatedAt(value: BigInt) {
     this.set("_updatedAt", Value.fromBigInt(value));
-  }
-}
-
-export class VisitEvent extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id !== null, "Cannot save VisitEvent entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save VisitEvent entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("VisitEvent", id.toString(), this);
-  }
-
-  static load(id: string): VisitEvent | null {
-    return store.get("VisitEvent", id) as VisitEvent | null;
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get _campaign(): string {
-    let value = this.get("_campaign");
-    return value.toString();
-  }
-
-  set _campaign(value: string) {
-    this.set("_campaign", Value.fromString(value));
-  }
-
-  get _referrer(): string {
-    let value = this.get("_referrer");
-    return value.toString();
-  }
-
-  set _referrer(value: string) {
-    this.set("_referrer", Value.fromString(value));
-  }
-
-  get _visitor(): string {
-    let value = this.get("_visitor");
-    return value.toString();
-  }
-
-  set _visitor(value: string) {
-    this.set("_visitor", Value.fromString(value));
-  }
-
-  get _timeStamp(): BigInt {
-    let value = this.get("_timeStamp");
-    return value.toBigInt();
-  }
-
-  set _timeStamp(value: BigInt) {
-    this.set("_timeStamp", Value.fromBigInt(value));
   }
 }
 
