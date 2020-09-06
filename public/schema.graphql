@@ -311,3 +311,28 @@ type Fee @entity{
     _type: String # [Debt, TokenPool, Moderator]
     _timeStamp: BigInt!
 }
+
+type Token @entity {
+    id: ID!
+    _amountAdded: BigInt
+    _amountBurned: BigInt
+}
+
+
+type Holder @entity {
+    id: ID!
+    _twokeyBalance: BigInt
+    _twokeyDaiBalance: BigInt
+    _twokeyEthBalance: BigInt
+}
+
+type TokenTransfer @entity {
+    id: ID!
+    _token: Token!
+    _sender: Bytes!
+    _receiver: Bytes!
+    _amount: BigInt!
+    _block: BigInt!
+    _timestamp: BigInt!
+    _transaction: Bytes!
+}

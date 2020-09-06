@@ -7,7 +7,8 @@ dataSources:
     network: ropsten
     source:
       address: "0xc2a7bb4b7b4e2cb1d3653caf7b6b308c4600fa66"
-      abi: TwoKeyEventSource #1.1.4
+      abi: TwoKeyEventSource
+      startBlock: 6900000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -73,6 +74,7 @@ dataSources:
     source:
       address: "0xa3d7eb044ca229265991e481fa9f75dbd6549726"
       abi: TwoKeyBaseReputationRegistry
+      startBlock: 6900000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -88,3 +90,69 @@ dataSources:
       eventHandlers:
         - event: ReputationUpdated(address,string,string,int256,address)
           handler: handleReputationUpdated
+  - kind: ethereum/contract
+    name: TwoKeyStandardToken
+    network: ropsten
+    source:
+      address: "0x3e200226b285eadeccf60036c18a52b7e88c9bb2"
+      abi: ERC20
+      startBlock: 6900000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/Holders.ts
+      entities:
+        - Transfer
+        - Holder
+        - Token
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+  - kind: ethereum/contract
+    name: TwoKeyETHStandardToken
+    network: ropsten
+    source:
+      address: "0xd067df0ca66f97d04246d90917ae2bae5f5f9fc7"
+      abi: ERC20
+      startBlock: 8300000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/Holders.ts
+      entities:
+        - Transfer
+        - Holder
+        - Token
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+  - kind: ethereum/contract
+    name: TwoKeyDAIStandardToken
+    network: ropsten
+    source:
+      address: "0x480cf5334e4092eed9e161ff0c3d96852ceb7cb3"
+      abi: ERC20
+      startBlock: 8400000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/Holders.ts
+      entities:
+        - Transfer
+        - Holder
+        - Token
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
