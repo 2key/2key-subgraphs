@@ -100,11 +100,13 @@ type Campaign @entity {
     id: ID!  # Web3 Address
     _owner: User
     _subgraphType: GraphType!
+    _type: String
     _n_conversions: Int
     _n_conversions_executed: Int
     _n_unique_converters: Int
     _n_conversions_approved: Int
     _n_forwarded: Int
+    _n_referred: Int
     _n_conversions_paid: Int
     _n_conversions_unpaid: Int
     _n_conversions_rejected: Int
@@ -142,11 +144,16 @@ type Meta @entity {
   id: ID!
   _conversionsExecuted: Int
   _n_conversions_rejected: Int
+  _n_ppcCampaignsCreated: Int
+  _n_clicks: Int
   _version: Int
   _contracts: [Bytes!]
   _subgraphType: GraphType!
   _visitCounter: Int
+  _visitCounterPpc: Int
   _n_forwarded: Int
+  _n_referred: Int
+  _n_referredPpc: Int
   _joinsCounter: Int
   _plasmaToHandleCounter: Int
   _plasmaToEthereumCounter: Int
@@ -233,22 +240,10 @@ type Visit @entity {
   _campaign: Campaign! # address
   _referrer: User! # address
   _visitor: User! # address
-  _createdByJoin: Boolean!
-  _overridJoinCreationWithVisit: Boolean!
-  _overrideTxHash: Bytes!
-  _tx_hash: Bytes!
   _timeStamp: BigInt!
   _updatedAt: BigInt!
 }
 
-
-type VisitEvent @entity {
-  id: ID!
-  _campaign: Campaign! # address
-  _referrer: User! # address
-  _visitor: User! # address
-  _timeStamp:BigInt!
-}
 
 type CampaignPlasmaByWeb3 @entity {
   id: ID!
