@@ -31,6 +31,50 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "campaignPlasma",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "influencer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "amountOfTokens",
+        "type": "uint256"
+      }
+    ],
+    "name": "AddedPendingRewards",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "influencer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "amountPaid",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "campaignsPaid",
+        "type": "address[]"
+      }
+    ],
+    "name": "PaidPendingRewards",
+    "type": "event"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "implementation",

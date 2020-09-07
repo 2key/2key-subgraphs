@@ -18,19 +18,20 @@ import {
   ConversionRejected as ConversionRejectedEvent,
   HandleChanged as HandleChangedEvent,
   PlasmaMirrorCampaigns as PlasmaMirrorCampaignsEvent,
-  ConversionPaid as ConversionPaidEvent
+  ConversionPaid as ConversionPaidEvent,
+  AddedPendingRewards as AddedPendingRewardsEvent,
+  PaidPendingRewards as PaidPendingRewardsEvent
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
 
 import {
   Campaign, Conversion, User, Visit, Meta, Debug, PlasmaToEthereumMappingEvent, JoinEvent,
-  Join, ForwardedByCampaign, CampaignPlasmaByWeb3, CampaignWeb3ByPlasma, Reputation, Feedback
+  Join, ForwardedByCampaign, CampaignPlasmaByWeb3, CampaignWeb3ByPlasma, Reputation, Feedback, Reward
 } from "../generated/schema"
 
 import {
   Address, BigInt, ethereum
  } from '@graphprotocol/graph-ts'
-
 
 function getOrCreateMetadata(eventAddress: Address, timeStamp: BigInt): Meta {
   let id = 'Meta';
@@ -89,6 +90,11 @@ function getOrCreateUser(userAddress: Address, timeStamp: BigInt): User {
     user._n_joins = 0;
     user._n_conversions_paid = 0;
     user._n_conversions_unpaid = 0;
+    user._pending_rewards_wei = BigInt.fromI32(0);
+    user._added_rewards_wei = BigInt.fromI32(0);
+    user._paid_rewards_wei = BigInt.fromI32(0);
+    user._pending_rewards_ppc_wei = BigInt.fromI32(0);
+    user._added_rewards_ppc_wei = BigInt.fromI32(0);
     user._contractorMonetaryRep = BigInt.fromI32(0);
     user._contractorBudgetRep = BigInt.fromI32(0);
     user._contractorFeedbackRep = BigInt.fromI32(0);
@@ -204,7 +210,28 @@ function getOrCreateVisit(eventAddress: Address, campaignAddress: Address, refer
   return visit as Visit;
 }
 
-function getOrCreateCampaign(eventAddress:Address, campaignAddress: Address, timeStamp: BigInt): Campaign {
+
+function getOrCreateReward(eventAddress: Address, campaignAddress: Address, userAddress: Address, timeStamp: BigInt): Reward {
+  let id = campaignAddress.toHex() + '-' + userAddress.toHex();
+
+  let reward = Reward.load(id);
+  if (reward == null){
+    let user = getOrCreateUser(userAddress, timeStamp);
+    let campaign = getOrCreateCampaign(eventAddress, campaignAddress, timeStamp);
+
+    reward = new Reward(id);
+    reward._amount_added_wei = BigInt.fromI32(0);
+    reward._amount_paid_wei = BigInt.fromI32(0);
+    reward._user = user.id;
+    reward._campaign = campaign.id;
+    reward.save()
+  }
+
+  return reward as Reward;
+}
+
+
+function getOrCreateCampaign(eventAddress: Address, campaignAddress: Address, timeStamp: BigInt): Campaign {
   let id = campaignAddress.toHex();
   let campaign = Campaign.load(id);
 
@@ -555,4 +582,54 @@ export function handleConversionRejected(event: ConversionRejectedEvent): void {
   conversion._rejected_status_code = event.params.statusCode.toI32();
   conversion._rejected_at = event.block.timestamp;
   conversion.save();
+}
+
+
+export function handleAddedPendingRewards(event: AddedPendingRewardsEvent): void {
+  let metadata = getOrCreateMetadata(event.address, event.block.timestamp);
+  metadata.save();
+
+  let influencerPlasma = event.params.influencer;
+
+  let reward = getOrCreateReward(event.address, event.params.campaignPlasma, influencerPlasma, event.block.timestamp);
+  reward._amount_added_wei = reward._amount_added_wei.plus(event.params.amountOfTokens as BigInt);
+  reward.save();
+
+  let campaign = getOrCreateCampaign(event.address, event.params.campaignPlasma, event.block.timestamp);
+
+
+  let user = getOrCreateUser(influencerPlasma, event.block.timestamp);
+  if (campaign._type == 'ppc'){
+    user._pending_rewards_ppc_wei = user._pending_rewards_ppc_wei.plus(reward._amount_added_wei as BigInt);
+    user._added_rewards_ppc_wei = user._added_rewards_ppc_wei.plus(reward._amount_added_wei as BigInt);
+  }
+  user._added_rewards_wei = user._added_rewards_wei.plus(reward._amount_added_wei as BigInt);
+  user._pending_rewards_wei = user._pending_rewards_wei.plus(reward._amount_added_wei as BigInt);
+  user.save();
+}
+
+export function handlePaidPendingRewards(event: PaidPendingRewardsEvent): void {
+  let metadata = getOrCreateMetadata(event.address, event.block.timestamp);
+  metadata.save();
+
+  var ppcPaid = false;
+  let user = getOrCreateUser(event.params.influencer, event.block.timestamp);
+  let campaignsPaid = event.params.campaignsPaid;
+
+  campaignsPaid.forEach(function(campaignAddress){
+    // let reward = getOrCreateReward(campaignAddress, event.params.influencer, event.block.timestamp);
+    // reward._amount_paid_wei = reward._amount_paid_wei.plus(event.params.amountPaid as BigInt);
+    // reward.save();
+    let campaign = getOrCreateCampaign(event.address, campaignAddress, event.block.timestamp);
+    if (campaign._type == 'ppc'){
+      ppcPaid = true;
+    }
+  });
+
+  user._paid_rewards_wei = user._paid_rewards_wei.plus(event.params.amountPaid as BigInt);
+  user._pending_rewards_wei = user._pending_rewards_wei.minus(event.params.amountPaid as BigInt);
+  if (ppcPaid){
+    user._pending_rewards_ppc_wei = user._pending_rewards_ppc_wei.minus(event.params.amountPaid as BigInt);
+  }
+  user.save();
 }

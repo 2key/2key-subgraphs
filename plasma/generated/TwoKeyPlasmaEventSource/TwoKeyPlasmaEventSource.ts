@@ -32,6 +32,58 @@ export class ConversionPaid__Params {
   }
 }
 
+export class AddedPendingRewards extends ethereum.Event {
+  get params(): AddedPendingRewards__Params {
+    return new AddedPendingRewards__Params(this);
+  }
+}
+
+export class AddedPendingRewards__Params {
+  _event: AddedPendingRewards;
+
+  constructor(event: AddedPendingRewards) {
+    this._event = event;
+  }
+
+  get campaignPlasma(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get influencer(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get amountOfTokens(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class PaidPendingRewards extends ethereum.Event {
+  get params(): PaidPendingRewards__Params {
+    return new PaidPendingRewards__Params(this);
+  }
+}
+
+export class PaidPendingRewards__Params {
+  _event: PaidPendingRewards;
+
+  constructor(event: PaidPendingRewards) {
+    this._event = event;
+  }
+
+  get influencer(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get amountPaid(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get campaignsPaid(): Array<Address> {
+    return this._event.parameters[2].value.toAddressArray();
+  }
+}
+
 export class Plasma2Ethereum extends ethereum.Event {
   get params(): Plasma2Ethereum__Params {
     return new Plasma2Ethereum__Params(this);
