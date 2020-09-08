@@ -56,7 +56,6 @@ dataSources:
         - User
         - Test
         - Visit
-        - VisitEvent
         - ForwardedByCampaign
         - CampaignPlasmaByWeb3
         - CampaignWeb3ByPlasma
