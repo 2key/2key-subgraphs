@@ -45,7 +45,7 @@ export class AddedPendingRewards__Params {
     this._event = event;
   }
 
-  get campaignPlasma(): Address {
+  get contractAddress(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
@@ -53,7 +53,7 @@ export class AddedPendingRewards__Params {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get amountOfTokens(): BigInt {
+  get rewards(): BigInt {
     return this._event.parameters[2].value.toBigInt();
   }
 }
@@ -75,12 +75,20 @@ export class PaidPendingRewards__Params {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get amountPaid(): BigInt {
+  get nonRebalancedRewards(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 
+  get rewards(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
   get campaignsPaid(): Array<Address> {
-    return this._event.parameters[2].value.toAddressArray();
+    return this._event.parameters[3].value.toAddressArray();
+  }
+
+  get earningsPerCampaign(): Array<BigInt> {
+    return this._event.parameters[4].value.toBigIntArray();
   }
 }
 

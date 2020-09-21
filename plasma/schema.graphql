@@ -194,11 +194,12 @@ type User @entity {
   _n_joins: Int!
   _n_conversions_paid: Int
   _n_conversions_unpaid: Int
-  _pending_rewards_wei: BigInt
-  _paid_rewards_wei: BigInt
-  _added_rewards_wei: BigInt
-  _pending_rewards_ppc_wei: BigInt
-  _added_rewards_ppc_wei: BigInt
+  _pending_rewards_wei_non_rebalanced: BigInt
+  _pending_rewards_ppc_wei_non_rebalanced: BigInt
+  _paid_rewards_wei_rebalanced: BigInt
+  _paid_rewards_wei_non_rebalanced: BigInt
+  _paid_rewards_ppc_wei_rebalanced: BigInt
+  _paid_rewards_ppc_wei_non_rebalanced: BigInt
   _contractorMonetaryRep: BigInt
   _contractorBudgetRep: BigInt
   _contractorFeedbackRep: BigInt
@@ -244,8 +245,8 @@ type Feedback @entity {
 type Reward @entity {
   id: ID!
   _user: User!
-  _amount_added_wei: BigInt!
-  _amount_paid_wei: BigInt!
+  _amount_added_wei_non_rabalanced: BigInt!
+  _amount_paid_wei_rebalanced: BigInt!
   _campaign: Campaign!
   _added: Boolean
 }

@@ -66,7 +66,7 @@ dataSources:
       eventHandlers:
         - event: AddedPendingRewards(address,address,uint256)
           handler: handleAddedPendingRewards
-        - event: PaidPendingRewards(address,uint256,address[])
+        - event: PaidPendingRewards(address,uint256,uint256,address[],uint256[])
           handler: handlePaidPendingRewards
         - event: Plasma2Ethereum(address,address)
           handler: handlePlasma2Ethereum

@@ -1543,8 +1543,8 @@ export class User extends Entity {
     this.set("_n_conversions_unpaid", Value.fromI32(value));
   }
 
-  get _pending_rewards_wei(): BigInt | null {
-    let value = this.get("_pending_rewards_wei");
+  get _pending_rewards_wei_non_rebalanced(): BigInt | null {
+    let value = this.get("_pending_rewards_wei_non_rebalanced");
     if (value === null) {
       return null;
     } else {
@@ -1552,16 +1552,19 @@ export class User extends Entity {
     }
   }
 
-  set _pending_rewards_wei(value: BigInt | null) {
+  set _pending_rewards_wei_non_rebalanced(value: BigInt | null) {
     if (value === null) {
-      this.unset("_pending_rewards_wei");
+      this.unset("_pending_rewards_wei_non_rebalanced");
     } else {
-      this.set("_pending_rewards_wei", Value.fromBigInt(value as BigInt));
+      this.set(
+        "_pending_rewards_wei_non_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
     }
   }
 
-  get _paid_rewards_wei(): BigInt | null {
-    let value = this.get("_paid_rewards_wei");
+  get _pending_rewards_ppc_wei_non_rebalanced(): BigInt | null {
+    let value = this.get("_pending_rewards_ppc_wei_non_rebalanced");
     if (value === null) {
       return null;
     } else {
@@ -1569,16 +1572,19 @@ export class User extends Entity {
     }
   }
 
-  set _paid_rewards_wei(value: BigInt | null) {
+  set _pending_rewards_ppc_wei_non_rebalanced(value: BigInt | null) {
     if (value === null) {
-      this.unset("_paid_rewards_wei");
+      this.unset("_pending_rewards_ppc_wei_non_rebalanced");
     } else {
-      this.set("_paid_rewards_wei", Value.fromBigInt(value as BigInt));
+      this.set(
+        "_pending_rewards_ppc_wei_non_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
     }
   }
 
-  get _added_rewards_wei(): BigInt | null {
-    let value = this.get("_added_rewards_wei");
+  get _paid_rewards_wei_rebalanced(): BigInt | null {
+    let value = this.get("_paid_rewards_wei_rebalanced");
     if (value === null) {
       return null;
     } else {
@@ -1586,16 +1592,19 @@ export class User extends Entity {
     }
   }
 
-  set _added_rewards_wei(value: BigInt | null) {
+  set _paid_rewards_wei_rebalanced(value: BigInt | null) {
     if (value === null) {
-      this.unset("_added_rewards_wei");
+      this.unset("_paid_rewards_wei_rebalanced");
     } else {
-      this.set("_added_rewards_wei", Value.fromBigInt(value as BigInt));
+      this.set(
+        "_paid_rewards_wei_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
     }
   }
 
-  get _pending_rewards_ppc_wei(): BigInt | null {
-    let value = this.get("_pending_rewards_ppc_wei");
+  get _paid_rewards_wei_non_rebalanced(): BigInt | null {
+    let value = this.get("_paid_rewards_wei_non_rebalanced");
     if (value === null) {
       return null;
     } else {
@@ -1603,16 +1612,19 @@ export class User extends Entity {
     }
   }
 
-  set _pending_rewards_ppc_wei(value: BigInt | null) {
+  set _paid_rewards_wei_non_rebalanced(value: BigInt | null) {
     if (value === null) {
-      this.unset("_pending_rewards_ppc_wei");
+      this.unset("_paid_rewards_wei_non_rebalanced");
     } else {
-      this.set("_pending_rewards_ppc_wei", Value.fromBigInt(value as BigInt));
+      this.set(
+        "_paid_rewards_wei_non_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
     }
   }
 
-  get _added_rewards_ppc_wei(): BigInt | null {
-    let value = this.get("_added_rewards_ppc_wei");
+  get _paid_rewards_ppc_wei_rebalanced(): BigInt | null {
+    let value = this.get("_paid_rewards_ppc_wei_rebalanced");
     if (value === null) {
       return null;
     } else {
@@ -1620,11 +1632,34 @@ export class User extends Entity {
     }
   }
 
-  set _added_rewards_ppc_wei(value: BigInt | null) {
+  set _paid_rewards_ppc_wei_rebalanced(value: BigInt | null) {
     if (value === null) {
-      this.unset("_added_rewards_ppc_wei");
+      this.unset("_paid_rewards_ppc_wei_rebalanced");
     } else {
-      this.set("_added_rewards_ppc_wei", Value.fromBigInt(value as BigInt));
+      this.set(
+        "_paid_rewards_ppc_wei_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
+    }
+  }
+
+  get _paid_rewards_ppc_wei_non_rebalanced(): BigInt | null {
+    let value = this.get("_paid_rewards_ppc_wei_non_rebalanced");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _paid_rewards_ppc_wei_non_rebalanced(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_paid_rewards_ppc_wei_non_rebalanced");
+    } else {
+      this.set(
+        "_paid_rewards_ppc_wei_non_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
     }
   }
 
@@ -2134,22 +2169,22 @@ export class Reward extends Entity {
     this.set("_user", Value.fromString(value));
   }
 
-  get _amount_added_wei(): BigInt {
-    let value = this.get("_amount_added_wei");
+  get _amount_added_wei_non_rabalanced(): BigInt {
+    let value = this.get("_amount_added_wei_non_rabalanced");
     return value.toBigInt();
   }
 
-  set _amount_added_wei(value: BigInt) {
-    this.set("_amount_added_wei", Value.fromBigInt(value));
+  set _amount_added_wei_non_rabalanced(value: BigInt) {
+    this.set("_amount_added_wei_non_rabalanced", Value.fromBigInt(value));
   }
 
-  get _amount_paid_wei(): BigInt {
-    let value = this.get("_amount_paid_wei");
+  get _amount_paid_wei_rebalanced(): BigInt {
+    let value = this.get("_amount_paid_wei_rebalanced");
     return value.toBigInt();
   }
 
-  set _amount_paid_wei(value: BigInt) {
-    this.set("_amount_paid_wei", Value.fromBigInt(value));
+  set _amount_paid_wei_rebalanced(value: BigInt) {
+    this.set("_amount_paid_wei_rebalanced", Value.fromBigInt(value));
   }
 
   get _campaign(): string {

@@ -90,11 +90,12 @@ function getOrCreateUser(userAddress: Address, timeStamp: BigInt): User {
     user._n_joins = 0;
     user._n_conversions_paid = 0;
     user._n_conversions_unpaid = 0;
-    user._pending_rewards_wei = BigInt.fromI32(0);
-    user._added_rewards_wei = BigInt.fromI32(0);
-    user._paid_rewards_wei = BigInt.fromI32(0);
-    user._pending_rewards_ppc_wei = BigInt.fromI32(0);
-    user._added_rewards_ppc_wei = BigInt.fromI32(0);
+    user._pending_rewards_wei_non_rebalanced = BigInt.fromI32(0);
+    user._pending_rewards_ppc_wei_non_rebalanced = BigInt.fromI32(0);
+    user._paid_rewards_wei_rebalanced = BigInt.fromI32(0);
+    user._paid_rewards_wei_non_rebalanced = BigInt.fromI32(0);
+    user._paid_rewards_ppc_wei_rebalanced = BigInt.fromI32(0);
+    user._paid_rewards_ppc_wei_non_rebalanced = BigInt.fromI32(0);
     user._contractorMonetaryRep = BigInt.fromI32(0);
     user._contractorBudgetRep = BigInt.fromI32(0);
     user._contractorFeedbackRep = BigInt.fromI32(0);
@@ -220,8 +221,8 @@ function getOrCreateReward(eventAddress: Address, campaignAddress: Address, user
     let campaign = getOrCreateCampaign(eventAddress, campaignAddress, timeStamp);
 
     reward = new Reward(id);
-    reward._amount_added_wei = BigInt.fromI32(0);
-    reward._amount_paid_wei = BigInt.fromI32(0);
+    reward._amount_added_wei_non_rabalanced = BigInt.fromI32(0);
+    reward._amount_paid_wei_rebalanced = BigInt.fromI32(0);
     reward._user = user.id;
     reward._campaign = campaign.id;
     reward.save()
@@ -591,20 +592,17 @@ export function handleAddedPendingRewards(event: AddedPendingRewardsEvent): void
 
   let influencerPlasma = event.params.influencer;
 
-  let reward = getOrCreateReward(event.address, event.params.campaignPlasma, influencerPlasma, event.block.timestamp);
-  reward._amount_added_wei = reward._amount_added_wei.plus(event.params.amountOfTokens as BigInt);
+  let reward = getOrCreateReward(event.address, event.params.contractAddress, influencerPlasma, event.block.timestamp);
+  reward._amount_added_wei_non_rabalanced = reward._amount_added_wei_non_rabalanced.plus(event.params.rewards as BigInt);
   reward.save();
 
-  let campaign = getOrCreateCampaign(event.address, event.params.campaignPlasma, event.block.timestamp);
-
+  let campaign = getOrCreateCampaign(event.address, event.params.contractAddress, event.block.timestamp);
 
   let user = getOrCreateUser(influencerPlasma, event.block.timestamp);
   if (campaign._type == 'ppc'){
-    user._pending_rewards_ppc_wei = user._pending_rewards_ppc_wei.plus(reward._amount_added_wei as BigInt);
-    user._added_rewards_ppc_wei = user._added_rewards_ppc_wei.plus(reward._amount_added_wei as BigInt);
+    user._pending_rewards_ppc_wei_non_rebalanced = user._pending_rewards_ppc_wei_non_rebalanced.plus(reward._amount_added_wei_non_rabalanced as BigInt);
   }
-  user._added_rewards_wei = user._added_rewards_wei.plus(reward._amount_added_wei as BigInt);
-  user._pending_rewards_wei = user._pending_rewards_wei.plus(reward._amount_added_wei as BigInt);
+  user._pending_rewards_wei_non_rebalanced = user._pending_rewards_wei_non_rebalanced.plus(reward._amount_added_wei_non_rabalanced as BigInt);
   user.save();
 }
 
@@ -612,24 +610,53 @@ export function handlePaidPendingRewards(event: PaidPendingRewardsEvent): void {
   let metadata = getOrCreateMetadata(event.address, event.block.timestamp);
   metadata.save();
 
-  var ppcPaid = false;
-  let user = getOrCreateUser(event.params.influencer, event.block.timestamp);
-  let campaignsPaid = event.params.campaignsPaid;
+  let ppcPaid = false;
 
-  campaignsPaid.forEach(function(campaignAddress){
-    // let reward = getOrCreateReward(campaignAddress, event.params.influencer, event.block.timestamp);
-    // reward._amount_paid_wei = reward._amount_paid_wei.plus(event.params.amountPaid as BigInt);
-    // reward.save();
-    let campaign = getOrCreateCampaign(event.address, campaignAddress, event.block.timestamp);
+  let campaignsPaid = event.params.campaignsPaid;
+  let rewardsArray = event.params.earningsPerCampaign;
+
+  let nRewards = rewardsArray.length;
+  let nCampaigns = campaignsPaid.length;
+
+  if (nRewards != nCampaigns) {
+    return;
+  }
+
+  for (let campaignRewardIdx = 0; campaignRewardIdx < nCampaigns; campaignRewardIdx++){
+    let campaign = getOrCreateCampaign(event.address, campaignsPaid[campaignRewardIdx], event.block.timestamp);
+    let reward = getOrCreateReward(event.address, campaignsPaid[campaignRewardIdx], event.params.influencer, event.block.timestamp);
+
+    reward._amount_paid_wei_rebalanced = reward._amount_paid_wei_rebalanced.plus(rewardsArray[campaignRewardIdx] as BigInt);
+    reward.save();
+
     if (campaign._type == 'ppc'){
       ppcPaid = true;
     }
-  });
+  }
 
-  user._paid_rewards_wei = user._paid_rewards_wei.plus(event.params.amountPaid as BigInt);
-  user._pending_rewards_wei = user._pending_rewards_wei.minus(event.params.amountPaid as BigInt);
+  // campaignsPaid.forEach(function(campaignAddress, idx){
+  //   // let reward = getOrCreateReward(campaignAddress, event.params.influencer, event.block.timestamp);
+  //   // reward._amount_paid_wei = reward._amount_paid_wei.plus(event.params.amountPaid as BigInt);
+  //   // reward.save();
+  //   let campaign = getOrCreateCampaign(event.address, campaignAddress, event.block.timestamp);
+  //   let reward = getOrCreateReward(event.address, campaignAddress, event.params.influencer, event.block.timestamp);
+  //
+  //   reward._amount_paid_wei = reward._amount_paid_wei.plus(rewardsArray[idx] as BigInt);
+  //   reward.save();
+  //
+  //   if (campaign._type == 'ppc'){
+  //     ppcPaid = true;
+  //   }
+  // });
+
+  let user = getOrCreateUser(event.params.influencer, event.block.timestamp);
+
+  user._paid_rewards_wei_non_rebalanced = user._paid_rewards_wei_non_rebalanced.plus(event.params.nonRebalancedRewards as BigInt);
+  user._paid_rewards_wei_rebalanced = user._paid_rewards_wei_rebalanced.plus(event.params.rewards as BigInt);
+
   if (ppcPaid){
-    user._pending_rewards_ppc_wei = user._pending_rewards_ppc_wei.minus(event.params.amountPaid as BigInt);
+    user._paid_rewards_ppc_wei_non_rebalanced = user._paid_rewards_ppc_wei_non_rebalanced.plus(event.params.nonRebalancedRewards as BigInt);
+    user._paid_rewards_ppc_wei_rebalanced = user._paid_rewards_ppc_wei_rebalanced.plus(event.params.rewards as BigInt);
   }
   user.save();
 }

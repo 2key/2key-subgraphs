@@ -35,7 +35,7 @@
     "inputs": [
       {
         "indexed": false,
-        "name": "campaignPlasma",
+        "name": "contractAddress",
         "type": "address"
       },
       {
@@ -45,7 +45,7 @@
       },
       {
         "indexed": false,
-        "name": "amountOfTokens",
+        "name": "rewards",
         "type": "uint256"
       }
     ],
@@ -62,13 +62,23 @@
       },
       {
         "indexed": false,
-        "name": "amountPaid",
+        "name": "nonRebalancedRewards",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "rewards",
         "type": "uint256"
       },
       {
         "indexed": false,
         "name": "campaignsPaid",
         "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "name": "earningsPerCampaign",
+        "type": "uint256[]"
       }
     ],
     "name": "PaidPendingRewards",
