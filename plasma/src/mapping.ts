@@ -654,9 +654,24 @@ export function handlePaidPendingRewards(event: PaidPendingRewardsEvent): void {
   user._paid_rewards_wei_non_rebalanced = user._paid_rewards_wei_non_rebalanced.plus(event.params.nonRebalancedRewards as BigInt);
   user._paid_rewards_wei_rebalanced = user._paid_rewards_wei_rebalanced.plus(event.params.rewards as BigInt);
 
+  if (user._pending_rewards_wei_non_rebalanced <= event.params.nonRebalancedRewards){
+    user._pending_rewards_wei_non_rebalanced = BigInt.fromI32(0);
+  }
+  else{
+    user._pending_rewards_wei_non_rebalanced = user._pending_rewards_wei_non_rebalanced.minus(event.params.nonRebalancedRewards as BigInt);
+  }
+
   if (ppcPaid){
+    if (user._pending_rewards_ppc_wei_non_rebalanced <= event.params.nonRebalancedRewards){
+      user._pending_rewards_ppc_wei_non_rebalanced = BigInt.fromI32(0);
+    }
+    else{
+      user._pending_rewards_ppc_wei_non_rebalanced = user._pending_rewards_ppc_wei_non_rebalanced.minus(event.params.nonRebalancedRewards as BigInt);
+    }
+
     user._paid_rewards_ppc_wei_non_rebalanced = user._paid_rewards_ppc_wei_non_rebalanced.plus(event.params.nonRebalancedRewards as BigInt);
     user._paid_rewards_ppc_wei_rebalanced = user._paid_rewards_ppc_wei_rebalanced.plus(event.params.rewards as BigInt);
   }
+
   user.save();
 }
