@@ -126,6 +126,8 @@ function getOrCreateForwardByCampaign(eventAddress: Address, campaignAddress: Ad
     metadata._n_forwarded += 1;
     metadata._n_referred += 1;
 
+    campaign._n_forwarded += 1;
+    
     if (campaign._type == 'ppc'){
       metadata._n_referredPpc += 1;
     }
@@ -257,7 +259,7 @@ function getOrCreateCampaign(eventAddress: Address, campaignAddress: Address, ti
     campaign._n_joins = 0;
     campaign._n_conversions = 0;
     campaign._subgraphType = 'PLASMA';
-    campaign._version = 12;
+    campaign._version = 13;
   }
 
   campaign._updatedTimeStamp = timeStamp;
