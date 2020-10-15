@@ -863,6 +863,23 @@ export class Campaign extends Entity {
     this.set("_updatedTimeStamp", Value.fromBigInt(value));
   }
 
+  get _rewards(): Array<string> | null {
+    let value = this.get("_rewards");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set _rewards(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("_rewards");
+    } else {
+      this.set("_rewards", Value.fromStringArray(value as Array<string>));
+    }
+  }
+
   get _conversions(): Array<string> | null {
     let value = this.get("_conversions");
     if (value === null) {
@@ -1526,6 +1543,126 @@ export class User extends Entity {
     this.set("_n_conversions_unpaid", Value.fromI32(value));
   }
 
+  get _pending_rewards_wei_non_rebalanced(): BigInt | null {
+    let value = this.get("_pending_rewards_wei_non_rebalanced");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _pending_rewards_wei_non_rebalanced(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_pending_rewards_wei_non_rebalanced");
+    } else {
+      this.set(
+        "_pending_rewards_wei_non_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
+    }
+  }
+
+  get _pending_rewards_ppc_wei_non_rebalanced(): BigInt | null {
+    let value = this.get("_pending_rewards_ppc_wei_non_rebalanced");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _pending_rewards_ppc_wei_non_rebalanced(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_pending_rewards_ppc_wei_non_rebalanced");
+    } else {
+      this.set(
+        "_pending_rewards_ppc_wei_non_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
+    }
+  }
+
+  get _paid_rewards_wei_rebalanced(): BigInt | null {
+    let value = this.get("_paid_rewards_wei_rebalanced");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _paid_rewards_wei_rebalanced(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_paid_rewards_wei_rebalanced");
+    } else {
+      this.set(
+        "_paid_rewards_wei_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
+    }
+  }
+
+  get _paid_rewards_wei_non_rebalanced(): BigInt | null {
+    let value = this.get("_paid_rewards_wei_non_rebalanced");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _paid_rewards_wei_non_rebalanced(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_paid_rewards_wei_non_rebalanced");
+    } else {
+      this.set(
+        "_paid_rewards_wei_non_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
+    }
+  }
+
+  get _paid_rewards_ppc_wei_rebalanced(): BigInt | null {
+    let value = this.get("_paid_rewards_ppc_wei_rebalanced");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _paid_rewards_ppc_wei_rebalanced(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_paid_rewards_ppc_wei_rebalanced");
+    } else {
+      this.set(
+        "_paid_rewards_ppc_wei_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
+    }
+  }
+
+  get _paid_rewards_ppc_wei_non_rebalanced(): BigInt | null {
+    let value = this.get("_paid_rewards_ppc_wei_non_rebalanced");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set _paid_rewards_ppc_wei_non_rebalanced(value: BigInt | null) {
+    if (value === null) {
+      this.unset("_paid_rewards_ppc_wei_non_rebalanced");
+    } else {
+      this.set(
+        "_paid_rewards_ppc_wei_non_rebalanced",
+        Value.fromBigInt(value as BigInt)
+      );
+    }
+  }
+
   get _contractorMonetaryRep(): BigInt | null {
     let value = this.get("_contractorMonetaryRep");
     if (value === null) {
@@ -1756,6 +1893,23 @@ export class User extends Entity {
     }
   }
 
+  get _rewards(): Array<string> | null {
+    let value = this.get("_rewards");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set _rewards(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("_rewards");
+    } else {
+      this.set("_rewards", Value.fromStringArray(value as Array<string>));
+    }
+  }
+
   get _timeStamp(): BigInt {
     let value = this.get("_timeStamp");
     return value.toBigInt();
@@ -1973,6 +2127,82 @@ export class Feedback extends Entity {
 
   set _campaign(value: string) {
     this.set("_campaign", Value.fromString(value));
+  }
+}
+
+export class Reward extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Reward entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Reward entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Reward", id.toString(), this);
+  }
+
+  static load(id: string): Reward | null {
+    return store.get("Reward", id) as Reward | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get _user(): string {
+    let value = this.get("_user");
+    return value.toString();
+  }
+
+  set _user(value: string) {
+    this.set("_user", Value.fromString(value));
+  }
+
+  get _amount_added_wei_non_rabalanced(): BigInt {
+    let value = this.get("_amount_added_wei_non_rabalanced");
+    return value.toBigInt();
+  }
+
+  set _amount_added_wei_non_rabalanced(value: BigInt) {
+    this.set("_amount_added_wei_non_rabalanced", Value.fromBigInt(value));
+  }
+
+  get _amount_paid_wei_rebalanced(): BigInt {
+    let value = this.get("_amount_paid_wei_rebalanced");
+    return value.toBigInt();
+  }
+
+  set _amount_paid_wei_rebalanced(value: BigInt) {
+    this.set("_amount_paid_wei_rebalanced", Value.fromBigInt(value));
+  }
+
+  get _campaign(): string {
+    let value = this.get("_campaign");
+    return value.toString();
+  }
+
+  set _campaign(value: string) {
+    this.set("_campaign", Value.fromString(value));
+  }
+
+  get _added(): boolean {
+    let value = this.get("_added");
+    return value.toBoolean();
+  }
+
+  set _added(value: boolean) {
+    this.set("_added", Value.fromBoolean(value));
   }
 }
 

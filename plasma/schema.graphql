@@ -118,6 +118,7 @@ type Campaign @entity {
     _plasmaRootNode: User
     _timeStamp:BigInt!
     _updatedTimeStamp: BigInt!
+    _rewards: [Reward!] @derivedFrom(field: "_campaign")
     _conversions: [Conversion!] @derivedFrom(field: "_campaign")
     _visitors: [Visit!] @derivedFrom(field: "_campaign")
     _joins: [Join!] @derivedFrom(field: "_campaign")
@@ -193,6 +194,12 @@ type User @entity {
   _n_joins: Int!
   _n_conversions_paid: Int
   _n_conversions_unpaid: Int
+  _pending_rewards_wei_non_rebalanced: BigInt
+  _pending_rewards_ppc_wei_non_rebalanced: BigInt
+  _paid_rewards_wei_rebalanced: BigInt
+  _paid_rewards_wei_non_rebalanced: BigInt
+  _paid_rewards_ppc_wei_rebalanced: BigInt
+  _paid_rewards_ppc_wei_non_rebalanced: BigInt
   _contractorMonetaryRep: BigInt
   _contractorBudgetRep: BigInt
   _contractorFeedbackRep: BigInt
@@ -206,6 +213,7 @@ type User @entity {
   _visits_visitor: [Visit!] @derivedFrom(field: "_visitor")
   _joins_referrer: [Visit!] @derivedFrom(field: "_referrer")
   _joins_visitor: [Visit!] @derivedFrom(field: "_visitor")
+  _rewards: [Reward!] @derivedFrom(field: "_user")
   _timeStamp:BigInt!
   _updatedAt: BigInt!
 }
@@ -232,6 +240,15 @@ type Feedback @entity {
   _pointsWei: BigInt!
   _reporter: User!
   _campaign: Campaign!
+}
+
+type Reward @entity {
+  id: ID!
+  _user: User!
+  _amount_added_wei_non_rabalanced: BigInt!
+  _amount_paid_wei_rebalanced: BigInt!
+  _campaign: Campaign!
+  _added: Boolean
 }
 
 

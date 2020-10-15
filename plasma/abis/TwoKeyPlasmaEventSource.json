@@ -31,6 +31,60 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "contractAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "influencer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "rewards",
+        "type": "uint256"
+      }
+    ],
+    "name": "AddedPendingRewards",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "influencer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "nonRebalancedRewards",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "rewards",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "campaignsPaid",
+        "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "name": "earningsPerCampaign",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "PaidPendingRewards",
+    "type": "event"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "implementation",
