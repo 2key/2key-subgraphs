@@ -126,6 +126,8 @@ function getOrCreateForwardByCampaign(eventAddress: Address, campaignAddress: Ad
     metadata._n_forwarded += 1;
     metadata._n_referred += 1;
 
+    campaign._n_forwarded += 1;
+    
     if (campaign._type == 'ppc'){
       metadata._n_referredPpc += 1;
     }
