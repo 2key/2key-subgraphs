@@ -132,6 +132,7 @@ function getOrCreateForwardByCampaign(eventAddress: Address, campaignAddress: Ad
       metadata._n_referredPpc += 1;
     }
     metadata.save();
+    campaign.save();
   }
 
   forwardBy.save();
