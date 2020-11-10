@@ -323,13 +323,72 @@ export class Debug extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get _info(): string {
+  get _info(): string | null {
     let value = this.get("_info");
-    return value.toString();
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set _info(value: string) {
-    this.set("_info", Value.fromString(value));
+  set _info(value: string | null) {
+    if (value === null) {
+      this.unset("_info");
+    } else {
+      this.set("_info", Value.fromString(value as string));
+    }
+  }
+
+  get _info1(): string | null {
+    let value = this.get("_info1");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set _info1(value: string | null) {
+    if (value === null) {
+      this.unset("_info1");
+    } else {
+      this.set("_info1", Value.fromString(value as string));
+    }
+  }
+
+  get _info2(): string | null {
+    let value = this.get("_info2");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set _info2(value: string | null) {
+    if (value === null) {
+      this.unset("_info2");
+    } else {
+      this.set("_info2", Value.fromString(value as string));
+    }
+  }
+
+  get _info3(): string | null {
+    let value = this.get("_info3");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set _info3(value: string | null) {
+    if (value === null) {
+      this.unset("_info3");
+    } else {
+      this.set("_info3", Value.fromString(value as string));
+    }
   }
 }
 
@@ -1121,6 +1180,33 @@ export class Meta extends Entity {
 
   set _n_ppcCampaignsCreated(value: i32) {
     this.set("_n_ppcCampaignsCreated", Value.fromI32(value));
+  }
+
+  get _n_addPendingRewards(): i32 {
+    let value = this.get("_n_addPendingRewards");
+    return value.toI32();
+  }
+
+  set _n_addPendingRewards(value: i32) {
+    this.set("_n_addPendingRewards", Value.fromI32(value));
+  }
+
+  get _n_paidPendingRewards(): i32 {
+    let value = this.get("_n_paidPendingRewards");
+    return value.toI32();
+  }
+
+  set _n_paidPendingRewards(value: i32) {
+    this.set("_n_paidPendingRewards", Value.fromI32(value));
+  }
+
+  get _n_paidPendingRewardsDep(): i32 {
+    let value = this.get("_n_paidPendingRewardsDep");
+    return value.toI32();
+  }
+
+  set _n_paidPendingRewardsDep(value: i32) {
+    this.set("_n_paidPendingRewardsDep", Value.fromI32(value));
   }
 
   get _n_clicks(): i32 {

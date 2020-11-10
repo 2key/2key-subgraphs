@@ -7,9 +7,9 @@
     "create-aws": "graph create --node http://staging.api.graph.deployer.2key.net:80/ plasma",
     "remove-aws": "graph remove --node http://staging.api.graph.deployer.2key.net:80/ plasma",
     "deploy-aws": "graph deploy --node http://staging.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma",
-    "create-temp": "graph create --node http://s.api.graph.deployer.2key.net:80/ plasma",
-    "remove-temp": "graph remove --node http://s.api.graph.deployer.2key.net:80/ plasma",
-    "deploy-temp": "graph deploy --node http://s.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 plasma"
+    "create-debug": "graph create --node http://staging.api.graph.deployer.2key.net:80/ debug",
+    "remove-debug": "graph remove --node http://staging.api.graph.deployer.2key.net:80/ debug",
+    "deploy-debug": "graph deploy --node http://staging.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 debug"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.18.0",
