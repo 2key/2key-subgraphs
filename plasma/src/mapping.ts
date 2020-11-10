@@ -60,7 +60,7 @@ function getOrCreateMetadata(eventAddress: Address, timeStamp: BigInt): Meta {
     metadata._n_reputationEvents = 0;
     metadata._n_feedbackEvents = 0;
     metadata._n_conversions_rejected = 0;
-    metadata._version = 11;
+    metadata._version = 12;
     metadata._plasmaToHandleCounter = 0;
     metadata._handleChanged = 0;
     metadata._plasmaWeb3Mapping = 0;
@@ -131,7 +131,7 @@ function getOrCreateForwardByCampaign(eventAddress: Address, campaignAddress: Ad
     metadata._n_referred += 1;
 
     campaign._n_forwarded += 1;
-    
+
     if (campaign._type == 'ppc'){
       metadata._n_referredPpc += 1;
     }
