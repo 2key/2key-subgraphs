@@ -79,6 +79,43 @@
         "indexed": false,
         "name": "earningsPerCampaign",
         "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "name": "feePerReferrer2KEY",
+        "type": "uint256"
+      }
+    ],
+    "name": "PaidPendingRewards",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "influencer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "nonRebalancedRewards",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "rewards",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "campaignsPaid",
+        "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "name": "earningsPerCampaign",
+        "type": "uint256[]"
       }
     ],
     "name": "PaidPendingRewards",
