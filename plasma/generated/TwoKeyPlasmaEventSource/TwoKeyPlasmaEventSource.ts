@@ -90,6 +90,44 @@ export class PaidPendingRewards__Params {
   get earningsPerCampaign(): Array<BigInt> {
     return this._event.parameters[4].value.toBigIntArray();
   }
+
+  get feePerReferrer2KEY(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
+}
+
+export class PaidPendingRewards1 extends ethereum.Event {
+  get params(): PaidPendingRewards1__Params {
+    return new PaidPendingRewards1__Params(this);
+  }
+}
+
+export class PaidPendingRewards1__Params {
+  _event: PaidPendingRewards1;
+
+  constructor(event: PaidPendingRewards1) {
+    this._event = event;
+  }
+
+  get influencer(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get nonRebalancedRewards(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get rewards(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get campaignsPaid(): Array<Address> {
+    return this._event.parameters[3].value.toAddressArray();
+  }
+
+  get earningsPerCampaign(): Array<BigInt> {
+    return this._event.parameters[4].value.toBigIntArray();
+  }
 }
 
 export class Plasma2Ethereum extends ethereum.Event {
