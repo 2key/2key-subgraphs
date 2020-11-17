@@ -61,7 +61,10 @@ type Conversion @entity {
 
 type Debug @entity {
     id: ID!
-    _info: String!
+    _info: String
+    _info1: String
+    _info2: String
+    _info3: String
 }
 
 type Price @entity{
@@ -146,6 +149,9 @@ type Meta @entity {
   _conversionsExecuted: Int
   _n_conversions_rejected: Int
   _n_ppcCampaignsCreated: Int
+  _n_addPendingRewards: Int
+  _n_paidPendingRewards: Int
+  _n_paidPendingRewardsDep: Int
   _n_clicks: Int
   _version: Int
   _contracts: [Bytes!]

@@ -20,7 +20,8 @@ import {
   PlasmaMirrorCampaigns as PlasmaMirrorCampaignsEvent,
   ConversionPaid as ConversionPaidEvent,
   AddedPendingRewards as AddedPendingRewardsEvent,
-  PaidPendingRewards as PaidPendingRewardsEvent
+  PaidPendingRewards as PaidPendingRewardsEvent,
+  PaidPendingRewards1 as PaidPendingRewardsDepEvent,
 } from "../generated/TwoKeyPlasmaEventSource/TwoKeyPlasmaEventSource"
 
 
@@ -48,6 +49,9 @@ function getOrCreateMetadata(eventAddress: Address, timeStamp: BigInt): Meta {
     metadata._n_clicks = 0;
     metadata._n_referred = 0;
     metadata._n_referredPpc = 0;
+    metadata._n_addPendingRewards = 0;
+    metadata._n_paidPendingRewards = 0;
+    metadata._n_paidPendingRewardsDep = 0;
     metadata._n_conversions_unpaid = 0;
     metadata._joinsCounter = 0;
     metadata._subgraphType = 'PLASMA';
@@ -591,6 +595,7 @@ export function handleConversionRejected(event: ConversionRejectedEvent): void {
 
 export function handleAddedPendingRewards(event: AddedPendingRewardsEvent): void {
   let metadata = getOrCreateMetadata(event.address, event.block.timestamp);
+  metadata._n_addPendingRewards += 1;
   metadata.save();
 
   let influencerPlasma = event.params.influencer;
@@ -611,7 +616,15 @@ export function handleAddedPendingRewards(event: AddedPendingRewardsEvent): void
 
 export function handlePaidPendingRewards(event: PaidPendingRewardsEvent): void {
   let metadata = getOrCreateMetadata(event.address, event.block.timestamp);
+  metadata._n_paidPendingRewards += 1;
   metadata.save();
+
+  // let debug = Debug.load(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  // if (debug == null){
+  //   debug = new Debug(event.transaction.hash.toHex() + "-" + event.logIndex.toString());
+  //   debug._info = event.transaction.hash.toHex();
+  //   debug.save();
+  // }
 
   let ppcPaid = false;
 
@@ -620,6 +633,9 @@ export function handlePaidPendingRewards(event: PaidPendingRewardsEvent): void {
 
   let nRewards = rewardsArray.length;
   let nCampaigns = campaignsPaid.length;
+
+  // debug._info1 = nRewards.toString() + '-' + nCampaigns.toString();
+  // debug.save();
 
   if (nRewards != nCampaigns) {
     return;
@@ -651,6 +667,63 @@ export function handlePaidPendingRewards(event: PaidPendingRewardsEvent): void {
   //     ppcPaid = true;
   //   }
   // });
+
+  let user = getOrCreateUser(event.params.influencer, event.block.timestamp);
+
+  user._paid_rewards_wei_non_rebalanced = user._paid_rewards_wei_non_rebalanced.plus(event.params.nonRebalancedRewards as BigInt);
+  user._paid_rewards_wei_rebalanced = user._paid_rewards_wei_rebalanced.plus(event.params.rewards as BigInt);
+
+  if (user._pending_rewards_wei_non_rebalanced <= event.params.nonRebalancedRewards){
+    user._pending_rewards_wei_non_rebalanced = BigInt.fromI32(0);
+  }
+  else{
+    user._pending_rewards_wei_non_rebalanced = user._pending_rewards_wei_non_rebalanced.minus(event.params.nonRebalancedRewards as BigInt);
+  }
+
+  if (ppcPaid){
+    if (user._pending_rewards_ppc_wei_non_rebalanced <= event.params.nonRebalancedRewards){
+      user._pending_rewards_ppc_wei_non_rebalanced = BigInt.fromI32(0);
+    }
+    else{
+      user._pending_rewards_ppc_wei_non_rebalanced = user._pending_rewards_ppc_wei_non_rebalanced.minus(event.params.nonRebalancedRewards as BigInt);
+    }
+
+    user._paid_rewards_ppc_wei_non_rebalanced = user._paid_rewards_ppc_wei_non_rebalanced.plus(event.params.nonRebalancedRewards as BigInt);
+    user._paid_rewards_ppc_wei_rebalanced = user._paid_rewards_ppc_wei_rebalanced.plus(event.params.rewards as BigInt);
+  }
+
+  user.save();
+}
+
+
+export function handlePaidPendingRewardsDep(event: PaidPendingRewardsDepEvent): void {
+  let metadata = getOrCreateMetadata(event.address, event.block.timestamp);
+  metadata._n_paidPendingRewardsDep += 1;
+  metadata.save();
+
+  let ppcPaid = false;
+
+  let campaignsPaid = event.params.campaignsPaid;
+  let rewardsArray = event.params.earningsPerCampaign;
+
+  let nRewards = rewardsArray.length;
+  let nCampaigns = campaignsPaid.length;
+
+  if (nRewards != nCampaigns) {
+    return;
+  }
+
+  for (let campaignRewardIdx = 0; campaignRewardIdx < nCampaigns; campaignRewardIdx++){
+    let campaign = getOrCreateCampaign(event.address, campaignsPaid[campaignRewardIdx], event.block.timestamp);
+    let reward = getOrCreateReward(event.address, campaignsPaid[campaignRewardIdx], event.params.influencer, event.block.timestamp);
+
+    reward._amount_paid_wei_rebalanced = reward._amount_paid_wei_rebalanced.plus(rewardsArray[campaignRewardIdx] as BigInt);
+    reward.save();
+
+    if (campaign._type == 'ppc'){
+      ppcPaid = true;
+    }
+  }
 
   let user = getOrCreateUser(event.params.influencer, event.block.timestamp);
 
