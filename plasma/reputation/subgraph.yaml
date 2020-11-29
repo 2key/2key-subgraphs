@@ -1,0 +1,29 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: TwoKeyPlasmaReputationRegistry
+    network: plasma
+    source:
+      address: "0xdd2209edb96128b5856b70cb6eca1d5bef183908"
+      abi: TwoKeyPlasmaReputationRegistry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Reputation
+        - Feedback
+        - Metadata
+        - User
+        - Campaign
+      abis:
+        - name: TwoKeyPlasmaReputationRegistry
+          file: ./abis/TwoKeyPlasmaReputationRegistry.json
+      eventHandlers:
+        - event: ReputationUpdated(address,string,string,int256,address)
+          handler: handleReputationUpdated
+        - event: FeedbackSubmitted(address,string,string,int256,address,address)
+          handler: handleFeedbackSubmitted
+      file: ./src/mapping.ts

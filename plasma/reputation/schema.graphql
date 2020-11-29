@@ -1,0 +1,62 @@
+type Campaign @entity {
+    id: ID!
+}
+
+type Debug @entity {
+    id: ID!
+    _info: String
+    _info1: String
+    _info2: String
+    _info3: String
+}
+
+type Feedback @entity {
+    id: ID!
+    _user: User # address
+    _type: String
+    _role: String
+    _pointsWei: BigInt
+    _reporter: User
+    _campaign: Campaign
+}
+
+
+type Meta @entity {
+    id: ID!
+    _version: Int
+    _contracts: [Bytes!]
+    _n_campaigns: Int
+    _n_feedbackEvents: Int
+    _n_reputationEvents: Int
+    _timeStamp:BigInt!
+    _updatedAt:BigInt!
+}
+
+
+type User @entity {
+    id: ID!  #
+    _contractorMonetaryRep: BigInt
+    _contractorBudgetRep: BigInt
+    _contractorFeedbackRep: BigInt
+    _referrerMonetaryRep: BigInt
+    _referrerBudgetRep: BigInt
+    _referrerFeedbackRep: BigInt
+    _converterMonetaryRep: BigInt
+    _converterBudgetRep: BigInt
+    _converterFeedbackRep: BigInt
+    _signupRep: BigInt
+    _timeStamp:BigInt!
+    _updatedAt: BigInt!
+}
+
+
+type Reputation @entity {
+    id: ID!
+    _campaign: Campaign
+    _user: User
+    _type: String
+    _role: String
+    _pointsWei: BigInt
+}
+
+
