@@ -1,0 +1,70 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "epochId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "reward2KeyWei",
+        "type": "uint256"
+      }
+    ],
+    "name": "RewardsAssignedToUserInParticipationMiningEpoch",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "epochId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "totalRewardsInEpoch",
+        "type": "uint256"
+      }
+    ],
+    "name": "EpochDeclared",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "epochId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "numberOfUsers",
+        "type": "uint256"
+      }
+    ],
+    "name": "EpochRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "epochId",
+        "type": "uint256"
+      }
+    ],
+    "name": "EpochFinalized",
+    "type": "event"
+  }
+]

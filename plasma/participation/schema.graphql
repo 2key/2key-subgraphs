@@ -1,0 +1,35 @@
+type Epoch @entity {
+  id: ID!
+  _declared: Boolean! # address
+  _registered: Boolean! # address
+  _finalized: Boolean! # address
+  _nUsers: BigInt!
+  _participationMiningRewards: [ParticipationMiningReward!] @derivedFrom(field: "_epoch")
+  _timeStamp: BigInt!
+  _updatedAt: BigInt!
+}
+
+type ParticipationMiningReward @entity {
+  id: ID!
+  _rewardsWei: BigInt
+  _user: User! # address
+  _timeStamp: BigInt!
+  _epoch: Epoch! # address
+}
+
+type Meta @entity {
+  id: ID!
+  _version: Int
+  _nUsers: Int
+  _contracts: [Bytes!]
+  _timeStamp:BigInt!
+  _updatedAt:BigInt!
+}
+
+
+type User @entity {
+  id: ID!  #
+  _participationMiningRewards: [ParticipationMiningReward!] @derivedFrom(field: "_user")
+  _timeStamp:BigInt!
+  _updatedAt: BigInt!
+}
