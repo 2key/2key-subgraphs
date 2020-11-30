@@ -1,0 +1,21 @@
+{
+  "name": "participation",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "create-participation": "graph create --node http://prod.api.graph.deployer.2key.net:80/ participation",
+    "remove-participation": "graph remove --node http://prod.api.graph.deployer.2key.net:80/ participation",
+    "deploy-participation": "graph deploy --node http://prod.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 participation",
+    "create-debug-participation": "graph create --node http://prod.api.graph.deployer.2key.net:80/ debug-participation",
+    "remove-debug-participation": "graph remove --node http://prod.api.graph.deployer.2key.net:80/ debug-participation",
+    "deploy-debug-participation": "graph deploy --node http://prod.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 debug-participation",
+    "create-temp-participation": "graph create --node http://p.api.graph.deployer.2key.net:80/ participation",
+    "remove-temp-participation": "graph remove --node http://p.api.graph.deployer.2key.net:80/ participation",
+    "deploy-temp-participation": "graph deploy --node http://p.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 participation"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.19.0",
+    "@graphprotocol/graph-ts": "^0.19.0"
+  }
+}
