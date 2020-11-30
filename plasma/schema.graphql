@@ -1,18 +1,3 @@
-enum CurrencyType {
-    ETH
-    BTC
-    TWOKEY
-    NIS
-    JPY
-    EUR
-    USD
-    ILS
-    DAI
-    TUSD
-    GBP
-    USDT
-}
-
 enum GraphType{
     PLASMA
     PUBLIC
@@ -65,15 +50,6 @@ type Debug @entity {
     _info1: String
     _info2: String
     _info3: String
-}
-
-type Price @entity{
-    id:ID!
-    _currency: CurrencyType
-    _rate: BigInt!
-    _updater: User!
-    _timeStamp: BigInt!
-    _updatedTimeStamp: BigInt
 }
 
 type UserReg @entity {
@@ -144,6 +120,7 @@ type JoinEvent @entity {
   _timeStamp:BigInt!
 }
 
+
 type Meta @entity {
   id: ID!
   _conversionsExecuted: Int
@@ -170,8 +147,6 @@ type Meta @entity {
   _n_conversions_paid: Int
   _n_conversions_unpaid: Int
   _n_campaigns: Int
-  _n_feedbackEvents: Int
-  _n_reputationEvents: Int
   _timeStamp:BigInt!
   _updatedAt:BigInt!
 }
@@ -206,15 +181,6 @@ type User @entity {
   _paid_rewards_wei_non_rebalanced: BigInt
   _paid_rewards_ppc_wei_rebalanced: BigInt
   _paid_rewards_ppc_wei_non_rebalanced: BigInt
-  _contractorMonetaryRep: BigInt
-  _contractorBudgetRep: BigInt
-  _contractorFeedbackRep: BigInt
-  _referrerMonetaryRep: BigInt
-  _referrerBudgetRep: BigInt
-  _referrerFeedbackRep: BigInt
-  _converterMonetaryRep: BigInt
-  _converterBudgetRep: BigInt
-  _converterFeedbackRep: BigInt
   _visits_referrer: [Visit!] @derivedFrom(field: "_referrer")
   _visits_visitor: [Visit!] @derivedFrom(field: "_visitor")
   _joins_referrer: [Visit!] @derivedFrom(field: "_referrer")
@@ -227,25 +193,6 @@ type User @entity {
 type ForwardedByCampaign @entity {
     id: ID!
     _exists: Int!
-}
-
-type Reputation @entity {
-  id: ID!
-  _campaign: Campaign!
-  _user: User!
-  _type: String!
-  _role: String!
-  _pointsWei: BigInt!
-}
-
-type Feedback @entity {
-  id: ID!
-  _user: User! # address
-  _type: String!
-  _role: String!
-  _pointsWei: BigInt!
-  _reporter: User!
-  _campaign: Campaign!
 }
 
 type Reward @entity {

@@ -44,7 +44,7 @@ export class Conversion extends Entity {
 
   get _campaignType(): string | null {
     let value = this.get("_campaignType");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -70,7 +70,7 @@ export class Conversion extends Entity {
 
   get _status(): string | null {
     let value = this.get("_status");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -87,7 +87,7 @@ export class Conversion extends Entity {
 
   get _campaign(): string | null {
     let value = this.get("_campaign");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -104,7 +104,7 @@ export class Conversion extends Entity {
 
   get _participate(): string | null {
     let value = this.get("_participate");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -121,7 +121,7 @@ export class Conversion extends Entity {
 
   get _fiatAmountSpent(): BigInt | null {
     let value = this.get("_fiatAmountSpent");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -138,7 +138,7 @@ export class Conversion extends Entity {
 
   get _ethAmountSpent(): BigInt | null {
     let value = this.get("_ethAmountSpent");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -155,7 +155,7 @@ export class Conversion extends Entity {
 
   get _tokens(): BigInt | null {
     let value = this.get("_tokens");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -181,7 +181,7 @@ export class Conversion extends Entity {
 
   get _rejected_at(): BigInt | null {
     let value = this.get("_rejected_at");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -243,7 +243,7 @@ export class Conversion extends Entity {
 
   get _conversionId(): BigInt | null {
     let value = this.get("_conversionId");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -260,7 +260,7 @@ export class Conversion extends Entity {
 
   get _timeStamp(): BigInt | null {
     let value = this.get("_timeStamp");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -277,7 +277,7 @@ export class Conversion extends Entity {
 
   get _updatedTimeStamp(): BigInt | null {
     let value = this.get("_updatedTimeStamp");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -325,7 +325,7 @@ export class Debug extends Entity {
 
   get _info(): string | null {
     let value = this.get("_info");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -342,7 +342,7 @@ export class Debug extends Entity {
 
   get _info1(): string | null {
     let value = this.get("_info1");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -359,7 +359,7 @@ export class Debug extends Entity {
 
   get _info2(): string | null {
     let value = this.get("_info2");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -376,7 +376,7 @@ export class Debug extends Entity {
 
   get _info3(): string | null {
     let value = this.get("_info3");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -388,98 +388,6 @@ export class Debug extends Entity {
       this.unset("_info3");
     } else {
       this.set("_info3", Value.fromString(value as string));
-    }
-  }
-}
-
-export class Price extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id !== null, "Cannot save Price entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Price entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Price", id.toString(), this);
-  }
-
-  static load(id: string): Price | null {
-    return store.get("Price", id) as Price | null;
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get _currency(): string | null {
-    let value = this.get("_currency");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set _currency(value: string | null) {
-    if (value === null) {
-      this.unset("_currency");
-    } else {
-      this.set("_currency", Value.fromString(value as string));
-    }
-  }
-
-  get _rate(): BigInt {
-    let value = this.get("_rate");
-    return value.toBigInt();
-  }
-
-  set _rate(value: BigInt) {
-    this.set("_rate", Value.fromBigInt(value));
-  }
-
-  get _updater(): string {
-    let value = this.get("_updater");
-    return value.toString();
-  }
-
-  set _updater(value: string) {
-    this.set("_updater", Value.fromString(value));
-  }
-
-  get _timeStamp(): BigInt {
-    let value = this.get("_timeStamp");
-    return value.toBigInt();
-  }
-
-  set _timeStamp(value: BigInt) {
-    this.set("_timeStamp", Value.fromBigInt(value));
-  }
-
-  get _updatedTimeStamp(): BigInt | null {
-    let value = this.get("_updatedTimeStamp");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _updatedTimeStamp(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_updatedTimeStamp");
-    } else {
-      this.set("_updatedTimeStamp", Value.fromBigInt(value as BigInt));
     }
   }
 }
@@ -516,7 +424,7 @@ export class UserReg extends Entity {
 
   get _name(): string | null {
     let value = this.get("_name");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -533,7 +441,7 @@ export class UserReg extends Entity {
 
   get _fullName(): string | null {
     let value = this.get("_fullName");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -550,7 +458,7 @@ export class UserReg extends Entity {
 
   get _email(): string | null {
     let value = this.get("_email");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -567,7 +475,7 @@ export class UserReg extends Entity {
 
   get _walletName(): string | null {
     let value = this.get("_walletName");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -584,7 +492,7 @@ export class UserReg extends Entity {
 
   get _web3(): Bytes | null {
     let value = this.get("_web3");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -601,7 +509,7 @@ export class UserReg extends Entity {
 
   get _address(): Bytes | null {
     let value = this.get("_address");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -636,7 +544,7 @@ export class UserReg extends Entity {
 
   get _tx_hash(): string | null {
     let value = this.get("_tx_hash");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -653,7 +561,7 @@ export class UserReg extends Entity {
 
   get _updatedTimeStamp(): BigInt | null {
     let value = this.get("_updatedTimeStamp");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -701,7 +609,7 @@ export class Campaign extends Entity {
 
   get _owner(): string | null {
     let value = this.get("_owner");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -727,7 +635,7 @@ export class Campaign extends Entity {
 
   get _type(): string | null {
     let value = this.get("_type");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -825,7 +733,7 @@ export class Campaign extends Entity {
 
   get _converters_addresses(): Array<string> | null {
     let value = this.get("_converters_addresses");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -854,7 +762,7 @@ export class Campaign extends Entity {
 
   get _plasmaAddress(): Bytes | null {
     let value = this.get("_plasmaAddress");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -889,7 +797,7 @@ export class Campaign extends Entity {
 
   get _plasmaRootNode(): string | null {
     let value = this.get("_plasmaRootNode");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -924,7 +832,7 @@ export class Campaign extends Entity {
 
   get _rewards(): Array<string> | null {
     let value = this.get("_rewards");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -941,7 +849,7 @@ export class Campaign extends Entity {
 
   get _conversions(): Array<string> | null {
     let value = this.get("_conversions");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -958,7 +866,7 @@ export class Campaign extends Entity {
 
   get _visitors(): Array<string> | null {
     let value = this.get("_visitors");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -975,7 +883,7 @@ export class Campaign extends Entity {
 
   get _joins(): Array<string> | null {
     let value = this.get("_joins");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1229,7 +1137,7 @@ export class Meta extends Entity {
 
   get _contracts(): Array<Bytes> | null {
     let value = this.get("_contracts");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytesArray();
@@ -1377,24 +1285,6 @@ export class Meta extends Entity {
 
   set _n_campaigns(value: i32) {
     this.set("_n_campaigns", Value.fromI32(value));
-  }
-
-  get _n_feedbackEvents(): i32 {
-    let value = this.get("_n_feedbackEvents");
-    return value.toI32();
-  }
-
-  set _n_feedbackEvents(value: i32) {
-    this.set("_n_feedbackEvents", Value.fromI32(value));
-  }
-
-  get _n_reputationEvents(): i32 {
-    let value = this.get("_n_reputationEvents");
-    return value.toI32();
-  }
-
-  set _n_reputationEvents(value: i32) {
-    this.set("_n_reputationEvents", Value.fromI32(value));
   }
 
   get _timeStamp(): BigInt {
@@ -1552,7 +1442,7 @@ export class User extends Entity {
 
   get _web3Address(): Bytes | null {
     let value = this.get("_web3Address");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -1569,7 +1459,7 @@ export class User extends Entity {
 
   get _handle(): string | null {
     let value = this.get("_handle");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1631,7 +1521,7 @@ export class User extends Entity {
 
   get _pending_rewards_wei_non_rebalanced(): BigInt | null {
     let value = this.get("_pending_rewards_wei_non_rebalanced");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1651,7 +1541,7 @@ export class User extends Entity {
 
   get _pending_rewards_ppc_wei_non_rebalanced(): BigInt | null {
     let value = this.get("_pending_rewards_ppc_wei_non_rebalanced");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1671,7 +1561,7 @@ export class User extends Entity {
 
   get _paid_rewards_wei_rebalanced(): BigInt | null {
     let value = this.get("_paid_rewards_wei_rebalanced");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1691,7 +1581,7 @@ export class User extends Entity {
 
   get _paid_rewards_wei_non_rebalanced(): BigInt | null {
     let value = this.get("_paid_rewards_wei_non_rebalanced");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1711,7 +1601,7 @@ export class User extends Entity {
 
   get _paid_rewards_ppc_wei_rebalanced(): BigInt | null {
     let value = this.get("_paid_rewards_ppc_wei_rebalanced");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1731,7 +1621,7 @@ export class User extends Entity {
 
   get _paid_rewards_ppc_wei_non_rebalanced(): BigInt | null {
     let value = this.get("_paid_rewards_ppc_wei_non_rebalanced");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1749,162 +1639,9 @@ export class User extends Entity {
     }
   }
 
-  get _contractorMonetaryRep(): BigInt | null {
-    let value = this.get("_contractorMonetaryRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _contractorMonetaryRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_contractorMonetaryRep");
-    } else {
-      this.set("_contractorMonetaryRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get _contractorBudgetRep(): BigInt | null {
-    let value = this.get("_contractorBudgetRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _contractorBudgetRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_contractorBudgetRep");
-    } else {
-      this.set("_contractorBudgetRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get _contractorFeedbackRep(): BigInt | null {
-    let value = this.get("_contractorFeedbackRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _contractorFeedbackRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_contractorFeedbackRep");
-    } else {
-      this.set("_contractorFeedbackRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get _referrerMonetaryRep(): BigInt | null {
-    let value = this.get("_referrerMonetaryRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _referrerMonetaryRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_referrerMonetaryRep");
-    } else {
-      this.set("_referrerMonetaryRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get _referrerBudgetRep(): BigInt | null {
-    let value = this.get("_referrerBudgetRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _referrerBudgetRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_referrerBudgetRep");
-    } else {
-      this.set("_referrerBudgetRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get _referrerFeedbackRep(): BigInt | null {
-    let value = this.get("_referrerFeedbackRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _referrerFeedbackRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_referrerFeedbackRep");
-    } else {
-      this.set("_referrerFeedbackRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get _converterMonetaryRep(): BigInt | null {
-    let value = this.get("_converterMonetaryRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _converterMonetaryRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_converterMonetaryRep");
-    } else {
-      this.set("_converterMonetaryRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get _converterBudgetRep(): BigInt | null {
-    let value = this.get("_converterBudgetRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _converterBudgetRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_converterBudgetRep");
-    } else {
-      this.set("_converterBudgetRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get _converterFeedbackRep(): BigInt | null {
-    let value = this.get("_converterFeedbackRep");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set _converterFeedbackRep(value: BigInt | null) {
-    if (value === null) {
-      this.unset("_converterFeedbackRep");
-    } else {
-      this.set("_converterFeedbackRep", Value.fromBigInt(value as BigInt));
-    }
-  }
-
   get _visits_referrer(): Array<string> | null {
     let value = this.get("_visits_referrer");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1924,7 +1661,7 @@ export class User extends Entity {
 
   get _visits_visitor(): Array<string> | null {
     let value = this.get("_visits_visitor");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1944,7 +1681,7 @@ export class User extends Entity {
 
   get _joins_referrer(): Array<string> | null {
     let value = this.get("_joins_referrer");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1964,7 +1701,7 @@ export class User extends Entity {
 
   get _joins_visitor(): Array<string> | null {
     let value = this.get("_joins_visitor");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1981,7 +1718,7 @@ export class User extends Entity {
 
   get _rewards(): Array<string> | null {
     let value = this.get("_rewards");
-    if (value === null) {
+    if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -2052,167 +1789,6 @@ export class ForwardedByCampaign extends Entity {
 
   set _exists(value: i32) {
     this.set("_exists", Value.fromI32(value));
-  }
-}
-
-export class Reputation extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id !== null, "Cannot save Reputation entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Reputation entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Reputation", id.toString(), this);
-  }
-
-  static load(id: string): Reputation | null {
-    return store.get("Reputation", id) as Reputation | null;
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get _campaign(): string {
-    let value = this.get("_campaign");
-    return value.toString();
-  }
-
-  set _campaign(value: string) {
-    this.set("_campaign", Value.fromString(value));
-  }
-
-  get _user(): string {
-    let value = this.get("_user");
-    return value.toString();
-  }
-
-  set _user(value: string) {
-    this.set("_user", Value.fromString(value));
-  }
-
-  get _type(): string {
-    let value = this.get("_type");
-    return value.toString();
-  }
-
-  set _type(value: string) {
-    this.set("_type", Value.fromString(value));
-  }
-
-  get _role(): string {
-    let value = this.get("_role");
-    return value.toString();
-  }
-
-  set _role(value: string) {
-    this.set("_role", Value.fromString(value));
-  }
-
-  get _pointsWei(): BigInt {
-    let value = this.get("_pointsWei");
-    return value.toBigInt();
-  }
-
-  set _pointsWei(value: BigInt) {
-    this.set("_pointsWei", Value.fromBigInt(value));
-  }
-}
-
-export class Feedback extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id !== null, "Cannot save Feedback entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Feedback entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Feedback", id.toString(), this);
-  }
-
-  static load(id: string): Feedback | null {
-    return store.get("Feedback", id) as Feedback | null;
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get _user(): string {
-    let value = this.get("_user");
-    return value.toString();
-  }
-
-  set _user(value: string) {
-    this.set("_user", Value.fromString(value));
-  }
-
-  get _type(): string {
-    let value = this.get("_type");
-    return value.toString();
-  }
-
-  set _type(value: string) {
-    this.set("_type", Value.fromString(value));
-  }
-
-  get _role(): string {
-    let value = this.get("_role");
-    return value.toString();
-  }
-
-  set _role(value: string) {
-    this.set("_role", Value.fromString(value));
-  }
-
-  get _pointsWei(): BigInt {
-    let value = this.get("_pointsWei");
-    return value.toBigInt();
-  }
-
-  set _pointsWei(value: BigInt) {
-    this.set("_pointsWei", Value.fromBigInt(value));
-  }
-
-  get _reporter(): string {
-    let value = this.get("_reporter");
-    return value.toString();
-  }
-
-  set _reporter(value: string) {
-    this.set("_reporter", Value.fromString(value));
-  }
-
-  get _campaign(): string {
-    let value = this.get("_campaign");
-    return value.toString();
-  }
-
-  set _campaign(value: string) {
-    this.set("_campaign", Value.fromString(value));
   }
 }
 
