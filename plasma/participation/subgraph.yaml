@@ -1,0 +1,31 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: TwoKeyPlasmaEventSource
+    network: plasma
+    source:
+      address: "0xd701037bb6e1df5b8ff0501a1163d4228542fae0"
+      abi: TwoKeyPlasmaEventSource
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Meta
+        - User
+        - ParticipationMiningReward
+      abis:
+        - name: TwoKeyPlasmaEventSource
+          file: ./abis/TwoKeyPlasmaEventSource.json
+      eventHandlers:
+        - event: RewardsAssignedToUserInParticipationMiningEpoch(uint256,address,uint256)
+          handler: handleRewardsAssignedToUserInParticipationMiningEpoch
+        - event: EpochDeclared(uint256,uint256)
+          handler: handleEpochDeclared
+        - event: EpochRegistered(uint256,uint256)
+          handler: handleEpochRegistered
+        - event: EpochFinalized(uint256)
+          handler: handleEpochFinalized
+      file: ./src/mapping.ts
