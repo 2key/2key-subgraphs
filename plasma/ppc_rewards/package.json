@@ -1,0 +1,21 @@
+{
+  "name": "rewards",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "create-rewards": "graph create --node http://test.api.graph.deployer.2key.net:80/ rewards",
+    "remove-rewards": "graph remove --node http://test.api.graph.deployer.2key.net:80/ rewards",
+    "deploy-rewards": "graph deploy --node http://test.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 rewards",
+    "create-debug-rewards": "graph create --node http://test.api.graph.deployer.2key.net:80/ debug-rewards",
+    "remove-debug-rewards": "graph remove --node http://test.api.graph.deployer.2key.net:80/ debug-rewards",
+    "deploy-debug-rewards": "graph deploy --node http://test.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 debug-rewards",
+    "create-temp-rewards": "graph create --node http://t.api.graph.deployer.2key.net:80/ rewards",
+    "remove-temp-rewards": "graph remove --node http://t.api.graph.deployer.2key.net:80/ rewards",
+    "deploy-temp-rewards": "graph deploy --node http://t.api.graph.deployer.2key.net:80/ --ipfs https://ipfs.2key.net:443 rewards"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.19.0",
+    "@graphprotocol/graph-ts": "^0.19.0"
+  }
+}

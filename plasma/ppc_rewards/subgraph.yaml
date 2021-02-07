@@ -1,0 +1,32 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: TwoKeyPlasmaEventSource
+    network: plasma
+    source:
+      address: "0x82155db9c79250370ed11e9c1166473a6b2c2600"
+      abi: TwoKeyPlasmaEventSource
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Campaign
+        - Meta
+        - User
+        - Reward
+      abis:
+        - name: TwoKeyPlasmaEventSource
+          file: ./abis/TwoKeyPlasmaEventSource.json
+      eventHandlers:
+        - event: AddedPendingRewards(address,address,uint256)
+          handler: handleAddedPendingRewards
+        - event: PaidPendingRewards(address,uint256,uint256,address[],uint256[])
+          handler: handlePaidPendingRewardsDep
+        - event: PaidPendingRewards(address,uint256,uint256,address[],uint256[],uint256)
+          handler: handlePaidPendingRewards
+        - event: CPCCampaignCreated(address,address)
+          handler: handleCPCCampaignCreated
+      file: ./src/mapping.ts

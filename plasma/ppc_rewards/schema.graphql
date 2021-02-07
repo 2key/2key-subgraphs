@@ -1,0 +1,52 @@
+enum GraphType{
+    PLASMA
+    PUBLIC
+}
+
+
+type Campaign @entity {
+    id: ID!  # Web3 Address
+    _subgraphType: GraphType!
+    _type: String
+    _version: Int
+    _timeStamp:BigInt!
+    _updatedTimeStamp: BigInt!
+    _rewards: [Reward!] @derivedFrom(field: "_campaign")
+}
+
+
+type Meta @entity {
+  id: ID!
+  _n_addPendingRewards: Int
+  _n_paidPendingRewards: Int
+  _n_paidPendingRewardsDep: Int
+  _version: Int
+  _contracts: [Bytes!]
+  _subgraphType: GraphType!
+  _timeStamp:BigInt!
+  _updatedAt:BigInt!
+}
+
+type User @entity {
+  id: ID!  #
+  _pending_rewards_wei_non_rebalanced: BigInt
+  _pending_rewards_ppc_wei_non_rebalanced: BigInt
+  _paid_rewards_wei_rebalanced: BigInt
+  _paid_rewards_wei_non_rebalanced: BigInt
+  _paid_rewards_ppc_wei_rebalanced: BigInt
+  _paid_rewards_ppc_wei_non_rebalanced: BigInt
+  _rewards: [Reward!] @derivedFrom(field: "_user")
+  _timeStamp:BigInt!
+  _updatedAt: BigInt!
+}
+
+type Reward @entity {
+  id: ID!
+  _user: User!
+  _amount_added_wei_non_rabalanced: BigInt!
+  _amount_paid_wei_rebalanced: BigInt!
+  _campaign: Campaign!
+  _added: Boolean
+}
+
+
