@@ -1,0 +1,37 @@
+type Meta @entity {
+    id: ID!
+    _version: Int
+    _depositCounter: BigDecimal
+    _withdrawCounter: BigDecimal
+    _netStaked: BigInt
+    _contracts: [Bytes!]
+    _timeStamp:BigInt!
+    _updatedAt:BigInt!
+}
+
+
+type User @entity {
+    id: ID!  #
+    _timeStamp:BigInt!
+    _updatedAt: BigInt!
+}
+
+
+type DepositEntity @entity {
+    id: ID!  #
+    _timeStamp:BigInt!
+    _updatedAt: BigInt!
+    _user: User!
+    _amount: BigInt!
+    _pid: BigInt!
+}
+
+
+type WithdrawEntity @entity {
+    id: ID!  #
+    _timeStamp:BigInt!
+    _updatedAt: BigInt!
+    _user: User!
+    _amount: BigInt!
+    _pid: BigInt!
+}

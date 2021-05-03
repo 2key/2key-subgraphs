@@ -1,0 +1,16 @@
+{
+  "name": "twokey-farm-subgraph",
+  "author": "Idan Portal <https://github.com/4tal>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy_twokey_farm_develop": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/farm-twokey-develop",
+    "deploy_twokey_farm_staging": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/farm-twokey-staging",
+    "deploy_twokey_farm_prod": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 2key/farm-twokey-prod"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.20.0",
+    "@graphprotocol/graph-ts": "^0.20.0"
+  }
+}
